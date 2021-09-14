@@ -52,6 +52,7 @@
                             <button type="submit" class="btn btn-primary btn-lg btn-block">
                                 {{ translate('Login') }}
                             </button>
+                            <a href="{{route('home')}}" class="btn btn-success btn-lg btn-block">{{ translate('Go Home') }}</a>
                         </form>
                         @if (env("DEMO_MODE") == "On")
                             <div class="mt-4">
