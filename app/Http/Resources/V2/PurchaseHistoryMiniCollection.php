@@ -23,7 +23,7 @@ class PurchaseHistoryMiniCollection extends ResourceCollection
                     'grand_total' => format_price($data->grand_total) ,
                     'date' => Carbon::createFromTimestamp($data->date)->format('d-m-Y'),
                     'links' => [
-                        'details' => route('purchaseHistory.details', $data->id)
+                        'details' => ''
                     ]
                 ];
             })

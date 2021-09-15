@@ -14,7 +14,7 @@ class ProductDetailCollection extends ResourceCollection
         return [
             'data' => $this->collection->map(function ($data) {
                 $precision = 2;
-                $calculable_price = homeDiscountedBasePrice($data);
+                $calculable_price = home_discounted_base_price($data, false);
                 $calculable_price = number_format($calculable_price, $precision, '.', '');
                 $calculable_price = floatval($calculable_price);
                 // $calculable_price = round($calculable_price, 2);
@@ -56,10 +56,10 @@ class ProductDetailCollection extends ResourceCollection
                     'photos' => $photos,
                     'thumbnail_image' => api_asset($data->thumbnail_img),
                     'tags' => explode(',', $data->tags),
-                    'price_high_low' => (double)explode('-', homeDiscountedPrice($data))[0] == (double)explode('-', homeDiscountedPrice($data))[1] ? format_price((double)explode('-', homeDiscountedPrice($data))[0]) : "From " . format_price((double)explode('-', homeDiscountedPrice($data))[0]) . " to " . format_price((double)explode('-', homeDiscountedPrice($data))[1]),
+                    'price_high_low' => (double)explode('-', home_discounted_base_price($data, false))[0] == (double)explode('-', home_discounted_price($data, false))[1] ? format_price((double)explode('-', home_discounted_price($data, false))[0]) : "From " . format_price((double)explode('-', home_discounted_price($data, false))[0]) . " to " . format_price((double)explode('-', home_discounted_price($data, false))[1]),
                     'choice_options' => $this->convertToChoiceOptions(json_decode($data->choice_options)),
                     'colors' => json_decode($data->colors),
-                    'has_discount' => homeBasePrice($data) != homeDiscountedBasePrice($data),
+                    'has_discount' => home_base_price($data, false) != home_discounted_base_price($data, false),
                     'stroked_price' => home_base_price($data),
                     'main_price' => home_discounted_base_price($data),
                     'calculable_price' => $calculable_price,

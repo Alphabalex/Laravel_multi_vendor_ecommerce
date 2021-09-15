@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use App\Utility\NagadUtility;
-use App\Order;
+use App\CombinedOrder;
 use App\BusinessSetting;
 use App\Seller;
 use App\CustomerPackage;
@@ -50,9 +50,9 @@ class NagadController{
     {
         if(Session::has('payment_type')){
             if(Session::get('payment_type') == 'cart_payment'){
-                $order = Order::findOrFail(Session::get('order_id'));
-                $this->amount($order->grand_total);
-                $this->tnx($order->id);
+                $combined_order = CombinedOrder::findOrFail(Session::get('combined_order_id'));
+                $this->amount($combined_order->grand_total);
+                $this->tnx($combined_order->id);
             }
             if(Session::get('payment_type') == 'wallet_payment'){
                 $this->amount(round(Session::get('payment_data')['amount']));
@@ -161,7 +161,7 @@ class NagadController{
             $payment_type = Session::get('payment_type');
             if ($payment_type == 'cart_payment') {
                 $checkoutController = new CheckoutController;
-                return $checkoutController->checkout_done(Session::get('order_id'), $json);
+                return $checkoutController->checkout_done(Session::get('combined_order_id'), $json);
             }
             if ($payment_type == 'wallet_payment') {
                 $walletController = new WalletController;

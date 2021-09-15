@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Order;
+use App\CombinedOrder;
 use App\BusinessSetting;
 use App\Seller;
 use App\CustomerPackage;
@@ -59,10 +59,10 @@ class IyzicoController extends Controller
             $iyzicoRequest->setBillingAddress($billingAddress);
 
             if(Session::get('payment_type') == 'cart_payment'){
-                $order = Order::findOrFail(Session::get('order_id'));
+                $combined_order = CombinedOrder::findOrFail(Session::get('combined_order_id'));
 
-                $iyzicoRequest->setPrice(round($order->grand_total));
-                $iyzicoRequest->setPaidPrice(round($order->grand_total));
+                $iyzicoRequest->setPrice(round($combined_order->grand_total));
+                $iyzicoRequest->setPaidPrice(round($combined_order->grand_total));
                 $iyzicoRequest->setCurrency(\Iyzipay\Model\Currency::TL);
                 $iyzicoRequest->setBasketId(rand(000000,999999));
                 $iyzicoRequest->setPaymentGroup(\Iyzipay\Model\PaymentGroup::SUBSCRIPTION);
@@ -70,7 +70,7 @@ class IyzicoController extends Controller
                     'payment_type' => Session::get('payment_type'),
                     'amount' => 0,
                     'payment_method' => 0,
-                    'order_id' => Session::get('order_id'),
+                    'combined_order_id' => Session::get('combined_order_id'),
                     'customer_package_id' => 0,
                     'seller_package_id' => 0
                 ]));
@@ -97,7 +97,7 @@ class IyzicoController extends Controller
                     'payment_type' => Session::get('payment_type'),
                     'amount' => Session::get('payment_data')['amount'],
                     'payment_method' => Session::get('payment_data')['payment_method'],
-                    'order_id' => 0,
+                    'combined_order_id' => 0,
                     'customer_package_id' => 0,
                     'seller_package_id' => 0
                 ]));
@@ -126,7 +126,7 @@ class IyzicoController extends Controller
                     'payment_type' => Session::get('payment_type'),
                     'amount' => 0.0,
                     'payment_method' => Session::get('payment_data')['payment_method'],
-                    'order_id' => 0,
+                    'combined_order_id' => 0,
                     'customer_package_id' => Session::get('payment_data')['customer_package_id'],
                     'seller_package_id' => 0
                 ]));
@@ -155,7 +155,7 @@ class IyzicoController extends Controller
                     'payment_type' => Session::get('payment_type'),
                     'amount' => 0,
                     'payment_method' => Session::get('payment_data')['payment_method'],
-                    'order_id' => 0,
+                    'combined_order_id' => 0,
                     'customer_package_id' => 0,
                     'seller_package_id' => Session::get('payment_data')['seller_package_id']
                 ]));
@@ -185,7 +185,7 @@ class IyzicoController extends Controller
         }
     }
 
-    public function callback(Request $request, $payment_type, $amount = null, $payment_method = null, $order_id = null, $customer_package_id = null, $seller_package_id = null){
+    public function callback(Request $request, $payment_type, $amount = null, $payment_method = null, $combined_order_id = null, $customer_package_id = null, $seller_package_id = null){
         $options = new \Iyzipay\Options();
         $options->setApiKey(env('IYZICO_API_KEY'));
         $options->setSecretKey(env('IYZICO_SECRET_KEY'));
@@ -208,7 +208,7 @@ class IyzicoController extends Controller
                 $payment = $payWithIyzico->getRawResult();
 
                 $checkoutController = new CheckoutController;
-                return $checkoutController->checkout_done($order_id, $payment);
+                return $checkoutController->checkout_done($combined_order_id, $payment);
             }
             elseif ($payment_type == 'wallet_payment') {
                 $payment = $payWithIyzico->getRawResult();

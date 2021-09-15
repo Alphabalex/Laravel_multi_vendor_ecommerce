@@ -180,12 +180,12 @@
                         <form class="form-default" role="form" action="{{ route('cart.login.submit') }}" method="POST">
                             @csrf
                             <div class="form-group">
-                                @if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null && \App\Addon::where('unique_identifier', 'otp_system')->first()->activated)
+                                @if (addon_is_activated('otp_system'))
                                     <input type="text" class="form-control h-auto form-control-lg {{ $errors->has('email') ? ' is-invalid' : '' }}" value="{{ old('email') }}" placeholder="{{ translate('Email Or Phone')}}" name="email" id="email">
                                 @else
                                     <input type="email" class="form-control h-auto form-control-lg {{ $errors->has('email') ? ' is-invalid' : '' }}" value="{{ old('email') }}" placeholder="{{  translate('Email') }}" name="email">
                                 @endif
-                                @if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null && \App\Addon::where('unique_identifier', 'otp_system')->first()->activated)
+                                @if (addon_is_activated('otp_system'))
                                     <span class="opacity-60">{{  translate('Use country code before number') }}</span>
                                 @endif
                             </div>
@@ -245,14 +245,6 @@
                             @endif
                         </ul>
                     @endif
-                    <!-- @if (get_setting('guest_checkout') == 1)
-                        <div class="separator mb-3">
-                            <span class="bg-white px-3 opacity-60">{{ translate('Or')}}</span>
-                        </div>
-                        <div class="text-center">
-                            <a href="{{ route('guest.checkout.shipping_info') }}" class="btn btn-soft-primary">{{ translate('Guest Checkout')}}</a>
-                        </div>
-                    @endif -->
                 </div>
             </div>
         </div>

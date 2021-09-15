@@ -11,6 +11,7 @@ use App\Order;
 use App\OrderDetail;
 use Illuminate\Support\Facades\Hash;
 use App\Notifications\EmailVerificationNotification;
+use Cache;
 
 class SellerController extends Controller
 {
@@ -202,6 +203,7 @@ class SellerController extends Controller
         $seller = Seller::findOrFail($id);
         $seller->verification_status = 1;
         if ($seller->save()) {
+            Cache::forget('verified_sellers_id');
             flash(translate('Seller has been approved successfully'))->success();
             return redirect()->route('sellers.index');
         }
@@ -215,6 +217,7 @@ class SellerController extends Controller
         $seller->verification_status = 0;
         $seller->verification_info = null;
         if ($seller->save()) {
+            Cache::forget('verified_sellers_id');
             flash(translate('Seller verification request has been rejected successfully'))->success();
             return redirect()->route('sellers.index');
         }
@@ -240,6 +243,7 @@ class SellerController extends Controller
         $seller = Seller::findOrFail($request->id);
         $seller->verification_status = $request->status;
         if ($seller->save()) {
+            Cache::forget('verified_sellers_id');
             return 1;
         }
         return 0;

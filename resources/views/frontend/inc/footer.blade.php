@@ -145,7 +145,7 @@
                                 {{ translate('Track Order') }}
                             </a>
                         </li>
-                        @if (\App\Addon::where('unique_identifier', 'affiliate_system')->first() != null && \App\Addon::where('unique_identifier', 'affiliate_system')->first()->activated)
+                        @if (addon_is_activated('affiliate_system'))
                             <li class="mb-2">
                                 <a class="opacity-50 hov-opacity-100 text-light" href="{{ route('affiliate.apply') }}">{{ translate('Be an affiliate partner')}}</a>
                             </li>
@@ -177,6 +177,7 @@
                 </div>
             </div>
             <div class="col-lg-4">
+                @if ( get_setting('show_social_links') )
                 <ul class="list-inline my-3 my-md-0 social colored text-center">
                     @if ( get_setting('facebook_link') !=  null )
                     <li class="list-inline-item">
@@ -204,6 +205,7 @@
                     </li>
                     @endif
                 </ul>
+                @endif
             </div>
             <div class="col-lg-4">
                 <div class="text-center text-md-right">

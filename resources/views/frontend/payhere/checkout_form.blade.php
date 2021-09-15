@@ -7,7 +7,7 @@
         <input type="hidden" name="cancel_url" value="{{ route('payhere.checkout.cancel') }}">
         <input type="hidden" name="notify_url" value="{{ route('payhere.checkout.notify') }}">
         <br><br>Custom Params<br>
-        <input type="text" name="custom_1" value="{{ $order_id }}">
+        <input type="text" name="custom_1" value="{{ $combined_order_id }}">
         <input type="text" name="custom_2" value="">
         <br><br>Item Details<br>
         <input type="text" name="order_id" value="{{ rand(1000000,999999999) }}">

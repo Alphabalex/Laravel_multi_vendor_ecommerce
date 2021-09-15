@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Session;
-use File;
 use App\Language;
 use App\Translation;
+use Cache;
 
 class LanguageController extends Controller
 {
@@ -99,6 +99,7 @@ class LanguageController extends Controller
                 $translation_def->save();
             }
         }
+        Cache::forget('translations-'.$language->code);
         flash(translate('Translations updated for ').$language->name)->success();
         return back();
     }

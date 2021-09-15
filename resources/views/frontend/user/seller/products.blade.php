@@ -11,7 +11,7 @@
     </div>
 
     <div class="row gutters-10 justify-content-center">
-        @if (\App\Addon::where('unique_identifier', 'seller_subscription')->first() != null && \App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated)
+        @if (addon_is_activated('seller_subscription'))
             <div class="col-md-4 mx-auto mb-3" >
                 <div class="bg-grad-1 text-white rounded-lg overflow-hidden">
                   <span class="size-30px rounded-circle mx-auto bg-soft-primary d-flex align-items-center justify-content-center mt-3">
@@ -36,7 +36,7 @@
             </a>
         </div>
 
-        @if (\App\Addon::where('unique_identifier', 'seller_subscription')->first() != null && \App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated)
+        @if (addon_is_activated('seller_subscription'))
         @php
             $seller_package = \App\SellerPackage::find(Auth::user()->seller->seller_package_id);
         @endphp

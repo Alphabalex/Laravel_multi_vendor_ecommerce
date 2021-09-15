@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\CustomerPackage;
 use App\SellerPackage;
-use App\Order;
+use App\CombinedOrder;
 use App\BusinessSetting;
 use App\Seller;
 use Session;
@@ -29,8 +29,8 @@ class AamarpayController extends Controller
         $amount = 0;
         if(Session::has('payment_type')){
             if(Session::get('payment_type') == 'cart_payment'){
-                $order = Order::findOrFail(Session::get('order_id'));
-                $amount = round($order->grand_total);
+                $combined_order = CombinedOrder::findOrFail(Session::get('combined_order_id'));
+                $amount = round($combined_order->grand_total);
             }
             elseif (Session::get('payment_type') == 'wallet_payment') {
                 $amount = round(Session::get('payment_data')['amount']);
@@ -73,7 +73,7 @@ class AamarpayController extends Controller
             'fail_url' => route('aamarpay.fail'), //your fail route
             'cancel_url' => route('cart'), //your cancel url
             'opt_a' => Session::get('payment_type'),  //optional paramter
-            'opt_b' => Session::get('order_id'),
+            'opt_b' => Session::get('combined_order_id'),
             'opt_c' => json_encode(Session::get('payment_data')),
             'opt_d' => '',
             'signature_key' => env('AAMARPAY_SIGNATURE_KEY') //signature key will provided aamarpay, contact integration@aamarpay.com for test/live signature key

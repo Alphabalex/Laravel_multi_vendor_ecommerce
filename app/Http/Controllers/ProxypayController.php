@@ -130,7 +130,7 @@ class ProxypayController extends Controller
                 
                 if($amounts_paid >= $order->grand_total) {
                     $order->payment_status = 'paid';
-                    commission_calculation($order);
+                    calculateCommissionAffilationClubPoint($order);
                     
                     $order->commission_calculated = 1;
                     $order->save();

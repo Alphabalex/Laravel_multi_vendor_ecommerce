@@ -11,7 +11,7 @@
               <div class="card-body">
                   <form class="form-horizontal" action="{{ route('business_settings.vendor_commission.update') }}" method="POST" enctype="multipart/form-data">
                   	@csrf
-                    @if (\App\Addon::where('unique_identifier', 'seller_subscription')->first() != null && \App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated)
+                    @if (addon_is_activated('seller_subscription'))
                         <div class="form-group row">
                             <div class="col-lg-4">
                                 <label class="col-from-label">{{ translate('Seller Commission Activation') }}</label>

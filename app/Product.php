@@ -12,9 +12,11 @@ class Product extends Model {
         'purchase_price', 'unit', 'slug', 'colors', 'choice_options', 'variations', 'thumbnail_img', 'meta_title', 'meta_description'
     ];
 
+    protected $with = ['product_translations'];
+
     public function getTranslation($field = '', $lang = false) {
         $lang = $lang == false ? App::getLocale() : $lang;
-        $product_translations = $this->hasMany(ProductTranslation::class)->where('lang', $lang)->first();
+        $product_translations = $this->product_translations->where('lang', $lang)->first();
         return $product_translations != null ? $product_translations->$field : $this->$field;
     }
 

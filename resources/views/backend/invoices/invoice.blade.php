@@ -1,7 +1,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Laravel</title>
+    <title>{{  translate('INVOICE') }}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta charset="UTF-8">
 	<style media="all">
@@ -20,7 +20,7 @@
 		}
 		.gry-color *,
 		.gry-color{
-			color:#878f9c;
+			color:#000;
 		}
 		table{
 			width: 100%;

@@ -918,7 +918,7 @@ $.fn.toggleAttr = function (attr, attr1, attr2) {
                             data.pop();
                         },
                         onPaste: function (e) {
-                            if(!format){
+                            if(format){
                                 var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
                                 e.preventDefault();
                                 document.execCommand('insertText', false, bufferText);

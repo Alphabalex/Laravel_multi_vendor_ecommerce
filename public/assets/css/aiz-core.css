@@ -4036,6 +4036,9 @@ input[type="number"] {
     white-space: nowrap;
     background-color: transparent;
     border: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .dropdown-item.active,
 .dropdown-item:hover,

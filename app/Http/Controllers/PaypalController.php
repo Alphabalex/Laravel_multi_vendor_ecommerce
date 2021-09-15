@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Redirect;
-use App\Order;
-use App\BusinessSetting;
-use App\Seller;
+use App\CombinedOrder;
 use Session;
 use App\CustomerPackage;
 use App\SellerPackage;
@@ -35,8 +33,8 @@ class PaypalController extends Controller
 
         if(Session::has('payment_type')){
             if(Session::get('payment_type') == 'cart_payment'){
-                $order = Order::findOrFail(Session::get('order_id'));
-                $amount = $order->grand_total;
+                $combined_order = CombinedOrder::findOrFail(Session::get('combined_order_id'));
+                $amount = $combined_order->grand_total;
             }
             elseif (Session::get('payment_type') == 'wallet_payment') {
                 $amount = Session::get('payment_data')['amount'];
@@ -115,7 +113,7 @@ class PaypalController extends Controller
             if($request->session()->has('payment_type')){
                 if($request->session()->get('payment_type') == 'cart_payment'){
                     $checkoutController = new CheckoutController;
-                    return $checkoutController->checkout_done($request->session()->get('order_id'), json_encode($response));
+                    return $checkoutController->checkout_done($request->session()->get('combined_order_id'), json_encode($response));
                 }
                 elseif ($request->session()->get('payment_type') == 'wallet_payment') {
                     $walletController = new WalletController;

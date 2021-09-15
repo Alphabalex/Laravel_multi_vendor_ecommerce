@@ -189,7 +189,7 @@
                                 </div>
                             @endif
 
-                            @if (\App\Addon::where('unique_identifier', 'club_point')->first() != null && \App\Addon::where('unique_identifier', 'club_point')->first()->activated && $detailedProduct->earn_point > 0)
+                            @if (addon_is_activated('club_point') && $detailedProduct->earn_point > 0)
                                 <div class="row no-gutters mt-4">
                                     <div class="col-2">
                                         <div class="opacity-50">{{  translate('Club Point') }}:</div>
@@ -245,7 +245,7 @@
                                     <button type="button" class="btn btn-link btn-icon-left fw-600" onclick="addToCompare({{ $detailedProduct->id }})">
                                         {{ translate('Add to compare')}}
                                     </button>
-                                    @if(Auth::check() && \App\Addon::where('unique_identifier', 'affiliate_system')->first() != null && \App\Addon::where('unique_identifier', 'affiliate_system')->first()->activated && (\App\AffiliateOption::where('type', 'product_sharing')->first()->status || \App\AffiliateOption::where('type', 'category_wise_affiliate')->first()->status) && Auth::user()->affiliate_user != null && Auth::user()->affiliate_user->status)
+                                    @if(Auth::check() && addon_is_activated('affiliate_system') && (\App\AffiliateOption::where('type', 'product_sharing')->first()->status || \App\AffiliateOption::where('type', 'category_wise_affiliate')->first()->status) && Auth::user()->affiliate_user != null && Auth::user()->affiliate_user->status)
                                         @php
                                             if(Auth::check()){
                                                 if(Auth::user()->referral_code == null){
@@ -635,7 +635,7 @@
                                             <h3 class="fw-600 fs-13 text-truncate-2 lh-1-4 mb-0">
                                                 <a href="{{ route('product', $related_product->slug) }}" class="d-block text-reset">{{ $related_product->getTranslation('name') }}</a>
                                             </h3>
-                                            @if (\App\Addon::where('unique_identifier', 'club_point')->first() != null && \App\Addon::where('unique_identifier', 'club_point')->first()->activated)
+                                            @if (addon_is_activated('club_point'))
                                                 <div class="rounded px-2 mt-2 bg-soft-primary border-soft-primary border">
                                                     {{ translate('Club Point') }}:
                                                     <span class="fw-700 float-right">{{ $related_product->earn_point }}</span>
@@ -700,12 +700,12 @@
                         <form class="form-default" role="form" action="{{ route('cart.login.submit') }}" method="POST">
                             @csrf
                             <div class="form-group">
-                                @if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null && \App\Addon::where('unique_identifier', 'otp_system')->first()->activated)
+                                @if (addon_is_activated('otp_system'))
                                     <input type="text" class="form-control h-auto form-control-lg {{ $errors->has('email') ? ' is-invalid' : '' }}" value="{{ old('email') }}" placeholder="{{ translate('Email Or Phone')}}" name="email" id="email">
                                 @else
                                     <input type="email" class="form-control h-auto form-control-lg {{ $errors->has('email') ? ' is-invalid' : '' }}" value="{{ old('email') }}" placeholder="{{  translate('Email') }}" name="email">
                                 @endif
-                                @if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null && \App\Addon::where('unique_identifier', 'otp_system')->first()->activated)
+                                @if (addon_is_activated('otp_system'))
                                     <span class="opacity-60">{{  translate('Use country code before number') }}</span>
                                 @endif
                             </div>

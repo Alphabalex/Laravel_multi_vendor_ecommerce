@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use View;
 use Session;
 use Redirect;
-use App\Order;
+use App\CombinedOrder;
 use App\Seller;
 use App\BusinessSetting;
 use App\CustomerPackage;
@@ -39,13 +39,13 @@ class InstamojoController extends Controller
               );
 
            if(Session::get('payment_type') == 'cart_payment'){
-               $order = Order::findOrFail(Session::get('order_id'));
+               $combined_order = CombinedOrder::findOrFail(Session::get('combined_order_id'));
 
                if(preg_match_all('/^(?:(?:\+|0{0,2})91(\s*[\ -]\s*)?|[0]?)?[789]\d{9}|(\d[ -]?){10}\d$/im', Auth::user()->phone)) {
                     try {
                         $response = $api->paymentRequestCreate(array(
                             "purpose" => ucfirst(str_replace('_', ' ', Session::get('payment_type'))),
-                            "amount" => round($order->grand_total),
+                            "amount" => round($combined_order->grand_total),
                             "send_email" => false,
                             "email" => Auth::user()->email,
                             "phone" => Auth::user()->phone,
@@ -164,7 +164,7 @@ class InstamojoController extends Controller
     if(Session::has('payment_type')){
         if(Session::get('payment_type') == 'cart_payment'){
             $checkoutController = new CheckoutController;
-            return $checkoutController->checkout_done(Session::get('order_id'), $payment);
+            return $checkoutController->checkout_done(Session::get('combined_order_id'), $payment);
         }
         elseif (Session::get('payment_type') == 'wallet_payment') {
             $walletController = new WalletController;

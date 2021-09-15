@@ -39,7 +39,7 @@
                 <div class="form-group row">
                     <label class="col-md-2 col-from-label" for="banner"></label>
                     <div class="col-md-8">
-                        @if (\App\Addon::where('unique_identifier', 'pos_system')->first() != null && \App\Addon::where('unique_identifier', 'pos_system')->first()->activated)
+                        @if (addon_is_activated('pos_system'))
                           <div class="row">
                               <div class="col-md-10">
                                   <label class="col-from-label">{{ translate('POS System') }}</label>
@@ -107,7 +107,7 @@
                                 </label>
                             </div>
                         </div>
-                        @if (\App\Addon::where('unique_identifier', 'refund_request')->first() != null && \App\Addon::where('unique_identifier', 'refund_request')->first()->activated)
+                        @if (addon_is_activated('refund_request'))
                           <div class="row">
                               <div class="col-md-10">
                                   <label class="col-from-label">{{ translate('Refunds') }}</label>
@@ -197,7 +197,7 @@
                                 </label>
                             </div>
                         </div>
-                        @if (\App\Addon::where('unique_identifier', 'affiliate_system')->first() != null && \App\Addon::where('unique_identifier', 'affiliate_system')->first()->activated)
+                        @if (addon_is_activated('affiliate_system'))
                           <div class="row">
                               <div class="col-md-10">
                                   <label class="col-from-label">{{ translate('Affiliate System') }}</label>
@@ -210,7 +210,7 @@
                               </div>
                           </div>
                         @endif
-                        @if (\App\Addon::where('unique_identifier', 'offline_payment')->first() != null && \App\Addon::where('unique_identifier', 'offline_payment')->first()->activated)
+                        @if (addon_is_activated('offline_payment'))
                           <div class="row">
                               <div class="col-md-10">
                                   <label class="col-from-label">{{ translate('Offline Payment System') }}</label>
@@ -223,7 +223,7 @@
                               </div>
                           </div>
                         @endif
-                        @if (\App\Addon::where('unique_identifier', 'paytm')->first() != null && \App\Addon::where('unique_identifier', 'paytm')->first()->activated)
+                        @if (addon_is_activated('paytm'))
                           <div class="row">
                               <div class="col-md-10">
                                   <label class="col-from-label">{{ translate('Paytm Payment Gateway') }}</label>
@@ -236,7 +236,7 @@
                               </div>
                           </div>
                         @endif
-                        @if (\App\Addon::where('unique_identifier', 'club_point')->first() != null && \App\Addon::where('unique_identifier', 'club_point')->first()->activated)
+                        @if (addon_is_activated('club_point'))
                           <div class="row">
                               <div class="col-md-10">
                                   <label class="col-from-label">{{ translate('Club Point System') }}</label>
@@ -249,7 +249,7 @@
                               </div>
                           </div>
                         @endif
-                        @if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null && \App\Addon::where('unique_identifier', 'otp_system')->first()->activated)
+                        @if (addon_is_activated('otp_system'))
                           <div class="row">
                               <div class="col-md-10">
                                   <label class="col-from-label">{{ translate('OTP System') }}</label>

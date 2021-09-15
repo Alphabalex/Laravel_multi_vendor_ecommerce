@@ -281,7 +281,7 @@ class ProductController extends Controller
             $product->pdf = $request->pdf->store('uploads/products/pdf');
         }
 
-        $product->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)).'-'.Str::random(5);
+        $product->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name));
 
         if($request->has('colors_active') && $request->has('colors') && count($request->colors) > 0){
             $product->colors = json_encode($request->colors);
@@ -442,7 +442,7 @@ class ProductController extends Controller
             return redirect()->route('products.admin');
         }
         else{
-            if(\App\Addon::where('unique_identifier', 'seller_subscription')->first() != null && \App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated){
+            if(addon_is_activated('seller_subscription')){
                 $seller = Auth::user()->seller;
                 $seller->remaining_uploads -= 1;
                 $seller->save();
@@ -826,7 +826,7 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
         $product_new = $product->replicate();
-        $product_new->slug = substr($product_new->slug, 0, -5).Str::random(5);
+        $product_new->slug = $product_new->slug.'-'.Str::random(5);
 
         if($product_new->save()){
             foreach ($product->stocks as $key => $stock) {
@@ -888,7 +888,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($request->id);
         $product->published = $request->status;
 
-        if($product->added_by == 'seller' && \App\Addon::where('unique_identifier', 'seller_subscription')->first() != null && \App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated){
+        if($product->added_by == 'seller' && addon_is_activated('seller_subscription')){
             $seller = $product->user->seller;
             if($seller->invalid_at != null && Carbon::now()->diffInDays(Carbon::parse($seller->invalid_at), false) <= 0){
                 return 0;
@@ -904,7 +904,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($request->id);
         $product->approved = $request->approved;
 
-        if($product->added_by == 'seller' && \App\Addon::where('unique_identifier', 'seller_subscription')->first() != null && \App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated){
+        if($product->added_by == 'seller' && addon_is_activated('seller_subscription')){
             $seller = $product->user->seller;
             if($seller->invalid_at != null && Carbon::now()->diffInDays(Carbon::parse($seller->invalid_at), false) <= 0){
                 return 0;

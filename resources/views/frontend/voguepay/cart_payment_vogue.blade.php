@@ -27,7 +27,7 @@
         function pay3() {
          Voguepay.init({
              v_merchant_id: document.getElementById("merchant_id").value,
-             total: '{{\App\Order::findOrFail(Session::get('order_id'))->grand_total}}',
+             total: '{{\App\CombinedOrder::findOrFail(Session::get('combined_order_id'))->grand_total}}',
              cur: '{{\App\Currency::findOrFail(get_setting('system_default_currency'))->code}}',
              merchant_ref: 'ref123',
              memo: 'Payment for shirt',

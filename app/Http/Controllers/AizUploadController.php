@@ -204,7 +204,7 @@ class AizUploadController extends Controller
     public function destroy(Request $request,$id)
     {
         $upload = Upload::findOrFail($id);
-
+        
         if(auth()->user()->user_type == 'seller' && $upload->user_id != auth()->user()->id){
             flash(translate("You don't have permission for deleting this!"))->error();
             return back();
@@ -212,6 +212,9 @@ class AizUploadController extends Controller
         try{
             if(env('FILESYSTEM_DRIVER') == 's3'){
                 Storage::disk('s3')->delete($upload->file_name);
+                if (file_exists(public_path().'/'.$upload->file_name)) {
+                    unlink(public_path().'/'.$upload->file_name);
+                }
             }
             else{
                 unlink(public_path().'/'.$upload->file_name);

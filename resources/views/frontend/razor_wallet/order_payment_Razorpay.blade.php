@@ -7,7 +7,7 @@
         <!--amount need to be in paisa-->
         <script src="https://checkout.razorpay.com/v1/checkout.js"
                 data-key="{{ env('RAZOR_KEY') }}"
-                data-amount={{round($order->grand_total) * 100}}
+                data-amount={{round($combined_order->grand_total) * 100}}
                 data-buttontext=""
                 data-name="{{ env('APP_NAME') }}"
                 data-description="Cart Payment"

@@ -176,7 +176,7 @@
     </div>
 
     <!-- Auction Product -->
-    @if(addon_activated('auction'))
+    @if(addon_is_activated('auction'))
         <div id="auction_products">
 
         </div>

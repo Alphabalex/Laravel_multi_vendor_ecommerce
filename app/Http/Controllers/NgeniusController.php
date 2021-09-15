@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 
 
 use App\CustomerPackage;
-use App\Order;
+use App\CombinedOrder;
 use App\Utility\NgeniusUtility;
 use Session;
 
@@ -14,8 +14,8 @@ class NgeniusController extends Controller
     public function pay()
     {
         if (Session::get('payment_type') == 'cart_payment') {
-            $order = Order::findOrFail(Session::get('order_id'));
-            $amount = round($order->grand_total * 100);
+            $combined_order = CombinedOrder::findOrFail(Session::get('combined_order_id'));
+            $amount = round($combined_order->grand_total * 100);
             //will be redirected
             NgeniusUtility::make_payment(route('ngenius.cart_payment_callback'),"cart_payment",$amount);
         } elseif (Session::get('payment_type') == 'wallet_payment') {

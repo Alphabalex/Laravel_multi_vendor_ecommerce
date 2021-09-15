@@ -42,7 +42,7 @@
                     @endif
 
                     @if(get_setting('show_currency_switcher') == 'on')
-                    <li class="list-inline-item dropdown" id="currency-change">
+                    <li class="list-inline-item dropdown ml-auto ml-lg-0 mr-0" id="currency-change">
                         @php
                             if(Session::has('currency_code')){
                                 $currency_code = Session::get('currency_code');
@@ -74,7 +74,7 @@
                                 <a href="{{ route('admin.dashboard') }}" class="text-reset d-inline-block opacity-60">{{ translate('My Panel')}}</a>
                             </li>
                         @else
-                            
+
                             <li class="list-inline-item mr-3 border-right border-left-0 pr-3 pl-0 dropdown">
                                 <a class="dropdown-toggle no-arrow text-reset" data-toggle="dropdown" href="javascript:void(0);" role="button" aria-haspopup="false" aria-expanded="false">
                                     <span class="">
@@ -134,7 +134,7 @@
                                     </div>
                                 </div>
                             </li>
-                            
+
                             <li class="list-inline-item mr-3 border-right border-left-0 pr-3 pl-0">
                                 <a href="{{ route('dashboard') }}" class="text-reset d-inline-block opacity-60">{{ translate('My Panel')}}</a>
                             </li>
@@ -197,7 +197,9 @@
                                     <button class="btn px-2" type="button"><i class="la la-2x la-long-arrow-left"></i></button>
                                 </div>
                                 <div class="input-group">
-                                    <input type="text" class="border-0 border-lg form-control" id="search" name="q" placeholder="{{translate('I am shopping for...')}}" autocomplete="off">
+                                    <input type="text" class="border-0 border-lg form-control" id="search" name="keyword" @isset($query)
+                                        value="{{ $query }}"
+                                    @endisset placeholder="{{translate('I am shopping for...')}}" autocomplete="off">
                                     <div class="input-group-append d-none d-lg-block">
                                         <button class="btn btn-primary" type="submit">
                                             <i class="la la-search la-flip-horizontal fs-18"></i>

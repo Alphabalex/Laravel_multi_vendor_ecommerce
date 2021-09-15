@@ -10,7 +10,7 @@
     </div>
 
     <div class="card-body">
-        @if (\App\Addon::where('unique_identifier', 'club_point')->first() != null && \App\Addon::where('unique_identifier', 'club_point')->first()->activated)
+        @if (addon_is_activated('club_point'))
             @php
                 $total_point = 0;
             @endphp
@@ -131,7 +131,7 @@
             </tfoot>
         </table>
 
-        @if (\App\Addon::where('unique_identifier', 'club_point')->first() != null && \App\Addon::where('unique_identifier', 'club_point')->first()->activated)
+        @if (addon_is_activated('club_point'))
             @if (Session::has('club_point'))
                 <div class="mt-3">
                     <form class="" action="{{ route('checkout.remove_club_point') }}" method="POST" enctype="multipart/form-data">

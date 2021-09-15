@@ -21,7 +21,6 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         $sort_search =null;
-//        $categories = Category::orderBy('name', 'asc');
         $categories = Category::orderBy('order_level', 'desc');
         if ($request->has('search')){
             $sort_search = $request->search;
@@ -83,6 +82,8 @@ class CategoryController extends Controller
         }
 
         $category->save();
+
+        $category->attributes()->sync($request->filtering_attributes);
 
         $category_translation = CategoryTranslation::firstOrNew(['lang' => env('DEFAULT_LANGUAGE'), 'category_id' => $category->id]);
         $category_translation->name = $request->name;
@@ -178,6 +179,8 @@ class CategoryController extends Controller
 
         $category->save();
 
+        $category->attributes()->sync($request->filtering_attributes);
+
         $category_translation = CategoryTranslation::firstOrNew(['lang' => $request->lang, 'category_id' => $category->id]);
         $category_translation->name = $request->name;
         $category_translation->save();
@@ -195,6 +198,7 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $category = Category::findOrFail($id);
+        $category->attributes()->detach();
 
         // Category Translations Delete
         foreach ($category->category_translations as $key => $category_translation) {

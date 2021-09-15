@@ -7,9 +7,11 @@ use App;
 
 class Category extends Model
 {
+    protected $with = ['category_translations'];
+
     public function getTranslation($field = '', $lang = false){
         $lang = $lang == false ? App::getLocale() : $lang;
-        $category_translation = $this->hasMany(CategoryTranslation::class)->where('lang', $lang)->first();
+        $category_translation = $this->category_translations->where('lang', $lang)->first();
         return $category_translation != null ? $category_translation->$field : $this->$field;
     }
 
@@ -38,5 +40,10 @@ class Category extends Model
     public function parentCategory()
     {
         return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    public function attributes()
+    {
+        return $this->belongsToMany(Attribute::class);
     }
 }

@@ -8,6 +8,7 @@ use App\SubCategory;
 use App\SubSubCategory;
 use App\Coupon;
 use Schema;
+use Auth;
 
 
 class CouponController extends Controller
@@ -19,6 +20,11 @@ class CouponController extends Controller
      */
     public function index()
     {
+        if(Auth::user()->user_type == 'seller') {
+            $coupons = Coupon::where('user_id', Auth::user()->id)->orderBy('id','desc')->get();
+            return view('frontend.user.seller.coupons.index', compact('coupons'));
+        }
+
         $coupons = Coupon::orderBy('id','desc')->get();
         return view('backend.marketing.coupons.index', compact('coupons'));
     }
@@ -30,6 +36,10 @@ class CouponController extends Controller
      */
     public function create()
     {
+        if(Auth::user()->user_type == 'seller') {
+            return view('frontend.user.seller.coupons.create');
+        }
+
         return view('backend.marketing.coupons.create');
     }
 
@@ -45,51 +55,51 @@ class CouponController extends Controller
             flash(translate('Coupon already exist for this coupon code'))->error();
             return back();
         }
+
         $coupon = new Coupon;
-          if ($request->coupon_type == "product_base") {
-              $coupon->type = $request->coupon_type;
-              $coupon->code = $request->coupon_code;
-              $coupon->discount = $request->discount;
-              $coupon->discount_type = $request->discount_type;
-              $date_var                 = explode(" - ", $request->date_range);
-              $coupon->start_date       = strtotime($date_var[0]);
-              $coupon->end_date         = strtotime( $date_var[1]);
-              $cupon_details = array();
-              foreach($request->product_ids as $product_id) {
-                  $data['product_id'] = $product_id;
-                  array_push($cupon_details, $data);
-              }
-              $coupon->details = json_encode($cupon_details);
-              if ($coupon->save()) {
-                  flash(translate('Coupon has been saved successfully'))->success();
-                  return redirect()->route('coupon.index');
-              }
-              else{
-                  flash(translate('Something went wrong'))->danger();
-                  return back();
-              }
-          }
-          elseif ($request->coupon_type == "cart_base") {
-              $coupon->type             = $request->coupon_type;
-              $coupon->code             = $request->coupon_code;
-              $coupon->discount         = $request->discount;
-              $coupon->discount_type    = $request->discount_type;
-              $date_var                 = explode(" - ", $request->date_range);
-              $coupon->start_date       = strtotime($date_var[0]);
-              $coupon->end_date         = strtotime( $date_var[1]);
-              $data                     = array();
-              $data['min_buy']          = $request->min_buy;
-              $data['max_discount']     = $request->max_discount;
-              $coupon->details          = json_encode($data);
-              if ($coupon->save()) {
-                  flash(translate('Coupon has been saved successfully'))->success();
-                  return redirect()->route('coupon.index');
-              }
-              else{
-                  flash(translate('Something went wrong'))->danger();
-                  return back();
-              }
-          }
+        $coupon->user_id = Auth::user()->id;
+
+        if ($request->coupon_type == "product_base") {
+            $coupon->type = $request->coupon_type;
+            $coupon->code = $request->coupon_code;
+            $coupon->discount = $request->discount;
+            $coupon->discount_type = $request->discount_type;
+            $date_var                 = explode(" - ", $request->date_range);
+            $coupon->start_date       = strtotime($date_var[0]);
+            $coupon->end_date         = strtotime( $date_var[1]);
+            $cupon_details = array();
+            foreach($request->product_ids as $product_id) {
+                $data['product_id'] = $product_id;
+                array_push($cupon_details, $data);
+            }
+            $coupon->details = json_encode($cupon_details);
+
+        } elseif ($request->coupon_type == "cart_base") {
+            $coupon->type             = $request->coupon_type;
+            $coupon->code             = $request->coupon_code;
+            $coupon->discount         = $request->discount;
+            $coupon->discount_type    = $request->discount_type;
+            $date_var                 = explode(" - ", $request->date_range);
+            $coupon->start_date       = strtotime($date_var[0]);
+            $coupon->end_date         = strtotime( $date_var[1]);
+            $data                     = array();
+            $data['min_buy']          = $request->min_buy;
+            $data['max_discount']     = $request->max_discount;
+            $coupon->details          = json_encode($data);
+        }
+
+        if ($coupon->save()) {
+            flash(translate('Coupon has been saved successfully'))->success();
+            
+            if(Auth::user()->user_type == 'seller'){
+              return redirect()->route('seller.coupon.index');
+            }
+            return redirect()->route('coupon.index');
+        }
+        else{
+            flash(translate('Something went wrong'))->danger();
+            return back();
+        }
     }
 
     /**
@@ -111,8 +121,13 @@ class CouponController extends Controller
      */
     public function edit($id)
     {
-      $coupon = Coupon::findOrFail(decrypt($id));
-      return view('backend.marketing.coupons.edit', compact('coupon'));
+        $coupon = Coupon::findOrFail(decrypt($id));
+
+        if(Auth::user()->user_type == 'seller') {
+            return view('frontend.user.seller.coupons.edit', compact('coupon'));
+        }
+
+        return view('backend.marketing.coupons.edit', compact('coupon'));
     }
 
     /**
@@ -124,34 +139,28 @@ class CouponController extends Controller
      */
     public function update(Request $request, $id)
     {
-      if(count(Coupon::where('id', '!=' , $id)->where('code', $request->coupon_code)->get()) > 0){
-          flash(translate('Coupon already exist for this coupon code'))->error();
-          return back();
-      }
+        if(count(Coupon::where('id', '!=' , $id)->where('code', $request->coupon_code)->get()) > 0){
+            flash(translate('Coupon already exist for this coupon code'))->error();
+            return back();
+        }
 
-      $coupon = Coupon::findOrFail($id);
+        $coupon = Coupon::findOrFail($id);
         if ($request->coupon_type == "product_base") {
-            $coupon->type = $request->coupon_type;
-            $coupon->code = $request->coupon_code;
-            $coupon->discount = $request->discount;
+            $coupon->type           = $request->coupon_type;
+            $coupon->code           = $request->coupon_code;
+            $coupon->discount       = $request->discount;
             $coupon->discount_type  = $request->discount_type;
-            $date_var                 = explode(" - ", $request->date_range);
-            $coupon->start_date       = strtotime($date_var[0]);
-            $coupon->end_date         = strtotime( $date_var[1]);
+            $date_var               = explode(" - ", $request->date_range);
+            $coupon->start_date     = strtotime($date_var[0]);
+            $coupon->end_date       = strtotime( $date_var[1]);
+
             $cupon_details = array();
             foreach($request->product_ids as $product_id) {
                 $data['product_id'] = $product_id;
                 array_push($cupon_details, $data);
             }
-            $coupon->details = json_encode($cupon_details);
-            if ($coupon->save()) {
-                flash(translate('Coupon has been saved successfully'))->success();
-                return redirect()->route('coupon.index');
-            }
-            else{
-                flash(translate('Something went wrong'))->danger();
-                return back();
-            }
+            $coupon->details        = json_encode($cupon_details);
+            
         }
         elseif ($request->coupon_type == "cart_base") {
             $coupon->type           = $request->coupon_type;
@@ -165,14 +174,19 @@ class CouponController extends Controller
             $data['min_buy']        = $request->min_buy;
             $data['max_discount']   = $request->max_discount;
             $coupon->details        = json_encode($data);
-            if ($coupon->save()) {
-                flash(translate('Coupon has been saved successfully'))->success();
-                return redirect()->route('coupon.index');
+        }
+
+        if ($coupon->save()) {
+            flash(translate('Coupon has been updated successfully'))->success();
+
+            if(Auth::user()->user_type == 'seller'){
+                return redirect()->route('seller.coupon.index');
             }
-            else{
-                flash(translate('Something went wrong'))->danger();
-                return back();
-            }
+            return redirect()->route('coupon.index');
+        }
+        else {
+            flash(translate('Something went wrong'))->danger();
+            return back();
         }
     }
 
@@ -187,6 +201,9 @@ class CouponController extends Controller
         $coupon = Coupon::findOrFail($id);
         if(Coupon::destroy($id)){
             flash(translate('Coupon has been deleted successfully'))->success();
+            if(Auth::user()->user_type == 'seller'){
+                return redirect()->route('seller.coupon.index');
+            }
             return redirect()->route('coupon.index');
         }
 
@@ -197,10 +214,17 @@ class CouponController extends Controller
     public function get_coupon_form(Request $request)
     {
         if($request->coupon_type == "product_base") {
-            return view('backend.marketing.coupons.product_base_coupon');
+            if(Auth::user()->user_type == 'seller') {
+                $products = filter_products(\App\Product::where('user_id', Auth::user()->id))->get();
+            } else {
+                $admin_id = \App\User::where('user_type', 'admin')->first()->id;
+                $products = filter_products(\App\Product::where('user_id', $admin_id))->get();
+            }
+
+            return view('frontend.partials.coupons.product_base_coupon', compact('products'));
         }
         elseif($request->coupon_type == "cart_base"){
-            return view('backend.marketing.coupons.cart_base_coupon');
+            return view('frontend.partials.coupons.cart_base_coupon');
         }
     }
 
@@ -208,11 +232,19 @@ class CouponController extends Controller
     {
         if($request->coupon_type == "product_base") {
             $coupon = Coupon::findOrFail($request->id);
-            return view('backend.marketing.coupons.product_base_coupon_edit',compact('coupon'));
+
+            if(Auth::user()->user_type == 'seller') {
+                $products = filter_products(\App\Product::where('user_id', Auth::user()->id))->get();
+            } else {
+                $admin_id = \App\User::where('user_type', 'admin')->first()->id;
+                $products = filter_products(\App\Product::where('user_id', $admin_id))->get();
+            }
+
+            return view('frontend.partials.coupons.product_base_coupon_edit',compact('coupon', 'products'));
         }
         elseif($request->coupon_type == "cart_base"){
             $coupon = Coupon::findOrFail($request->id);
-            return view('backend.marketing.coupons.cart_base_coupon_edit',compact('coupon'));
+            return view('frontend.partials.coupons.cart_base_coupon_edit',compact('coupon'));
         }
     }
 

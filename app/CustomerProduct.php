@@ -7,9 +7,11 @@ use App;
 
 class CustomerProduct extends Model
 {
+    protected $with = ['customer_product_translations'];
+
     public function getTranslation($field = '', $lang = false){
       $lang = $lang == false ? App::getLocale() : $lang;
-      $customer_product_translations = $this->hasMany(CustomerProductTranslation::class)->where('lang', $lang)->first();
+      $customer_product_translations = $this->customer_product_translations->where('lang', $lang)->first();
       return $customer_product_translations != null ? $customer_product_translations->$field : $this->$field;
     }
 

@@ -136,11 +136,11 @@ class PayhereController extends Controller
         return PayhereController::checkout_incomplete();
     }
 
-    public static function checkout_success($order_id,$responses)
+    public static function checkout_success($combined_order_id,$responses)
     {
         $payment_details = json_encode($responses);
         $checkoutController = new CheckoutController;
-        return $checkoutController->checkout_done($order_id, $payment_details);
+        return $checkoutController->checkout_done($combined_order_id, $payment_details);
     }
 
     public static function checkout_incomplete()

@@ -20,8 +20,8 @@
                         data-name="{{ env('APP_NAME') }}"
                         data-description="Cart Payment"
                         data-image="{{ uploaded_asset(get_setting('header_logo')) }}"
-                        data-prefill.name= "{{ Auth::user()->name}}"
-                        data-prefill.email= "{{ Auth::user()->email}}"
+                        data-prefill.name= "{{ $user->name}}"
+                        data-prefill.email= "{{ $user->email}}"
                         data-theme.color="#ff7529">
                 </script>
                 <input type="hidden" name="_token" value="{!!csrf_token()!!}">

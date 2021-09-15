@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\CustomerPackage;
 use App\SellerPackage;
-use App\Order;
+use App\CombinedOrder;
 use App\BusinessSetting;
 use App\Seller;
 use Session;
@@ -27,8 +27,8 @@ class BkashController extends Controller
         $amount = 0;
         if(Session::has('payment_type')){
             if(Session::get('payment_type') == 'cart_payment'){
-                $order = Order::findOrFail(Session::get('order_id'));
-                $amount = round($order->grand_total);
+                $combined_order = CombinedOrder::findOrFail(Session::get('combined_order_id'));
+                $amount = round($combined_order->grand_total);
             }
             elseif (Session::get('payment_type') == 'wallet_payment') {
                 $amount = round(Session::get('payment_data')['amount']);
@@ -128,7 +128,7 @@ class BkashController extends Controller
 
         if ($payment_type == 'cart_payment') {
             $checkoutController = new CheckoutController;
-            return $checkoutController->checkout_done(Session::get('order_id'), $request->payment_details);
+            return $checkoutController->checkout_done(Session::get('combined_order_id'), $request->payment_details);
         }
 
         if ($payment_type == 'wallet_payment') {

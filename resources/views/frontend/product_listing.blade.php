@@ -100,8 +100,8 @@
                                         <div class="aiz-range-slider">
                                             <div
                                                 id="input-slider-range"
-                                                data-range-value-min="@if(count(\App\Product::query()->get()) < 1) 0 @else {{ filter_products(\App\Product::query())->get()->min('unit_price') }} @endif"
-                                                data-range-value-max="@if(count(\App\Product::query()->get()) < 1) 0 @else {{ filter_products(\App\Product::query())->get()->max('unit_price') }} @endif"
+                                                data-range-value-min="@if(\App\Product::count() < 1) 0 @else {{ \App\Product::min('unit_price') }} @endif"
+                                                data-range-value-max="@if(\App\Product::count() < 1) 0 @else {{ \App\Product::max('unit_price') }} @endif"
                                             ></div>
 
                                             <div class="row mt-2">
@@ -133,70 +133,54 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                @foreach ($attributes as $attribute)
+                                    <div class="bg-white shadow-sm rounded mb-3">
+                                        <div class="fs-15 fw-600 p-3 border-bottom">
+                                            {{ translate('Filter by') }} {{ $attribute->getTranslation('name') }}
+                                        </div>
+                                        <div class="p-3">
+                                            <div class="aiz-checkbox-list">
+                                                @foreach ($attribute->attribute_values as $attribute_value)
+                                                    <label class="aiz-checkbox">
+                                                        <input
+                                                            type="checkbox"
+                                                            name="selected_attribute_values[]"
+                                                            value="{{ $attribute_value->value }}" @if (in_array($attribute_value->value, $selected_attribute_values)) checked @endif
+                                                            onchange="filter()"
+                                                        >
+                                                        <span class="aiz-square-check"></span>
+                                                        <span>{{ $attribute_value->value }}</span>
+                                                    </label>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+
                                 <div class="bg-white shadow-sm rounded mb-3">
                                     <div class="fs-15 fw-600 p-3 border-bottom">
                                         {{ translate('Filter by color')}}
                                     </div>
                                     <div class="p-3">
                                         <div class="aiz-radio-inline">
-                                            @foreach ($all_colors as $key => $color)
-                                            <label class="aiz-megabox pl-0 mr-2" data-toggle="tooltip" data-title="{{ optional(\App\Color::where('code', $color)->first())->name }}">
+                                            @foreach ($colors as $key => $color)
+                                            <label class="aiz-megabox pl-0 mr-2" data-toggle="tooltip" data-title="{{ $color->name }}">
                                                 <input
                                                     type="radio"
                                                     name="color"
-                                                    value="{{ $color }}"
+                                                    value="{{ $color->code }}"
                                                     onchange="filter()"
-                                                    @if(isset($selected_color) && $selected_color == $color) checked @endif
+                                                    @if(isset($selected_color) && $selected_color == $color->code) checked @endif
                                                 >
                                                 <span class="aiz-megabox-elem rounded d-flex align-items-center justify-content-center p-1 mb-2">
-                                                    <span class="size-30px d-inline-block rounded" style="background: {{ $color }};"></span>
+                                                    <span class="size-30px d-inline-block rounded" style="background: {{ $color->code }};"></span>
                                                 </span>
                                             </label>
                                             @endforeach
                                         </div>
                                     </div>
                                 </div>
-
-                                @foreach ($attributes as $key => $attribute)
-                                    @if (\App\Attribute::find($attribute['id']) != null)
-                                        <div class="bg-white shadow-sm rounded mb-3">
-                                            <div class="fs-15 fw-600 p-3 border-bottom">
-                                                {{ translate('Filter by') }} {{ \App\Attribute::find($attribute['id'])->getTranslation('name') }}
-                                            </div>
-                                            <div class="p-3">
-                                                <div class="aiz-checkbox-list">
-                                                    @if(array_key_exists('values', $attribute))
-                                                        @foreach ($attribute['values'] as $key => $value)
-                                                            @php
-                                                                $flag = false;
-                                                                if(isset($selected_attributes)){
-                                                                    foreach ($selected_attributes as $key => $selected_attribute) {
-                                                                        if($selected_attribute['id'] == $attribute['id']){
-                                                                            if(in_array($value, $selected_attribute['values'])){
-                                                                                $flag = true;
-                                                                                break;
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                }
-                                                            @endphp
-                                                            <label class="aiz-checkbox">
-                                                                <input
-                                                                    type="checkbox"
-                                                                    name="attribute_{{ $attribute['id'] }}[]"
-                                                                    value="{{ $value }}" @if ($flag) checked @endif
-                                                                    onchange="filter()"
-                                                                >
-                                                                <span class="aiz-square-check"></span>
-                                                                <span>{{ $value }}</span>
-                                                            </label>
-                                                        @endforeach
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                @endforeach
 
                                 {{-- <button type="submit" class="btn btn-styled btn-block btn-base-4">Apply filter</button> --}}
                             </div>
@@ -236,7 +220,7 @@
                                             {{ translate('All Products') }}
                                         @endif
                                     </h1>
-                                    <input type="hidden" name="q" value="{{ $query }}">
+                                    <input type="hidden" name="keyword" value="{{ $query }}">
                                 </div>
                                 <div class="form-group ml-auto mr-0 w-200px d-none d-xl-block">
                                     <label class="mb-0 opacity-50">{{ translate('Brands')}}</label>

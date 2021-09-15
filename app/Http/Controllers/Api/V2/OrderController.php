@@ -13,6 +13,7 @@ use App\Models\CouponUsage;
 use App\Models\BusinessSetting;
 use App\User;
 use DB;
+use \App\Utility\NotificationUtility;
 
 class OrderController extends Controller
 {
@@ -40,8 +41,8 @@ class OrderController extends Controller
             $shippingAddress['city']        = $address->city;
             $shippingAddress['postal_code'] = $address->postal_code;
             $shippingAddress['phone']       = $address->phone;
-            if($address->latitude || $address->longitude) {
-                $shippingAddress['lat_lang'] = $address->latitude.','.$address->longitude;
+            if ($address->latitude || $address->longitude) {
+                $shippingAddress['lat_lang'] = $address->latitude . ',' . $address->longitude;
             }
         }
 
@@ -57,7 +58,7 @@ class OrderController extends Controller
         // create an order
         $order = Order::create([
             'user_id' => $request->user_id,
-            'seller_id' =>$request->owner_id,
+            'seller_id' => $request->owner_id,
             'shipping_address' => json_encode($shippingAddress),
             'payment_type' => $request->payment_type,
             'payment_status' => $set_paid ? 'paid' : 'unpaid',
@@ -111,11 +112,15 @@ class OrderController extends Controller
 
         Cart::where('user_id', $request->user_id)->where('owner_id', $request->owner_id)->delete();
 
+        if ($request->payment_type == 'cash_on_delivery') {
+            NotificationUtility::sendOrderPlacedNotification($order);
+        }
+
+
         return response()->json([
             'order_id' => $order->id,
             'result' => true,
             'message' => translate('Your order has been placed successfully')
         ]);
     }
-
 }

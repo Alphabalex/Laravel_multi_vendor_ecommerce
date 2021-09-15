@@ -13,6 +13,7 @@
 
 
 Route::get('/pos/products', 'PosController@search')->name('pos.search_product');
+Route::get('/variants', 'PosController@getVarinats')->name('variants');
 Route::post('/add-to-cart-pos', 'PosController@addToCart')->name('pos.addToCart');
 Route::post('/update-quantity-cart-pos', 'PosController@updateQuantity')->name('pos.updateQuantity');
 Route::post('/remove-from-cart-pos', 'PosController@removeFromCart')->name('pos.removeFromCart');
@@ -20,8 +21,6 @@ Route::post('/get_shipping_address', 'PosController@getShippingAddress')->name('
 Route::post('/get_shipping_address_seller', 'PosController@getShippingAddressForSeller')->name('pos.getShippingAddressForSeller');
 Route::post('/setDiscount', 'PosController@setDiscount')->name('pos.setDiscount');
 Route::post('/setShipping', 'PosController@setShipping')->name('pos.setShipping');
-Route::post('/set-shipping-address', 'PosController@set_shipping_address')->name('pos.set-shipping-address');
-Route::post('/pos-order-summary', 'PosController@get_order_summary')->name('pos.getOrderSummary');
 Route::post('/pos-order', 'PosController@order_store')->name('pos.order_place');
 
 //Admin

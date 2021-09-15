@@ -159,7 +159,7 @@
                         <h5 class="mb-0 h6">{{translate('Product Variation')}}</h5>
                     </div>
                     <div class="card-body">
-                        <div class="form-group row">
+                        <div class="form-group row gutters-5">
                             <div class="col-md-3">
                                 <input type="text" class="form-control" value="{{translate('Colors')}}" disabled>
                             </div>
@@ -178,7 +178,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group row">
+                        <div class="form-group row gutters-5">
                             <div class="col-md-3">
                                 <input type="text" class="form-control" value="{{translate('Attributes')}}" disabled>
                             </div>

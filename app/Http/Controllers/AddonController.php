@@ -12,6 +12,7 @@ use App\BusinessSetting;
 use CoreComponentRepository;
 use Illuminate\Support\Str;
 use Storage;
+use Cache;
 
 class AddonController extends Controller
 {
@@ -157,6 +158,8 @@ class AddonController extends Controller
                         $addon->version = $json['version'];
                         $addon->save();
 
+                        Cache::forget('addons');
+
                         flash(translate('This addon is updated successfully'))->success();
                         return redirect()->route('addons.index');
                     }
@@ -223,17 +226,10 @@ class AddonController extends Controller
             return 0;
         }
         $addon = Addon::find($request->id);
-        //$menu  = Menu::where('displayed_name', $addon->unique_identifier)->first();
         $addon->activated = $request->status;
-
         $addon->save();
-        //$menu->save();
 
-        // $data = array(
-        //     'status' => true,
-        //     'notification' => translate('addon_status_updated_successfully')
-        // );
-        // return $data;
+        Cache::forget('addons');
 
         return 1;
     }

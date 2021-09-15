@@ -85,7 +85,7 @@ class RegisterController extends Controller
             $customer->save();
         }
         else {
-            if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null && \App\Addon::where('unique_identifier', 'otp_system')->first()->activated){
+            if (addon_is_activated('otp_system')){
                 $user = User::create([
                     'name' => $data['name'],
                     'phone' => '+'.$data['country_code'].$data['phone'],

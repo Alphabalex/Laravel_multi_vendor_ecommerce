@@ -10,7 +10,7 @@
             <div class="col">
                 <h5 class="mb-md-0 h6">{{ translate('All Orders') }}</h5>
             </div>
-            
+
             <div class="dropdown mb-2 mb-md-0">
                 <button class="btn border dropdown-toggle" type="button" data-toggle="dropdown">
                     {{translate('Bulk Action')}}
@@ -23,7 +23,7 @@
                     </a>-->
                 </div>
             </div>
-            
+
             <!-- Change Status Modal -->
             <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -53,9 +53,10 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-lg-2 ml-auto">
                 <select class="form-control aiz-selectpicker" name="delivery_status" id="delivery_status">
+                    <option value="">{{translate('Filter by Delivery Status')}}</option>
                     <option value="pending" @if ($delivery_status == 'pending') selected @endif>{{translate('Pending')}}</option>
                     <option value="confirmed" @if ($delivery_status == 'confirmed') selected @endif>{{translate('Confirmed')}}</option>
                     <option value="picked_up" @if ($delivery_status == 'picked_up') selected @endif>{{translate('Picked Up')}}</option>
@@ -80,7 +81,7 @@
                 </div>
             </div>
         </div>
-    
+
         <div class="card-body">
             <table class="table aiz-table mb-0">
                 <thead>
@@ -146,7 +147,7 @@
                                 if($order->delivery_status == 'cancelled') {
                                     $status = '<span class="badge badge-inline badge-danger">'.translate('Cancel').'</span>';
                                 }
-                                
+
                             @endphp
                             {!! $status !!}
                         </td>
@@ -202,16 +203,16 @@
             if(this.checked) {
                 // Iterate each checkbox
                 $('.check-one:checkbox').each(function() {
-                    this.checked = true;                        
+                    this.checked = true;
                 });
             } else {
                 $('.check-one:checkbox').each(function() {
-                    this.checked = false;                       
+                    this.checked = false;
                 });
             }
-          
+
         });
-        
+
 //        function change_status() {
 //            var data = new FormData($('#order_form')[0]);
 //            $.ajax({
@@ -231,7 +232,7 @@
 //                }
 //            });
 //        }
-        
+
         function bulk_delete() {
             var data = new FormData($('#sort_orders')[0]);
             $.ajax({

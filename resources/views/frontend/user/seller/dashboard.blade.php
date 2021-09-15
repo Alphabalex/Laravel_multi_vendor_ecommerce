@@ -157,7 +157,7 @@
           </div>
       </div>
       <div class="col-md-4">
-          @if (\App\Addon::where('unique_identifier', 'seller_subscription')->first() != null && \App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated)
+          @if (addon_is_activated('seller_subscription'))
 
               <div class="card">
                   <div class="card-header">

@@ -25,7 +25,7 @@
                                             @endif
                                         </div>
 
-                                        @if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null && \App\Addon::where('unique_identifier', 'otp_system')->first()->activated)
+                                        @if (addon_is_activated('otp_system'))
                                             <div class="form-group phone-form-group mb-1">
                                                 <input type="tel" id="phone-code" class="form-control{{ $errors->has('phone') ? ' is-invalid' : '' }}" value="{{ old('phone') }}" placeholder="" name="phone" autocomplete="off">
                                             </div>

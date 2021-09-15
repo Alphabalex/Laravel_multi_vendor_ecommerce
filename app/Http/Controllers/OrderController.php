@@ -19,12 +19,14 @@ use App\Coupon;
 use App\OtpConfiguration;
 use App\User;
 use App\BusinessSetting;
+use App\CombinedOrder;
 use App\SmsTemplate;
 use Auth;
 use Session;
 use DB;
 use Mail;
 use App\Mail\InvoiceEmailManager;
+use App\Utility\NotificationUtility;
 use CoreComponentRepository;
 use App\Utility\SmsUtility;
 
@@ -117,12 +119,8 @@ class OrderController extends Controller
         $delivery_status = null;
         $sort_search = null;
         $admin_user_id = User::where('user_type', 'admin')->first()->id;
-        $orders = DB::table('orders')
-            ->orderBy('id', 'desc')
-//                    ->join('order_details', 'orders.id', '=', 'order_details.order_id')
-            ->where('seller_id', $admin_user_id)
-            ->select('orders.id')
-            ->distinct();
+        $orders = Order::orderBy('id', 'desc')
+                        ->where('seller_id', $admin_user_id);
 
         if ($request->payment_type != null) {
             $orders = $orders->where('payment_status', $request->payment_type);
@@ -137,7 +135,7 @@ class OrderController extends Controller
             $orders = $orders->where('code', 'like', '%' . $sort_search . '%');
         }
         if ($date != null) {
-            $orders = $orders->whereDate('orders.created_at', '>=', date('Y-m-d', strtotime(explode(" to ", $date)[0])))->whereDate('orders.created_at', '<=', date('Y-m-d', strtotime(explode(" to ", $date)[1])));
+            $orders = $orders->whereDate('created_at', '>=', date('Y-m-d', strtotime(explode(" to ", $date)[0])))->whereDate('created_at', '<=', date('Y-m-d', strtotime(explode(" to ", $date)[1])));
         }
 
         $orders = $orders->paginate(15);
@@ -168,15 +166,11 @@ class OrderController extends Controller
         $delivery_status = null;
         $sort_search = null;
         $admin_user_id = User::where('user_type', 'admin')->first()->id;
-        $orders = DB::table('orders')
-            ->orderBy('code', 'desc')
-//                    ->join('order_details', 'orders.id', '=', 'order_details.order_id')
-            ->where('orders.seller_id', '!=', $admin_user_id)
-            ->select('orders.id')
-            ->distinct();
+        $orders = Order::orderBy('code', 'desc')
+            ->where('orders.seller_id', '!=', $admin_user_id);
 
         if ($request->payment_type != null) {
-            $orders = $orders->where('orders.payment_status', $request->payment_type);
+            $orders = $orders->where('payment_status', $request->payment_type);
             $payment_status = $request->payment_type;
         }
         if ($request->delivery_status != null) {
@@ -188,7 +182,7 @@ class OrderController extends Controller
             $orders = $orders->where('code', 'like', '%' . $sort_search . '%');
         }
         if ($date != null) {
-            $orders = $orders->whereDate('orders.created_at', '>=', date('Y-m-d', strtotime(explode(" to ", $date)[0])))->whereDate('orders.created_at', '<=', date('Y-m-d', strtotime(explode(" to ", $date)[1])));
+            $orders = $orders->whereDate('created_at', '>=', date('Y-m-d', strtotime(explode(" to ", $date)[0])))->whereDate('created_at', '<=', date('Y-m-d', strtotime(explode(" to ", $date)[1])));
         }
         if ($seller_id) {
             $orders = $orders->where('seller_id', $seller_id);
@@ -214,7 +208,6 @@ class OrderController extends Controller
         $sort_search = null;
 
         if (Auth::user()->user_type == 'staff' && Auth::user()->staff->pick_up_point != null) {
-            //$orders = Order::where('pickup_point_id', Auth::user()->staff->pick_up_point->id)->get();
             $orders = DB::table('orders')
                 ->orderBy('code', 'desc')
                 ->join('order_details', 'orders.id', '=', 'order_details.order_id')
@@ -234,7 +227,6 @@ class OrderController extends Controller
 
             return view('backend.sales.pickup_point_orders.index', compact('orders', 'sort_search', 'date'));
         } else {
-            //$orders = Order::where('shipping_type', 'Pick-up Point')->get();
             $orders = DB::table('orders')
                 ->orderBy('code', 'desc')
                 ->join('order_details', 'orders.id', '=', 'order_details.order_id')
@@ -302,15 +294,7 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        $order = new Order;
-        if (Auth::check()) {
-            $order->user_id = Auth::user()->id;
-        } else {
-            $order->guest_id = mt_rand(100000, 999999);
-        }
-
         $carts = Cart::where('user_id', Auth::user()->id)
-            ->where('owner_id', $request->owner_id)
             ->get();
 
         if ($carts->isEmpty()) {
@@ -325,41 +309,47 @@ class OrderController extends Controller
             $shipping_info->lat_lang = $shipping_info->latitude . ',' . $shipping_info->longitude;
         }
 
-        $order->seller_id = $request->owner_id;
-        $order->shipping_address = json_encode($shipping_info);
+        $combined_order = new CombinedOrder;
+        $combined_order->user_id = Auth::user()->id;
+        $combined_order->shipping_address = json_encode($shipping_info);
+        $combined_order->save();
 
-        $order->payment_type = $request->payment_option;
-        $order->delivery_viewed = '0';
-        $order->payment_status_viewed = '0';
-        $order->code = date('Ymd-His') . rand(10, 99);
-        $order->date = strtotime('now');
+        $seller_products = array();
+        foreach ($carts as $cartItem){
+            $product_ids = array();
+            $product = Product::find($cartItem['product_id']);
+            if(array_key_exists($product->user_id, $seller_products)){
+                $product_ids = $seller_products[$product->user_id];
+            }
+            array_push($product_ids, $cartItem);
+            $seller_products[$product->user_id] = $product_ids;
+        }
 
-        if ($order->save()) {
+        foreach ($seller_products as $seller_product) {
+            $order = new Order;
+            $order->combined_order_id = $combined_order->id;
+            $order->user_id = Auth::user()->id;
+            $order->shipping_address = json_encode($shipping_info);
+
+            $order->payment_type = $request->payment_option;
+            $order->delivery_viewed = '0';
+            $order->payment_status_viewed = '0';
+            $order->code = date('Ymd-His') . rand(10, 99);
+            $order->date = strtotime('now');
+            $order->save();
+
             $subtotal = 0;
             $tax = 0;
             $shipping = 0;
-
-            //calculate shipping is to get shipping costs of different types
-            $admin_products = array();
-            $seller_products = array();
+            $coupon_discount = 0;
 
             //Order Details Storing
-            foreach ($carts as $key => $cartItem) {
+            foreach ($seller_product as $cartItem) {
                 $product = Product::find($cartItem['product_id']);
-
-                if ($product->added_by == 'admin') {
-                    array_push($admin_products, $cartItem['product_id']);
-                } else {
-                    $product_ids = array();
-                    if (array_key_exists($product->user_id, $seller_products)) {
-                        $product_ids = $seller_products[$product->user_id];
-                    }
-                    array_push($product_ids, $cartItem['product_id']);
-                    $seller_products[$product->user_id] = $product_ids;
-                }
 
                 $subtotal += $cartItem['price'] * $cartItem['quantity'];
                 $tax += $cartItem['tax'] * $cartItem['quantity'];
+                $coupon_discount += $cartItem['discount'];
 
                 $product_variation = $cartItem['variation'];
 
@@ -394,11 +384,12 @@ class OrderController extends Controller
                 $order_detail->quantity = $cartItem['quantity'];
                 $order_detail->save();
 
-                $product->num_of_sale++;
+                $product->num_of_sale = $product->num_of_sale + $cartItem['quantity'];
                 $product->save();
 
-                if (\App\Addon::where('unique_identifier', 'affiliate_system')->first() != null &&
-                    \App\Addon::where('unique_identifier', 'affiliate_system')->first()->activated) {
+                $order->seller_id = $product->user_id;
+
+                if (addon_is_activated('affiliate_system')) {
                     if ($order_detail->product_referral_code) {
                         $referred_by_user = User::where('referral_code', $order_detail->product_referral_code)->first();
 
@@ -410,74 +401,27 @@ class OrderController extends Controller
 
             $order->grand_total = $subtotal + $tax + $shipping;
 
-            if ($carts->first()->coupon_code != '') {
-                $order->grand_total -= $carts->sum('discount');
-                if (Session::has('club_point')) {
-                    $order->club_point = Session::get('club_point');
-                }
-                $order->coupon_discount = $carts->sum('discount');
+            $combined_order->grand_total += $order->grand_total;
 
-//                $clubpointController = new ClubPointController;
-//                $clubpointController->deductClubPoints($order->user_id, Session::get('club_point'));
+            if ($seller_product[0]->coupon_code != null) {
+                // if (Session::has('club_point')) {
+                //     $order->club_point = Session::get('club_point');
+                // }
+                $order->coupon_discount = $coupon_discount;
+                $order->grand_total -= $coupon_discount;
 
                 $coupon_usage = new CouponUsage;
                 $coupon_usage->user_id = Auth::user()->id;
-                $coupon_usage->coupon_id = Coupon::where('code', $carts->first()->coupon_code)->first()->id;
+                $coupon_usage->coupon_id = Coupon::where('code', $seller_product[0]->coupon_code)->first()->id;
                 $coupon_usage->save();
             }
 
             $order->save();
-
-            $array['view'] = 'emails.invoice';
-            $array['subject'] = translate('Your order has been placed') . ' - ' . $order->code;
-            $array['from'] = env('MAIL_FROM_ADDRESS');
-            $array['order'] = $order;
-
-            foreach ($seller_products as $key => $seller_product) {
-                try {
-                    Mail::to(\App\User::find($key)->email)->queue(new InvoiceEmailManager($array));
-                } catch (\Exception $e) {
-
-                }
-            }
-
-            if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null &&
-                \App\Addon::where('unique_identifier', 'otp_system')->first()->activated &&
-                SmsTemplate::where('identifier', 'order_placement')->first()->status == 1) {
-                try {
-                    $otpController = new OTPVerificationController;
-                    $otpController->send_order_code($order);
-                } catch (\Exception $e) {
-
-                }
-            }
-
-            //sends Notifications to user
-            send_notification($order, 'placed');
-            if (get_setting('google_firebase') == 1 && $order->user->device_token != null) {
-                $request->device_token = $order->user->device_token;
-                $request->title = "Order placed !";
-                $request->text = " An order {$order->code} has been placed";
-
-                $request->type = "order";
-                $request->id = $order->id;
-                $request->user_id = $order->user->id;
-
-                send_firebase_notification($request);
-            }
-
-            //sends email to customer with the invoice pdf attached
-            if (env('MAIL_USERNAME') != null) {
-                try {
-                    Mail::to(Auth::user()->email)->queue(new InvoiceEmailManager($array));
-                    Mail::to(User::where('user_type', 'admin')->first()->email)->queue(new InvoiceEmailManager($array));
-                } catch (\Exception $e) {
-
-                }
-            }
-
-            $request->session()->put('order_id', $order->id);
         }
+
+        $combined_order->save();
+
+        $request->session()->put('combined_order_id', $combined_order->id);
     }
 
     /**
@@ -618,7 +562,7 @@ class OrderController extends Controller
                     }
                 }
 
-                if (\App\Addon::where('unique_identifier', 'affiliate_system')->first() != null && \App\Addon::where('unique_identifier', 'affiliate_system')->first()->activated) {
+                if (addon_is_activated('affiliate_system')) {
                     if (($request->status == 'delivered' || $request->status == 'cancelled') &&
                         $orderDetail->product_referral_code) {
 
@@ -640,18 +584,16 @@ class OrderController extends Controller
                 }
             }
         }
-        if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null &&
-            \App\Addon::where('unique_identifier', 'otp_system')->first()->activated &&
-            SmsTemplate::where('identifier', 'delivery_status_change')->first()->status == 1) {
+        if (addon_is_activated('otp_system') && SmsTemplate::where('identifier', 'delivery_status_change')->first()->status == 1) {
             try {
-                SmsUtility::delivery_status_change($order->user->phone, $order);
+                SmsUtility::delivery_status_change(json_decode($order->shipping_address)->phone, $order);
             } catch (\Exception $e) {
 
             }
         }
 
         //sends Notifications to user
-        send_notification($order, $request->status);
+        NotificationUtility::sendNotification($order, $request->status);
         if (get_setting('google_firebase') == 1 && $order->user->device_token != null) {
             $request->device_token = $order->user->device_token;
             $request->title = "Order updated !";
@@ -662,13 +604,11 @@ class OrderController extends Controller
             $request->id = $order->id;
             $request->user_id = $order->user->id;
 
-            send_firebase_notification($request);
+            NotificationUtility::sendFirebaseNotification($request);
         }
 
 
-        if (\App\Addon::where('unique_identifier', 'delivery_boy')->first() != null &&
-            \App\Addon::where('unique_identifier', 'delivery_boy')->first()->activated) {
-
+        if (addon_is_activated('delivery_boy')) {
             if (Auth::user()->user_type == 'delivery_boy') {
                 $deliveryBoyController = new DeliveryBoyController;
                 $deliveryBoyController->store_delivery_history($order);
@@ -722,14 +662,14 @@ class OrderController extends Controller
 
 
         if ($order->payment_status == 'paid' && $order->commission_calculated == 0) {
-            commission_calculation($order);
+            calculateCommissionAffilationClubPoint($order);
 
             $order->commission_calculated = 1;
             $order->save();
         }
 
         //sends Notifications to user
-        send_notification($order, $request->status);
+        NotificationUtility::sendNotification($order, $request->status);
         if (get_setting('google_firebase') == 1 && $order->user->device_token != null) {
             $request->device_token = $order->user->device_token;
             $request->title = "Order updated !";
@@ -740,15 +680,13 @@ class OrderController extends Controller
             $request->id = $order->id;
             $request->user_id = $order->user->id;
 
-            send_firebase_notification($request);
+            NotificationUtility::sendFirebaseNotification($request);
         }
 
 
-        if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null &&
-            \App\Addon::where('unique_identifier', 'otp_system')->first()->activated &&
-            SmsTemplate::where('identifier', 'payment_status_change')->first()->status == 1) {
+        if (addon_is_activated('otp_system') && SmsTemplate::where('identifier', 'payment_status_change')->first()->status == 1) {
             try {
-                SmsUtility::payment_status_change($order->user->phone, $order);
+                SmsUtility::payment_status_change(json_decode($order->shipping_address)->phone, $order);
             } catch (\Exception $e) {
 
             }
@@ -758,7 +696,7 @@ class OrderController extends Controller
 
     public function assign_delivery_boy(Request $request)
     {
-        if (\App\Addon::where('unique_identifier', 'delivery_boy')->first() != null && \App\Addon::where('unique_identifier', 'delivery_boy')->first()->activated) {
+        if (addon_is_activated('delivery_boy')) {
 
             $order = Order::findOrFail($request->order_id);
             $order->assign_delivery_boy = $request->delivery_boy;
@@ -793,9 +731,7 @@ class OrderController extends Controller
                 }
             }
 
-            if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null &&
-                \App\Addon::where('unique_identifier', 'otp_system')->first()->activated &&
-                SmsTemplate::where('identifier', 'assign_delivery_boy')->first()->status == 1) {
+            if (addon_is_activated('otp_system') && SmsTemplate::where('identifier', 'assign_delivery_boy')->first()->status == 1) {
                 try {
                     SmsUtility::assign_delivery_boy($order->delivery_boy->phone, $order->code);
                 } catch (\Exception $e) {

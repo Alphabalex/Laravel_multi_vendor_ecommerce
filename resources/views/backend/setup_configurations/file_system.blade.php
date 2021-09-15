@@ -3,7 +3,7 @@
 @section('content')
 
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-xl-6">
             <div class="card">
                 <div class="card-header">
                     <h3 class="fs-18 mb-0 text-center">{{translate('S3 File System Credentials')}}</h3>
@@ -66,7 +66,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-6">
+        <div class="col-xl-6">
             <div class="card">
                 <div class="card-header">
                     <h3 class="fs-18 mb-0 text-center">{{translate('S3 File System Activation')}}</h3>
@@ -82,7 +82,7 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-xl-6">
             <div class="card">
                 <div class="card-header">
                     <h3 class="fs-18 mb-0 text-center">{{translate('Cache & Session Driver')}}</h3>
@@ -124,7 +124,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-6">
+        <div class="col-xl-6">
             <div class="card">
                 <div class="card-header">
                     <h3 class="fs-18 mb-0 text-center">{{translate('Redis Configuration (If you use redis as any of the drivers)')}}</h3>

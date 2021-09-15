@@ -62,7 +62,6 @@ return [
             'password',
         ],
     ],
-    "log"=>"errorlog",
 
     /*
     |--------------------------------------------------------------------------
@@ -182,6 +181,7 @@ return [
         \Laravel\Passport\PassportServiceProvider::class,
         KingFlamez\Rave\RaveServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
+        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         /*
          * Package Service Providers...
          */

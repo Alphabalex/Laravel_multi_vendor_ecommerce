@@ -18,12 +18,12 @@
                                     <form class="form-default" role="form" action="{{ route('login') }}" method="POST">
                                         @csrf
                                         <div class="form-group">
-                                            @if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null && \App\Addon::where('unique_identifier', 'otp_system')->first()->activated)
+                                            @if (addon_is_activated('otp_system'))
                                                 <input type="text" class="form-control {{ $errors->has('email') ? ' is-invalid' : '' }}" value="{{ old('email') }}" placeholder="{{ translate('Email Or Phone')}}" name="email" id="email">
                                             @else
                                                 <input type="email" class="form-control {{ $errors->has('email') ? ' is-invalid' : '' }}" value="{{ old('email') }}" placeholder="{{  translate('Email') }}" name="email">
                                             @endif
-                                            @if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null && \App\Addon::where('unique_identifier', 'otp_system')->first()->activated)
+                                            @if (addon_is_activated('otp_system'))
                                                 <span class="opacity-60">{{  translate('Use country code before number') }}</span>
                                             @endif
                                         </div>

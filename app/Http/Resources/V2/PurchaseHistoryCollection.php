@@ -31,7 +31,7 @@ class PurchaseHistoryCollection extends ResourceCollection
                     'date' => Carbon::createFromTimestamp($data->date)->format('d-m-Y'),
                     'cancel_request' => $data->cancel_request == 1,
                     'links' => [
-                        'details' => route('purchaseHistory.details', $data->id)
+                        'details' => ''
                     ]
                 ];
             })

@@ -83,13 +83,13 @@ Route::get('/customer-products/admin', 'HomeController@profile_edit')->name('pro
 Route::get('/customer-product/{slug}', 'CustomerProductController@customer_product')->name('customer.product');
 Route::get('/customer-packages', 'HomeController@premium_package_index')->name('customer_packages_list_show');
 
-Route::get('/search', 'HomeController@search')->name('search');
-Route::get('/search?q={search}', 'HomeController@search')->name('suggestion.search');
-Route::post('/ajax-search', 'HomeController@ajax_search')->name('search.ajax');
+Route::get('/search', 'SearchController@index')->name('search');
+Route::get('/search?keyword={search}', 'SearchController@index')->name('suggestion.search');
+Route::post('/ajax-search', 'SearchController@ajax_search')->name('search.ajax');
+Route::get('/category/{category_slug}', 'SearchController@listingByCategory')->name('products.category');
+Route::get('/brand/{brand_slug}', 'SearchController@listingByBrand')->name('products.brand');
 
 Route::get('/product/{slug}', 'HomeController@product')->name('product');
-Route::get('/category/{category_slug}', 'HomeController@listingByCategory')->name('products.category');
-Route::get('/brand/{brand_slug}', 'HomeController@listingByBrand')->name('products.brand');
 Route::post('/product/variant_price', 'HomeController@variant_price')->name('products.variant_price');
 Route::get('/shop/{slug}', 'HomeController@shop')->name('shop.visit');
 Route::get('/shop/{slug}/{type}', 'HomeController@filter_shop')->name('shop.visit.type');
@@ -180,7 +180,7 @@ Route::group(['middleware' => ['user', 'verified', 'unbanned']], function() {
     Route::post('/customer_products/status', 'CustomerProductController@updateStatus')->name('customer_products.update.status');
 
     Route::get('digital_purchase_history', 'PurchaseHistoryController@digital_index')->name('digital_purchase_history.index');
-    
+
     Route::get('/all-notifications', 'NotificationController@index')->name('all-notifications');
 });
 
@@ -202,8 +202,19 @@ Route::group(['prefix' => 'seller', 'middleware' => ['seller', 'verified', 'user
     Route::get('/digitalproducts/upload', 'HomeController@show_digital_product_upload_form')->name('seller.digitalproducts.upload');
     Route::get('/digitalproducts/{id}/edit', 'HomeController@show_digital_product_edit_form')->name('seller.digitalproducts.edit');
 
-    
+    //Coupon
+    Route::resource('coupon', 'CouponController')->names([
+        'index'     => 'seller.coupon.index',
+        'create'    => 'seller.coupon.create',
+        'store'     => 'seller.coupon.store',
+        'edit'      => 'seller.coupon.edit',
+        'update'    => 'seller.coupon.update',
+    ]);
+    Route::get('/coupon/destroy/{id}', 'CouponController@destroy')->name('seller.coupon.destroy');
+    Route::post('/coupon/get_form', 'CouponController@get_coupon_form')->name('seller.coupon.get_coupon_form');
+    Route::post('/coupon/get_form_edit', 'CouponController@get_coupon_form_edit')->name('seller.coupon.get_coupon_form_edit');
 
+    //Upload
     Route::any('/uploads/', 'AizUploadController@index')->name('my_uploads.all');
     Route::any('/uploads/new', 'AizUploadController@create')->name('my_uploads.new');
     Route::any('/uploads/file-info', 'AizUploadController@file_info')->name('my_uploads.info');
@@ -281,7 +292,7 @@ Route::get('/vogue-pay/success/{id}', 'VoguePayController@paymentSuccess');
 Route::get('/vogue-pay/failure/{id}', 'VoguePayController@paymentFailure');
 
 //Iyzico
-Route::any('/iyzico/payment/callback/{payment_type}/{amount?}/{payment_method?}/{order_id?}/{customer_package_id?}/{seller_package_id?}', 'IyzicoController@callback')->name('iyzico.callback');
+Route::any('/iyzico/payment/callback/{payment_type}/{amount?}/{payment_method?}/{combined_order_id?}/{customer_package_id?}/{seller_package_id?}', 'IyzicoController@callback')->name('iyzico.callback');
 
 Route::post('/get-city', 'CityController@get_city')->name('get-city');
 

@@ -248,7 +248,7 @@ class ProductController extends Controller
             'price' => (double)convert_price($price),
             'price_string' => format_price(convert_price($price)),
             'stock' => intval($stockQuantity),
-            'image' => $product_stock->image == null ? "" : $product_stock->image
+            'image' => $product_stock->image == null ? "" : api_asset($product_stock->image) 
         ]);
     }
 

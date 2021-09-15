@@ -7,9 +7,11 @@ use App;
 
 class PickupPoint extends Model
 {
+    protected $with = ['pickup_point_translations'];
+
     public function getTranslation($field = '', $lang = false){
         $lang = $lang == false ? App::getLocale() : $lang;
-        $pickup_point_translation = $this->hasMany(PickupPointTranslation::class)->where('lang', $lang)->first();
+        $pickup_point_translation = $this->pickup_point_translations->where('lang', $lang)->first();
         return $pickup_point_translation != null ? $pickup_point_translation->$field : $this->$field;
     }
 

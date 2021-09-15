@@ -129,7 +129,7 @@ class NgeniusUtility
 
             if ($payment_type == 'cart_payment') {
                 $checkoutController = new CheckoutController;
-                return $checkoutController->checkout_done(session()->get('order_id'), $payment);
+                return $checkoutController->checkout_done(session()->get('combined_order_id'), $payment);
             }
 
             if ($payment_type == 'wallet_payment') {

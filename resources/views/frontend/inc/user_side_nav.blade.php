@@ -140,6 +140,13 @@
                         </a>
                     </li>
 
+                    <li class="aiz-side-nav-item">
+                        <a href="{{ route('compare') }}" class="aiz-side-nav-link {{ areActiveRoutes(['compare'])}}">
+                            <i class="la la-refresh aiz-side-nav-icon"></i>
+                            <span class="aiz-side-nav-text">{{ translate('Compare') }}</span>
+                        </a>
+                    </li>
+
                     @if(Auth::user()->user_type == 'seller')
                         <li class="aiz-side-nav-item">
                             <a href="{{ route('seller.products') }}" class="aiz-side-nav-link {{ areActiveRoutes(['seller.products', 'seller.products.upload', 'seller.products.edit'])}}">
@@ -165,6 +172,12 @@
                                 <span class="aiz-side-nav-text">{{ translate('Uploaded Files') }}</span>
                             </a>
                         </li>
+                        <li class="aiz-side-nav-item">
+                            <a href="{{ route('seller.coupon.index') }}" class="aiz-side-nav-link {{ areActiveRoutes(['my_uploads.new'])}}">
+                                <i class="las la-bullhorn aiz-side-nav-icon"></i>
+                                <span class="aiz-side-nav-text">{{ translate('Coupon') }}</span>
+                            </a>
+                        </li>
                     @endif
 
                     @if(get_setting('classified_product') == 1)
@@ -176,7 +189,7 @@
                         </li>
                     @endif
 
-                    @if(addon_activated('auction'))
+                    @if(addon_is_activated('auction'))
                         <li class="aiz-side-nav-item">
                             <a href="javascript:void(0);" class="aiz-side-nav-link {{ areActiveRoutes(['auction_product_bids.index'])}}">
                                 <i class="las la-gavel aiz-side-nav-icon"></i>
@@ -199,7 +212,7 @@
                     @endif
 
                     @if(Auth::user()->user_type == 'seller')
-                        @if (\App\Addon::where('unique_identifier', 'pos_system')->first() != null && \App\Addon::where('unique_identifier', 'pos_system')->first()->activated)
+                        @if (addon_is_activated('pos_system'))
                             @if (\App\BusinessSetting::where('type', 'pos_activation_for_seller')->first() != null && get_setting('pos_activation_for_seller') != 0)
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('poin-of-sales.seller_index') }}" class="aiz-side-nav-link {{ areActiveRoutes(['poin-of-sales.seller_index'])}}">
@@ -319,7 +332,7 @@
                         </li>
                     @endif
 
-                    @if (\App\Addon::where('unique_identifier', 'affiliate_system')->first() != null && \App\Addon::where('unique_identifier', 'affiliate_system')->first()->activated && Auth::user()->affiliate_user != null && Auth::user()->affiliate_user->status)
+                    @if (addon_is_activated('affiliate_system') && Auth::user()->affiliate_user != null && Auth::user()->affiliate_user->status)
                         <li class="aiz-side-nav-item">
                             <a href="javascript:void(0);" class="aiz-side-nav-link {{ areActiveRoutes(['affiliate.user.index', 'affiliate.payment_settings'])}}">
                                 <i class="las la-dollar-sign aiz-side-nav-icon"></i>

@@ -3,37 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use URL;
 use DB;
 use Artisan;
-use Schema;
 use App\BusinessSetting;
-use App\Language;
-use App\Category;
-use App\CategoryTranslation;
-use App\Brand;
-use App\SubCategory;
-use App\SubSubCategory;
-use App\SubCategoryTranslation;
-use App\SubSubCategoryTranslation;
-use App\Attribute;
 use App\AttributeValue;
 use App\ProductStock;
 use App\Upload;
-use App\Banner;
-use App\User;
-use App\CustomerPackage;
-use App\CustomerProduct;
-use App\FlashDeal;
 use App\Product;
 use App\Tax;
 use App\ProductTax;
-use App\Shop;
-use App\Slider;
-use App\HomeCategory;
 use App\Order;
-use App\OrderDetail;
-use Storage;
 use ZipArchive;
 
 class UpdateController extends Controller
@@ -76,8 +55,17 @@ class UpdateController extends Controller
     }
 
     public function step1() {
-        if(BusinessSetting::where('type', 'current_version')->first() != null && BusinessSetting::where('type', 'current_version')->first()->value == '5.0'){
+        if(BusinessSetting::where('type', 'current_version')->first() != null && BusinessSetting::where('type', 'current_version')->first()->value == '5.1'){
+            $sql_path = base_path('sqlupdates/v52.sql');
+            DB::unprepared(file_get_contents($sql_path));
+
+            return redirect()->route('update.step2');
+        }
+        elseif(BusinessSetting::where('type', 'current_version')->first() != null && BusinessSetting::where('type', 'current_version')->first()->value == '5.0'){
             $sql_path = base_path('sqlupdates/v51.sql');
+            DB::unprepared(file_get_contents($sql_path));
+
+            $sql_path = base_path('sqlupdates/v52.sql');
             DB::unprepared(file_get_contents($sql_path));
 
             return redirect()->route('update.step2');
@@ -87,6 +75,9 @@ class UpdateController extends Controller
             DB::unprepared(file_get_contents($sql_path));
 
             $sql_path = base_path('sqlupdates/v51.sql');
+            DB::unprepared(file_get_contents($sql_path));
+
+            $sql_path = base_path('sqlupdates/v52.sql');
             DB::unprepared(file_get_contents($sql_path));
 
             return redirect()->route('update.step2');
@@ -99,6 +90,9 @@ class UpdateController extends Controller
             DB::unprepared(file_get_contents($sql_path));
 
             $sql_path = base_path('sqlupdates/v51.sql');
+            DB::unprepared(file_get_contents($sql_path));
+
+            $sql_path = base_path('sqlupdates/v52.sql');
             DB::unprepared(file_get_contents($sql_path));
 
             return redirect()->route('update.step2');
@@ -114,6 +108,9 @@ class UpdateController extends Controller
             DB::unprepared(file_get_contents($sql_path));
 
             $sql_path = base_path('sqlupdates/v51.sql');
+            DB::unprepared(file_get_contents($sql_path));
+
+            $sql_path = base_path('sqlupdates/v52.sql');
             DB::unprepared(file_get_contents($sql_path));
 
             return redirect()->route('update.step2');
@@ -132,6 +129,9 @@ class UpdateController extends Controller
             DB::unprepared(file_get_contents($sql_path));
 
             $sql_path = base_path('sqlupdates/v51.sql');
+            DB::unprepared(file_get_contents($sql_path));
+
+            $sql_path = base_path('sqlupdates/v52.sql');
             DB::unprepared(file_get_contents($sql_path));
 
             return redirect()->route('update.step2');
@@ -153,6 +153,9 @@ class UpdateController extends Controller
             DB::unprepared(file_get_contents($sql_path));
 
             $sql_path = base_path('sqlupdates/v51.sql');
+            DB::unprepared(file_get_contents($sql_path));
+
+            $sql_path = base_path('sqlupdates/v52.sql');
             DB::unprepared(file_get_contents($sql_path));
 
             return redirect()->route('update.step2');
@@ -177,6 +180,9 @@ class UpdateController extends Controller
             DB::unprepared(file_get_contents($sql_path));
 
             $sql_path = base_path('sqlupdates/v51.sql');
+            DB::unprepared(file_get_contents($sql_path));
+
+            $sql_path = base_path('sqlupdates/v52.sql');
             DB::unprepared(file_get_contents($sql_path));
 
             return redirect()->route('update.step2');
@@ -204,6 +210,9 @@ class UpdateController extends Controller
             DB::unprepared(file_get_contents($sql_path));
 
             $sql_path = base_path('sqlupdates/v51.sql');
+            DB::unprepared(file_get_contents($sql_path));
+
+            $sql_path = base_path('sqlupdates/v52.sql');
             DB::unprepared(file_get_contents($sql_path));
 
             return redirect()->route('update.step2');
@@ -234,6 +243,9 @@ class UpdateController extends Controller
             DB::unprepared(file_get_contents($sql_path));
 
             $sql_path = base_path('sqlupdates/v51.sql');
+            DB::unprepared(file_get_contents($sql_path));
+
+            $sql_path = base_path('sqlupdates/v52.sql');
             DB::unprepared(file_get_contents($sql_path));
 
             return redirect()->route('update.step2');
@@ -267,6 +279,9 @@ class UpdateController extends Controller
             DB::unprepared(file_get_contents($sql_path));
 
             $sql_path = base_path('sqlupdates/v51.sql');
+            DB::unprepared(file_get_contents($sql_path));
+
+            $sql_path = base_path('sqlupdates/v52.sql');
             DB::unprepared(file_get_contents($sql_path));
 
             return redirect()->route('update.step2');
@@ -303,6 +318,9 @@ class UpdateController extends Controller
             DB::unprepared(file_get_contents($sql_path));
 
             $sql_path = base_path('sqlupdates/v51.sql');
+            DB::unprepared(file_get_contents($sql_path));
+
+            $sql_path = base_path('sqlupdates/v52.sql');
             DB::unprepared(file_get_contents($sql_path));
 
             return redirect()->route('update.step2');
@@ -342,6 +360,9 @@ class UpdateController extends Controller
             DB::unprepared(file_get_contents($sql_path));
 
             $sql_path = base_path('sqlupdates/v51.sql');
+            DB::unprepared(file_get_contents($sql_path));
+
+            $sql_path = base_path('sqlupdates/v52.sql');
             DB::unprepared(file_get_contents($sql_path));
 
             return redirect()->route('update.step2');
@@ -384,6 +405,9 @@ class UpdateController extends Controller
             DB::unprepared(file_get_contents($sql_path));
 
             $sql_path = base_path('sqlupdates/v51.sql');
+            DB::unprepared(file_get_contents($sql_path));
+
+            $sql_path = base_path('sqlupdates/v52.sql');
             DB::unprepared(file_get_contents($sql_path));
 
             return redirect()->route('update.step2');
@@ -429,6 +453,9 @@ class UpdateController extends Controller
             DB::unprepared(file_get_contents($sql_path));
 
             $sql_path = base_path('sqlupdates/v51.sql');
+            DB::unprepared(file_get_contents($sql_path));
+
+            $sql_path = base_path('sqlupdates/v52.sql');
             DB::unprepared(file_get_contents($sql_path));
 
             return redirect()->route('update.step2');
@@ -481,6 +508,9 @@ class UpdateController extends Controller
             $sql_path = base_path('sqlupdates/v51.sql');
             DB::unprepared(file_get_contents($sql_path));
 
+            $sql_path = base_path('sqlupdates/v52.sql');
+            DB::unprepared(file_get_contents($sql_path));
+
             return redirect()->route('update.step2');
         }
         else {
@@ -495,7 +525,7 @@ class UpdateController extends Controller
     }
 
     public function step2() {
-        if(count(ProductTax::all()) == 0){
+        if(ProductTax::count() == 0){
             $this->convertTaxes();
         }
 
@@ -519,23 +549,25 @@ class UpdateController extends Controller
             }
         }
 
-        foreach (Product::all() as $product) {
-            if ($product->variant_product) {
-                try {
-                    $choice_options = json_decode($product->choice_options);
-                    foreach ($choice_options as $choice_option) {
-                        foreach ($choice_option->values as $value) {
-                            $attribute_value = AttributeValue::where('value', $value)->first();
-                            if ($attribute_value == null) {
-                                $attribute_value = new AttributeValue;
-                                $attribute_value->attribute_id = $choice_option->attribute_id;
-                                $attribute_value->value = $value;
-                                $attribute_value->save();
+        if(AttributeValue::count() == 0){
+            foreach (Product::all() as $product) {
+                if ($product->variant_product) {
+                    try {
+                        $choice_options = json_decode($product->choice_options);
+                        foreach ($choice_options as $choice_option) {
+                            foreach ($choice_option->values as $value) {
+                                $attribute_value = AttributeValue::where('value', $value)->first();
+                                if ($attribute_value == null) {
+                                    $attribute_value = new AttributeValue;
+                                    $attribute_value->attribute_id = $choice_option->attribute_id;
+                                    $attribute_value->value = $value;
+                                    $attribute_value->save();
+                                }
                             }
                         }
+                    } catch (\Exception $e) {
+    
                     }
-                } catch (\Exception $e) {
-
                 }
             }
         }

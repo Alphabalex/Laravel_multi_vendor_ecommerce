@@ -227,7 +227,9 @@ class HomeController extends Controller
     }
 
     public function load_auction_products_section(){
-        // return 'Auction Check';
+        if(!addon_is_activated('auction')){
+            return;
+        }
         return view('auction.frontend.auction_products_section');
     }
 
@@ -252,10 +254,9 @@ class HomeController extends Controller
 
     public function product(Request $request, $slug)
     {
-        $detailedProduct  = Product::where('slug', $slug)->where('approved', 1)->first();
+        $detailedProduct  = Product::with('reviews', 'brand', 'stocks', 'user', 'user.shop')->where('slug', $slug)->where('approved', 1)->first();
 
         if($detailedProduct != null && $detailedProduct->published){
-            //updateCartSetup();
             if($request->has('product_referral_code') &&
                     \App\Addon::where('unique_identifier', 'affiliate_system')->first() != null &&
                     \App\Addon::where('unique_identifier', 'affiliate_system')->first()->activated) {
@@ -279,7 +280,6 @@ class HomeController extends Controller
             else {
                 return view('frontend.product_details', compact('detailedProduct'));
             }
-            // return view('frontend.product_details', compact('detailedProduct'));
         }
         abort(404);
     }
@@ -322,7 +322,7 @@ class HomeController extends Controller
 
     public function show_product_upload_form(Request $request)
     {
-        if(\App\Addon::where('unique_identifier', 'seller_subscription')->first() != null && \App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated){
+        if(addon_is_activated('seller_subscription')){
             if(Auth::user()->seller->remaining_uploads > 0){
                 $categories = Category::where('parent_id', 0)
                     ->where('digital', 0)
@@ -367,216 +367,6 @@ class HomeController extends Controller
         }
         $products = $products->paginate(10);
         return view('frontend.user.seller.products', compact('products', 'search'));
-    }
-
-    public function ajax_search(Request $request)
-    {
-        $keywords = array();
-        $products = Product::where('published', 1)->where('tags', 'like', '%'.$request->search.'%')->get();
-        foreach ($products as $key => $product) {
-            foreach (explode(',',$product->tags) as $key => $tag) {
-                if(stripos($tag, $request->search) !== false){
-                    if(sizeof($keywords) > 5){
-                        break;
-                    }
-                    else{
-                        if(!in_array(strtolower($tag), $keywords)){
-                            array_push($keywords, strtolower($tag));
-                        }
-                    }
-                }
-            }
-        }
-
-        $products = filter_products(Product::query());
-
-        $products = $products->where('published', 1)
-                        ->where(function ($q) use($request) {
-                            $q->where('name', 'like', '%'.$request->search.'%')
-                            ->orWhere('tags', 'like', '%'.$request->search.'%');
-                        })
-                    ->get();
-
-//        $products = filter_products(Product::where('published', 1)->where('name', 'like', '%'.$request->search.'%'))->orWhere('tags', 'like', '%'.$request->search.'%')->get()->take(3);
-
-        $categories = Category::where('name', 'like', '%'.$request->search.'%')->get()->take(3);
-
-        $shops = Shop::whereIn('user_id', verified_sellers_id())->where('name', 'like', '%'.$request->search.'%')->get()->take(3);
-
-        if(sizeof($keywords)>0 || sizeof($categories)>0 || sizeof($products)>0 || sizeof($shops) >0){
-            return view('frontend.partials.search_content', compact('products', 'categories', 'keywords', 'shops'));
-        }
-        return '0';
-    }
-
-    public function listing(Request $request)
-    {
-        return $this->search($request);
-    }
-
-    public function listingByCategory(Request $request, $category_slug)
-    {
-        $category = Category::where('slug', $category_slug)->first();
-        if ($category != null) {
-            return $this->search($request, $category->id);
-        }
-        abort(404);
-    }
-
-    public function listingByBrand(Request $request, $brand_slug)
-    {
-        $brand = Brand::where('slug', $brand_slug)->first();
-        if ($brand != null) {
-            return $this->search($request, null, $brand->id);
-        }
-        abort(404);
-    }
-
-    public function search(Request $request, $category_id = null, $brand_id = null)
-    {
-        $query = $request->q;
-        $sort_by = $request->sort_by;
-        $min_price = $request->min_price;
-        $max_price = $request->max_price;
-        $seller_id = $request->seller_id;
-
-        $conditions = ['published' => 1];
-
-        if($brand_id != null){
-            $conditions = array_merge($conditions, ['brand_id' => $brand_id]);
-        }elseif ($request->brand != null) {
-            $brand_id = (Brand::where('slug', $request->brand)->first() != null) ? Brand::where('slug', $request->brand)->first()->id : null;
-            $conditions = array_merge($conditions, ['brand_id' => $brand_id]);
-        }
-
-        if($seller_id != null){
-            $conditions = array_merge($conditions, ['user_id' => Seller::findOrFail($seller_id)->user->id]);
-        }
-
-        $products = Product::where($conditions);
-
-        if($category_id != null){
-            $category_ids = CategoryUtility::children_ids($category_id);
-            $category_ids[] = $category_id;
-
-            $products = $products->whereIn('category_id', $category_ids);
-        }
-
-        if($min_price != null && $max_price != null){
-            $products = $products->where('unit_price', '>=', $min_price)->where('unit_price', '<=', $max_price);
-        }
-
-
-        switch ($sort_by) {
-            case 'newest':
-                $products->orderBy('created_at', 'desc');
-                break;
-            case 'oldest':
-                $products->orderBy('created_at', 'asc');
-                break;
-            case 'price-asc':
-                $products->orderBy('unit_price', 'asc');
-                break;
-            case 'price-desc':
-                $products->orderBy('unit_price', 'desc');
-                break;
-            default:
-                $products->orderBy('created_at', 'desc');
-                break;
-        }
-
-
-        $non_paginate_products = filter_products($products)->get();
-
-        //Attribute Filter
-
-        $attributes = array();
-        foreach ($non_paginate_products as $key => $product) {
-            if($product->attributes != null && is_array(json_decode($product->attributes))){
-                foreach (json_decode($product->attributes) as $key => $value) {
-                    $flag = false;
-                    $pos = 0;
-                    foreach ($attributes as $key => $attribute) {
-                        if($attribute['id'] == $value){
-                            $flag = true;
-                            $pos = $key;
-                            break;
-                        }
-                    }
-                    if(!$flag){
-                        $item['id'] = $value;
-                        $item['values'] = array();
-                        foreach (json_decode($product->choice_options) as $key => $choice_option) {
-                            if($choice_option->attribute_id == $value){
-                                $item['values'] = $choice_option->values;
-                                break;
-                            }
-                        }
-                        array_push($attributes, $item);
-                    }
-                    else {
-                        foreach (json_decode($product->choice_options) as $key => $choice_option) {
-                            if($choice_option->attribute_id == $value){
-                                foreach ($choice_option->values as $key => $value) {
-                                    if(!in_array($value, $attributes[$pos]['values'])){
-                                        array_push($attributes[$pos]['values'], $value);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        $selected_attributes = array();
-
-        foreach ($attributes as $key => $attribute) {
-            if($request->has('attribute_'.$attribute['id'])){
-                foreach ($request['attribute_'.$attribute['id']] as $key => $value) {
-                    $str = '"'.$value.'"';
-                    $products = $products->where('choice_options', 'like', '%'.$str.'%');
-                }
-
-                $item['id'] = $attribute['id'];
-                $item['values'] = $request['attribute_'.$attribute['id']];
-                array_push($selected_attributes, $item);
-            }
-        }
-
-
-        //Color Filter
-        $all_colors = array();
-
-        foreach ($non_paginate_products as $key => $product) {
-            if ($product->colors != null) {
-                foreach (json_decode($product->colors) as $key => $color) {
-                    if(!in_array($color, $all_colors)){
-                        array_push($all_colors, $color);
-                    }
-                }
-            }
-        }
-
-        $selected_color = null;
-
-        if($request->has('color')){
-            $str = '"'.$request->color.'"';
-            $products = $products->where('colors', 'like', '%'.$str.'%');
-            $selected_color = $request->color;
-        }
-
-        if($query != null){
-            $searchController = new SearchController;
-            $searchController->store($request);
-
-            $products = $products->where('name', 'like', '%'.$query.'%')->orWhere('tags', 'like', '%'.$query.'%');
-        }
-
-
-        $products = filter_products($products)->paginate(12)->appends(request()->query());
-
-        return view('frontend.product_listing', compact('products', 'query', 'category_id', 'brand_id', 'sort_by', 'seller_id','min_price', 'max_price', 'attributes', 'selected_attributes', 'all_colors', 'selected_color'));
     }
 
     public function home_settings(Request $request)
@@ -747,7 +537,7 @@ class HomeController extends Controller
     }
     public function show_digital_product_upload_form(Request $request)
     {
-        if(\App\Addon::where('unique_identifier', 'seller_subscription')->first() != null && \App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated){
+        if(addon_is_activated('seller_subscription')){
             if(Auth::user()->seller->remaining_digital_uploads > 0){
                 $business_settings = BusinessSetting::where('type', 'digital_product_upload')->first();
                 $categories = Category::where('digital', 1)->get();

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\CustomerPackageController;
 use Illuminate\Http\Request;
 use App\Http\Requests;
-use App\Order;
+use App\CombinedOrder;
 use App\Seller;
 use App\CustomerPackage;
 use App\SellerPackage;
@@ -20,10 +20,10 @@ class PaystackController extends Controller
     public function redirectToGateway(Request $request)
     {
         if (Session::get('payment_type') == 'cart_payment') {
-            $order = Order::findOrFail(Session::get('order_id'));
+            $combined_order = CombinedOrder::findOrFail(Session::get('combined_order_id'));
             $user = Auth::user();
             $request->email = $user->email;
-            $request->amount = round($order->grand_total * 100);
+            $request->amount = round($combined_order->grand_total * 100);
             $request->currency = env('PAYSTACK_CURRENCY_CODE', 'NGN');
             $request->reference = Paystack::genTranxRef();
             return Paystack::getAuthorizationUrl()->redirectNow();
@@ -69,9 +69,9 @@ class PaystackController extends Controller
                 $payment_detalis = json_encode($payment);
                 if (!empty($payment['data']) && $payment['data']['status'] == 'success') {
                     $checkoutController = new CheckoutController;
-                    return $checkoutController->checkout_done(Session::get('order_id'), $payment_detalis);
+                    return $checkoutController->checkout_done(Session::get('combined_order_id'), $payment_detalis);
                 }
-                Session::forget('order_id');
+                Session::forget('combined_order_id');
                 flash(translate('Payment cancelled'))->success();
                 return redirect()->route('home');
             } elseif (Session::get('payment_type') == 'wallet_payment') {

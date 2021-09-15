@@ -7,7 +7,7 @@ use Session;
 use Auth;
 use Illuminate\Routing\UrlGenerator;
 use App\Http\Controllers;
-use App\Order;
+use App\CombinedOrder;
 use App\BusinessSetting;
 use App\Seller;
 use App\Http\Controllers\CheckoutController;
@@ -29,14 +29,14 @@ class PublicSslCommerzPaymentController extends Controller
             # In orders table order uniq identity is "order_id","order_status" field contain status of the transaction, "grand_total" is the order amount to be paid and "currency" is for storing Site Currency which will be checked with paid currency.
             if(Session::has('payment_type')){
                 if(Session::get('payment_type') == 'cart_payment'){
-                    $order = Order::findOrFail($request->session()->get('order_id'));
+                    $combined_order = CombinedOrder::findOrFail($request->session()->get('combined_order_id'));
                     $post_data = array();
-                    $post_data['total_amount'] = $order->grand_total; # You cant not pay less than 10
+                    $post_data['total_amount'] = $combined_order->grand_total; # You cant not pay less than 10
                     $post_data['currency'] = "BDT";
-                    $post_data['tran_id'] = substr(md5($request->session()->get('order_id')), 0, 10); // tran_id must be unique
+                    $post_data['tran_id'] = substr(md5($request->session()->get('combined_order_id')), 0, 10); // tran_id must be unique
 
                     $post_data['value_a'] = $post_data['tran_id'];
-                    $post_data['value_b'] = $request->session()->get('order_id');
+                    $post_data['value_b'] = $request->session()->get('combined_order_id');
                     $post_data['value_c'] = $request->session()->get('payment_type');
 
                     #Start to save these value  in session to pick in success page.
@@ -205,7 +205,7 @@ class PublicSslCommerzPaymentController extends Controller
           $tran_id = $request->input('tran_id');
 
           #Check order status in order tabel against the transaction id or order id.
-          $order = Order::findOrFail($request->session()->get('order_id'));
+          $combined_order = CombinedOrder::findOrFail($request->session()->get('combined_order_id'));
 
                 if($order->payment_status =='Pending')
                 {

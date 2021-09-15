@@ -45,29 +45,31 @@
 
 <section class="py-4 gry-bg">
     <div class="container">
-        <div class="row cols-xs-space cols-sm-space cols-md-space">
-            <div class="col-xxl-8 col-xl-10 mx-auto text-left">
-                @php
-                    $admin_products = array();
-                    $seller_products = array();
-                    foreach ($carts as $key => $cartItem){
-                        if(\App\Product::find($cartItem['product_id'])->added_by == 'admin'){
-                            array_push($admin_products, $cartItem['product_id']);
-                        }
-                        else{
-                            $product_ids = array();
-                            if(array_key_exists(\App\Product::find($cartItem['product_id'])->user_id, $seller_products)){
-                                $product_ids = $seller_products[\App\Product::find($cartItem['product_id'])->user_id];
-                            }
-                            array_push($product_ids, $cartItem['product_id']);
-                            $seller_products[\App\Product::find($cartItem['product_id'])->user_id] = $product_ids;
-                        }
-                    }
-                @endphp
-
-                @if (!empty($admin_products))
+        <div class="row">
+            <div class="col-xxl-8 col-xl-10 mx-auto">
                 <form class="form-default" action="{{ route('checkout.store_delivery_info') }}" role="form" method="POST">
                     @csrf
+                    @php
+                        $admin_products = array();
+                        $seller_products = array();
+                        foreach ($carts as $key => $cartItem){
+                            $product = \App\Product::find($cartItem['product_id']);
+
+                            if($product->added_by == 'admin'){
+                                array_push($admin_products, $cartItem['product_id']);
+                            }
+                            else{
+                                $product_ids = array();
+                                if(array_key_exists($product->user_id, $seller_products)){
+                                    $product_ids = $seller_products[$product->user_id];
+                                }
+                                array_push($product_ids, $cartItem['product_id']);
+                                $seller_products[$product->user_id] = $product_ids;
+                            }
+                        }
+                    @endphp
+
+                    @if (!empty($admin_products))
                     <div class="card mb-3 shadow-sm border-0 rounded">
                         <div class="card-header p-3">
                             <h5 class="fs-16 fw-600 mb-0">{{ get_setting('site_name') }} {{ translate('Products') }}</h5>
@@ -157,14 +159,8 @@
                             </div>
                             
                         </div>
-                        <div class="card-footer justify-content-end">
-                            <button type="submit" name="owner_id" value="{{ App\User::where('user_type', 'admin')->first()->id }}" class="btn fw-600 btn-primary">{{ translate('Continue to Payment')}}</a>
-                        </div>
                     </div>
-                </form>
-                @endif
-                <form class="form-default"  action="{{ route('checkout.store_delivery_info') }}" role="form" method="POST">
-                    @csrf
+                    @endif
                     @if (!empty($seller_products))
                         @foreach ($seller_products as $key => $seller_product)
                             <div class="card mb-3 shadow-sm border-0 rounded">
@@ -264,19 +260,19 @@
                                     </div>
                                     
                                 </div>
-                                <div class="card-footer justify-content-end">
-                                    <button type="submit" name="owner_id" value="{{ $key }}" class="btn fw-600 btn-primary">{{ translate('Continue to Payment')}}</a>
-                                </div>
                             </div>
                         @endforeach
                     @endif
+
+
+                    <div class="pt-4 d-flex justify-content-between align-items-center">
+                        <a href="{{ route('home') }}" >
+                            <i class="la la-angle-left"></i>
+                            {{ translate('Return to shop')}}
+                        </a>
+                        <button type="submit" class="btn fw-600 btn-primary">{{ translate('Continue to Payment')}}</button>
+                    </div>
                 </form>
-                <div class="pt-4">
-                    <a href="{{ route('home') }}" >
-                        <i class="la la-angle-left"></i>
-                        {{ translate('Return to shop')}}
-                    </a>
-                </div>
             </div>
         </div>
     </div>

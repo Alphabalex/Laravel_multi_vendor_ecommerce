@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use Session;
 use Redirect;
-use App\Order;
+use App\CombinedOrder;
 use App\Seller;
 use Razorpay\Api\Api;
 use Illuminate\Support\Facades\Input;
@@ -21,8 +21,8 @@ class RazorpayController extends Controller
     {
         if(Session::has('payment_type')){
             if(Session::get('payment_type') == 'cart_payment'){
-                $order = Order::findOrFail(Session::get('order_id'));
-                return view('frontend.razor_wallet.order_payment_Razorpay', compact('order'));
+                $combined_order = CombinedOrder::findOrFail(Session::get('combined_order_id'));
+                return view('frontend.razor_wallet.order_payment_Razorpay', compact('combined_order'));
             }
             elseif (Session::get('payment_type') == 'wallet_payment') {
                 return view('frontend.razor_wallet.wallet_payment_Razorpay');
@@ -62,7 +62,7 @@ class RazorpayController extends Controller
             if(Session::has('payment_type')){
                 if(Session::get('payment_type') == 'cart_payment'){
                     $checkoutController = new CheckoutController;
-                    return $checkoutController->checkout_done(Session::get('order_id'), $payment_detalis);
+                    return $checkoutController->checkout_done(Session::get('combined_order_id'), $payment_detalis);
                 }
                 elseif (Session::get('payment_type') == 'wallet_payment') {
                     $walletController = new WalletController;

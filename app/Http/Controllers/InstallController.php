@@ -64,10 +64,7 @@ class InstallController extends Controller
         $previousRouteServiceProvier = base_path('app/Providers/RouteServiceProvider.php');
         $newRouteServiceProvier      = base_path('app/Providers/RouteServiceProvider.txt');
         copy($newRouteServiceProvier, $previousRouteServiceProvier);
-        //sleep(5);
         return view('installation.step5');
-
-        // return redirect('step6');
     }
     public function database_installation(Request $request) {
 

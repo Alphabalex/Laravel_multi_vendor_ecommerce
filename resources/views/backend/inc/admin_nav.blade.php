@@ -29,7 +29,7 @@
                     </div>
                 </div>
             </div>
-            @if (\App\Addon::where('unique_identifier', 'pos_system')->first() != null && \App\Addon::where('unique_identifier', 'pos_system')->first()->activated)
+            @if (addon_is_activated('pos_system'))
                 <div class="d-none d-md-flex justify-content-around align-items-center align-items-stretch ml-3">
                     <div class="aiz-topbar-item">
                         <div class="d-flex align-items-center">
@@ -86,7 +86,7 @@
                             </ul>
                         </div>
                         <div class="text-center border-top">
-                            <a href="{{ route('admin/all-notification') }}" class="text-reset d-block py-2">
+                            <a href="{{ route('admin.all-notification') }}" class="text-reset d-block py-2">
                                 {{translate('View All Notifications')}}
                             </a>
                         </div>

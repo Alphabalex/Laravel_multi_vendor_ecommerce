@@ -28,7 +28,7 @@
             <div class="fs-18 text-primary">{{ translate('Recharge Wallet') }}</div>
         </div>
       </div>
-      @if (\App\Addon::where('unique_identifier', 'offline_payment')->first() != null && \App\Addon::where('unique_identifier', 'offline_payment')->first()->activated)
+      @if (addon_is_activated('offline_payment'))
           <div class="col-md-4 mx-auto mb-3" >
               <div class="p-3 rounded mb-3 c-pointer text-center bg-white shadow-sm hov-shadow-lg has-transition" onclick="show_make_wallet_recharge_modal()">
                   <span class="size-60px rounded-circle mx-auto bg-secondary d-flex align-items-center justify-content-center mb-3">
@@ -150,7 +150,7 @@
                                       @if (get_setting('nagad') == 1)
                                           <option value="nagad">{{ translate('Nagad')}}</option>
                                       @endif
-                                      @if(\App\Addon::where('unique_identifier', 'african_pg')->first() != null && \App\Addon::where('unique_identifier', 'african_pg')->first()->activated)
+                                      @if(addon_is_activated('african_pg'))
                                           @if (get_setting('mpesa') == 1)
                                               <option value="mpesa">{{ translate('Mpesa')}}</option>
                                           @endif
@@ -161,7 +161,7 @@
                                               <option value="payfast">{{ translate('PayFast')}}</option>
                                           @endif
                                       @endif
-                                      @if (\App\Addon::where('unique_identifier', 'paytm')->first() != null && \App\Addon::where('unique_identifier', 'paytm')->first()->activated)
+                                      @if (addon_is_activated('paytm'))
                                           <option value="paytm">{{ translate('Paytm')}}</option>
                                       @endif
                                   </select>

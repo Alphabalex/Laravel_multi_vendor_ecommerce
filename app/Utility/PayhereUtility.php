@@ -22,9 +22,9 @@ class PayhereUtility
         return $sandbox ? PayhereUtility::action_url('sandbox') : PayhereUtility::action_url('live');
     }
 
-    public static  function create_checkout_form($order_id, $amount, $first_name, $last_name, $phone, $email,$address,$city)
+    public static  function create_checkout_form($combined_order, $amount, $first_name, $last_name, $phone, $email,$address,$city)
     {
-        return view('frontend.payhere.checkout_form', compact('order_id', 'amount', 'first_name', 'last_name', 'phone', 'email','address','city'));
+        return view('frontend.payhere.checkout_form', compact('combined_order', 'amount', 'first_name', 'last_name', 'phone', 'email','address','city'));
     }
 
     public static  function create_wallet_form($user_id,$order_id, $amount, $first_name, $last_name, $phone, $email,$address,$city)

@@ -21,14 +21,14 @@ class RazorpayController
         $order_id = $request->order_id;
         $amount = $request->amount;
         $user_id = $request->user_id;
-
+        $user = User::find($user_id);
 
         if ($payment_type == 'cart_payment') {
             $order = Order::find($order_id);
             $shipping_address = json_decode($order->shipping_address,true);
-            return view('frontend.razorpay.order_payment', compact('order', 'shipping_address'));
+            return view('frontend.razorpay.order_payment', compact('user','order', 'shipping_address'));
         } elseif ($payment_type == 'wallet_payment') {
-            $user = User::find($user_id);
+
             return view('frontend.razorpay.wallet_payment',  compact('user', 'amount'));
         }
     }

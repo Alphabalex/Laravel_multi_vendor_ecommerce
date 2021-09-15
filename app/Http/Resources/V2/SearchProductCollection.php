@@ -13,8 +13,8 @@ class SearchProductCollection extends ResourceCollection
                 return [
                     'name' => $data->name,
                     'thumbnail_image' => api_asset($data->thumbnail_img),
-                    'base_price' => (double) homeBasePrice($data),
-                    'base_discounted_price' => (double) homeDiscountedBasePrice($data),
+                    'base_price' => (double) home_base_price($data, false),
+                    'base_discounted_price' => (double) home_discounted_base_price($data, false),
                     'rating' => (double) $data->rating,
                     'links' => [
                         'details' => route('products.show', $data->id),

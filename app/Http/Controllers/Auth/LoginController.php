@@ -66,7 +66,7 @@ class LoginController extends Controller
         }
 
         // check if they're an existing user
-        $existingUser = User::where('provider_id', $user->id)->orWhere('email', $user->email)->first();
+        $existingUser = User::where('provider_id', $user->id)->first();
 
         if($existingUser){
             // log them in

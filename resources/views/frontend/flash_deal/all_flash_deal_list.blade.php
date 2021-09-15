@@ -28,7 +28,7 @@
 
 <section class="mb-4">
     <div class="container">
-        <div class="row row-cols-1 row-cols-lg-2 gutters-10">                           
+        <div class="row row-cols-1 row-cols-lg-2 gutters-10">
             @foreach($all_flash_deals as $single)
             <div class="col">
                 <div class="bg-white rounded shadow-sm mb-3">
@@ -37,7 +37,7 @@
                             src="{{ static_asset('assets/img/placeholder-rect.jpg') }}"
                             data-src="{{ uploaded_asset($single->banner) }}"
                             alt="{{ $single->title }}"
-                            class="img-fluid lazyload rounded">
+                            class="img-fluid lazyload rounded w-100">
                     </a>
                 </div>
             </div>

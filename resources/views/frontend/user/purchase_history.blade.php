@@ -30,7 +30,7 @@
                                         {{ single_price($order->grand_total) }}
                                     </td>
                                     <td>
-                                        {{ translate(ucfirst(str_replace('_', ' ', $order->orderDetails->first()->delivery_status))) }}
+                                        {{ translate(ucfirst(str_replace('_', ' ', $order->delivery_status))) }}
                                         @if($order->delivery_viewed == 0)
                                             <span class="ml-2" style="color:green"><strong>*</strong></span>
                                         @endif
