@@ -41,20 +41,18 @@ Route::group(['prefix' =>'admin', 'middleware' => ['auth', 'admin']], function()
 
     Route::get('/affiliate/logs', 'AffiliateController@affiliate_logs_admin')->name('affiliate.logs.admin');
 
+
 });
 
 //FrontEnd
 Route::get('/affiliate', 'AffiliateController@apply_for_affiliate')->name('affiliate.apply');
 Route::post('/affiliate/store', 'AffiliateController@store_affiliate_user')->name('affiliate.store_affiliate_user');
+Route::get('/affiliate/user', 'AffiliateController@user_index')->name('affiliate.user.index');
+Route::get('/affiliate/user/payment_history', 'AffiliateController@user_payment_history')->name('affiliate.user.payment_history');
+Route::get('/affiliate/user/withdraw_request_history', 'AffiliateController@user_withdraw_request_history')->name('affiliate.user.withdraw_request_history');
 
-Route::group(['middleware' => ['auth']], function(){
-    Route::get('/affiliate/user', 'AffiliateController@user_index')->name('affiliate.user.index');
-    Route::get('/affiliate/user/payment_history', 'AffiliateController@user_payment_history')->name('affiliate.user.payment_history');
-    Route::get('/affiliate/user/withdraw_request_history', 'AffiliateController@user_withdraw_request_history')->name('affiliate.user.withdraw_request_history');
+Route::get('/affiliate/payment/settings', 'AffiliateController@payment_settings')->name('affiliate.payment_settings');
+Route::post('/affiliate/payment/settings/store', 'AffiliateController@payment_settings_store')->name('affiliate.payment_settings_store');
 
-    Route::get('/affiliate/payment/settings', 'AffiliateController@payment_settings')->name('affiliate.payment_settings');
-    Route::post('/affiliate/payment/settings/store', 'AffiliateController@payment_settings_store')->name('affiliate.payment_settings_store');
-
-    // Affiliate Withdraw Request
-    Route::post('/affiliate/withdraw_request/store', 'AffiliateController@withdraw_request_store')->name('affiliate.withdraw_request.store');
-});
+// Affiliate Withdraw Request
+Route::post('/affiliate/withdraw_request/store', 'AffiliateController@withdraw_request_store')->name('affiliate.withdraw_request.store');

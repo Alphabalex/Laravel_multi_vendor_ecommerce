@@ -19,6 +19,7 @@
                                     <div class='col-12 form-group required'>
                                         <label class='control-label'>{{translate('Enter Mobile Number')}}</label>
                                         <input type="text" name="Msisdn" class="form-control" placeholder="{{ translate('Enter Mobile Number') }}" required>
+                                        <small class="text-warning">KINDLY PLEASE PROVIDE YOUR SAFARICOM M-PESA NUMBER START WITH 254</small>
                                     </div>
                                 </div>
 
@@ -33,13 +34,13 @@
                                 <div class="row">
                                     <div class="col-12">
                                         @if (Session::get('payment_type') == 'cart_payment')
-                                            <button class="btn btn-base-1 btn-block" type="submit">{{translate('Pay Now')}} (${{ number_format(convert_to_usd(\App\Order::findOrFail(Session::get('order_id'))->grand_total), 2) }})</button>
+                                            <button class="btn btn-base-1 btn-block" type="submit">{{translate('Pay Now')}} (Ksh{{ \App\Order::findOrFail(Session::get('order_id'))->grand_total }})</button>
                                         @elseif(Session::get('payment_type') == 'wallet_payment')
-                                            <button class="btn btn-base-1 btn-block" type="submit">{{translate('Pay Now')}} (${{ number_format(convert_to_usd(Session::get('payment_data')['amount']), 2) }})</button>
+                                            <button class="btn btn-base-1 btn-block" type="submit">{{translate('Pay Now')}} (Ksh{{ Session::get('payment_data')['amount'] }})</button>
                                         @elseif(Session::get('payment_type') == 'customer_package_payment')
-                                            <button class="btn btn-base-1 btn-block" type="submit">{{translate('Pay Now')}} (${{ number_format(convert_to_usd($customer_package->amount,2)) }})</button>
+                                            <button class="btn btn-base-1 btn-block" type="submit">{{translate('Pay Now')}} (Ksh{{ $customer_package->amount }})</button>
                                         @elseif(Session::get('payment_type') == 'seller_package_payment')
-                                            <button class="btn btn-base-1 btn-block" type="submit">{{translate('Pay Now')}} (${{ number_format(convert_to_usd($seller_package->amount,2)) }})</button>
+                                            <button class="btn btn-base-1 btn-block" type="submit">{{translate('Pay Now')}} (Ksh{{ $seller_package->amount }})</button>
                                         @endif
                                     </div>
                                 </div>

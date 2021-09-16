@@ -115,7 +115,6 @@ class OTPVerificationController extends Controller
         $phone = json_decode($order->shipping_address)->phone;
         if($phone != null){
             SmsUtility::order_placement($phone, $order);
-            // sendSMS(json_decode($order->shipping_address)->phone, env('APP_NAME'), 'You order has been placed and Order Code is : '.$order->code);
         }
     }
 
@@ -127,8 +126,6 @@ class OTPVerificationController extends Controller
         $phone = json_decode($order->shipping_address)->phone;
         if($phone != null){
             SmsUtility::delivery_status_change($phone, $order);
-
-            // sendSMS(json_decode($order->shipping_address)->phone, env('APP_NAME'), 'Your delivery status has been updated to '.$order->orderDetails->first()->delivery_status.' for Order code : '.$order->code);
         }
     }
 
@@ -140,7 +137,6 @@ class OTPVerificationController extends Controller
         $phone = json_decode($order->shipping_address)->phone;
         if($phone != null){
             SmsUtility::payment_status_change($phone, $order);
-            // sendSMS(json_decode($order->shipping_address)->phone, env('APP_NAME'), 'Your payment status has been updated to '.$order->payment_status.' for Order code : '.$order->code);
         }
     }
 }
