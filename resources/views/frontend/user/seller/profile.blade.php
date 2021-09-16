@@ -249,7 +249,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-2">
                                 <label>{{ translate('City')}}</label>
@@ -291,7 +291,7 @@
                                 </div>
                             </div>
                         @endif
-                        
+
                         <div class="row">
                             <div class="col-md-2">
                                 <label>{{ translate('Postal code')}}</label>
@@ -327,7 +327,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            
+
             <div class="modal-body" id="edit_modal_body">
 
             </div>
@@ -342,7 +342,7 @@
         function add_new_address(){
             $('#new-address-modal').modal('show');
         }
-        
+
         $('.new-email-verification').on('click', function() {
             $(this).find('.loading').removeClass('d-none');
             $(this).find('.default').addClass('d-none');
@@ -360,11 +360,11 @@
                     AIZ.plugins.notify('danger', data.message);
             });
         });
-        
+
         function edit_address(address) {
             var url = '{{ route("addresses.edit", ":id") }}';
             url = url.replace(':id', address);
-            
+
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -392,38 +392,34 @@
                 }
             });
         }
-        
+
         $(document).on('change', '[name=country]', function() {
             var country = $(this).val();
             get_city(country);
         });
-        
+
         function get_city(country) {
-            $('[name="city"]').html("");
             $.ajax({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                url: "{{route('get-city')}}",
+                url: "https://countriesnow.space/api/v0.1/countries/cities",
                 type: 'POST',
                 data: {
-                    country_name: country
+                    country: country
                 },
                 success: function (response) {
-                    var obj = JSON.parse(response);
-                    if(obj != '') {
-                        $('[name="city"]').html(obj);
-                        AIZ.plugins.bootstrapSelect('refresh');
-                    }
+                    var cities = response.data;
+                    $.map(cities, function (city,key) {
+                    $('[name="city"]').append('<option id='+ key +'>' + city + '</option>');
+                    });
+                    AIZ.plugins.bootstrapSelect('refresh');
                 }
             });
         }
     </script>
 
     @if (get_setting('google_map') == 1)
-        
+
         @include('frontend.partials.google_map')
-        
+
     @endif
 
 @endsection
