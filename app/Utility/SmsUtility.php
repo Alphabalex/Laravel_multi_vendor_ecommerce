@@ -46,12 +46,16 @@ class SmsUtility
         }
     }
 
-    public static function delivery_status_change($phone='', $order_code='')
+    public static function delivery_status_change($phone='', $order)
     {
         $sms_template   = SmsTemplate::where('identifier','delivery_status_change')->first();
         $sms_body       = $sms_template->sms_body;
-        $sms_body       = str_replace('[[order_code]]', $order_code, $sms_body);
+        $delivery_status = translate(ucfirst(str_replace('_', ' ', $order->delivery_status)));
+
+        $sms_body       = str_replace('[[delivery_status]]', $delivery_status, $sms_body);
+        $sms_body       = str_replace('[[order_code]]', $order->code, $sms_body);
         $template_id    = $sms_template->template_id;
+
         try {
             sendSMS($phone, env('APP_NAME'), $sms_body, $template_id);
         } catch (\Exception $e) {

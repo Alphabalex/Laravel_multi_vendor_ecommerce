@@ -19,7 +19,7 @@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="mb-0 h6">{{translate('Twillo OTP')}}</h3>
+                    <h3 class="mb-0 h6">{{translate('Twilio OTP')}}</h3>
                 </div>
                 <div class="card-body text-center">
                     <label class="aiz-switch aiz-switch-success mb-0">
@@ -70,44 +70,14 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <h4 class="text-center text-muted mt-4">{{translate('OTP will be Used For')}}</h4>
-    <div class="row">
-        <div class="col-lg-4">
+        <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="mb-0 h6">{{translate('Order Placement')}}</h3>
+                    <h3 class="mb-0 h6">{{translate('MIMSMS')}}</h3>
                 </div>
                 <div class="card-body text-center">
                     <label class="aiz-switch aiz-switch-success mb-0">
-                        <input type="checkbox" onchange="updateSettings(this, 'otp_for_order')" @if(\App\OtpConfiguration::where('type', 'otp_for_order')->first()->value == 1) checked @endif>
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="mb-0 h6">{{translate('Delivery Status Changing Time')}}</h3>
-                </div>
-                <div class="card-body text-center">
-                    <label class="aiz-switch aiz-switch-success mb-0">
-                        <input type="checkbox" onchange="updateSettings(this, 'otp_for_delivery_status')" @if(\App\OtpConfiguration::where('type', 'otp_for_delivery_status')->first()->value == 1) checked @endif>
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="mb-0 h6">{{translate('Paid Status Changing Time')}}</h3>
-                </div>
-                <div class="card-body text-center">
-                    <label class="aiz-switch aiz-switch-success mb-0">
-                        <input type="checkbox" onchange="updateSettings(this, 'otp_for_paid_status')" @if(\App\OtpConfiguration::where('type', 'otp_for_paid_status')->first()->value == 1) checked @endif>
+                        <input type="checkbox" onchange="updateSettings(this, 'mimsms')" @if(App\OtpConfiguration::where('type', 'mimsms')->first() != null && \App\OtpConfiguration::where('type', 'mimsms')->first()->value == 1) checked @endif>
                         <span class="slider round"></span>
                     </label>
                 </div>
@@ -127,7 +97,7 @@
                 var value = 0;
             }
             $.post('{{ route('otp_configurations.update.activation') }}', {_token:'{{ csrf_token() }}', type:type, value:value}, function(data){
-                if(data == '1'){
+                if(data == 1){
                     AIZ.plugins.notify('success', '{{ translate('Settings updated successfully') }}');
                 }
                 else{

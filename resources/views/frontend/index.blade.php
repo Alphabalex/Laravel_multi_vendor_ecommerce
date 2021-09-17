@@ -40,7 +40,7 @@
                     @if (count($featured_categories) > 0)
                         <ul class="list-unstyled mb-0 row gutters-5">
                             @foreach ($featured_categories as $key => $category)
-                                <li class="minw-0 col-4 col-md mt-3">
+                                <li class="minw-0 col-4 col-md-3 mt-3">
                                     <a href="{{ route('products.category', $category->slug) }}" class="d-block rounded bg-white p-2 text-reset shadow-sm">
                                         <img
                                             src="{{ static_asset('assets/img/placeholder.jpg') }}"
