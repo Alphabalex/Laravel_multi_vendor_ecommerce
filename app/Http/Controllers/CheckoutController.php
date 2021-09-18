@@ -57,8 +57,8 @@ class CheckoutController extends Controller
                     $razorpay = new RazorpayController;
                     return $razorpay->payWithRazorpay($request);
                 } elseif ($request->payment_option == 'proxypay') {
-                    //$proxy = new ProxypayController;
-                    //return $proxy->create_reference($request);
+                    $proxy = new ProxypayController;
+                    return $proxy->create_reference($request);
                 } elseif ($request->payment_option == 'paystack') {
                     if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null &&
                         \App\Addon::where('unique_identifier', 'otp_system')->first()->activated &&
@@ -85,12 +85,12 @@ class CheckoutController extends Controller
 
                     return PayhereUtility::create_checkout_form($combined_order_id, $amount, $first_name, $last_name, $phone, $email, $address, $city);
                 } elseif ($request->payment_option == 'payfast') {
-                    // $combined_order = CombinedOrder::findOrFail($request->session()->get('combined_order_id'));
+                    $combined_order = CombinedOrder::findOrFail($request->session()->get('combined_order_id'));
 
-                    // $combined_order_id = $combined_order->id;
-                    // $amount = $combined_order->grand_total;
+                    $combined_order_id = $combined_order->id;
+                    $amount = $combined_order->grand_total;
 
-                    // return PayfastUtility::create_checkout_form($combined_order_id, $amount);
+                    return PayfastUtility::create_checkout_form($combined_order_id, $amount);
                 } else if ($request->payment_option == 'ngenius') {
                     $ngenius = new NgeniusController();
                     return $ngenius->pay();
@@ -107,8 +107,8 @@ class CheckoutController extends Controller
                     $aamarpay = new AamarpayController;
                     return $aamarpay->index();
                 } else if ($request->payment_option == 'flutterwave') {
-                    // $flutterwave = new FlutterwaveController();
-                    // return $flutterwave->pay();
+                    $flutterwave = new FlutterwaveController();
+                    return $flutterwave->pay();
                 } else if ($request->payment_option == 'mpesa') {
                     $mpesa = new MpesaController();
                     return $mpesa->pay();
@@ -465,7 +465,7 @@ class CheckoutController extends Controller
 
         //Session::forget('club_point');
         //Session::forget('combined_order_id');
-        
+
         foreach($combined_order->orders as $order){
             NotificationUtility::sendOrderPlacedNotification($order);
         }
