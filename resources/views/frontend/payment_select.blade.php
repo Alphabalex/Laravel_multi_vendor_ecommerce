@@ -283,6 +283,7 @@
                                             @endif
                                         @endif
                                         @if(addon_is_activated('paytm'))
+                                            @if(get_setting('paytm') == 1)
                                             <div class="col-6 col-md-4">
                                                 <label class="aiz-megabox d-block mb-3">
                                                     <input value="paytm" class="online_payment" type="radio" name="payment_option" checked>
@@ -294,6 +295,7 @@
                                                     </span>
                                                 </label>
                                             </div>
+                                            @endif
                                         @endif
                                         @if(get_setting('cash_payment') == 1)
                                             @php

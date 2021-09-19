@@ -475,7 +475,86 @@
             </div>
         </div>
     </div>
-
+    @if(\App\Addon::where('unique_identifier', 'african_pg')->first() != null && \App\Addon::where('unique_identifier', 'african_pg')->first()->activated)
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0 h6 text-center">{{translate('MPesa Activation')}}</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="clearfix">
+                            <img class="float-left" src="{{ static_asset('assets/img/cards/mpesa.png') }}" height="30">
+                            <label class="aiz-switch aiz-switch-success mb-0 float-right">
+                                <input type="checkbox" onchange="updateSettings(this, 'mpesa')" <?php if(\App\BusinessSetting::where('type', 'mpesa')->first()->value == 1) echo "checked";?>>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="alert" style="color: #004085;background-color: #cce5ff;border-color: #b8daff;margin-bottom:0;margin-top:10px;">
+                            {{ translate('You need to configure Mpesa correctly to enable this feature') }}. <a href="{{ route('african_credentials.index') }}">{{ translate('Configure Now') }}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0 h6 text-center">{{translate('flutterwave Activation')}}</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="clearfix">
+                            <img class="float-left" src="{{ static_asset('assets/img/cards/flutterwave.png') }}" height="30">
+                            <label class="aiz-switch aiz-switch-success mb-0 float-right">
+                                <input type="checkbox" onchange="updateSettings(this, 'flutterwave')" <?php if(\App\BusinessSetting::where('type', 'flutterwave')->first()->value == 1) echo "checked";?>>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="alert" style="color: #004085;background-color: #cce5ff;border-color: #b8daff;margin-bottom:0;margin-top:10px;">
+                            {{ translate('You need to configure flutterwave correctly to enable this feature') }}. <a href="{{ route('african_credentials.index') }}">{{ translate('Configure Now') }}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0 h6 text-center">{{translate('Payfast Activation')}}</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="clearfix">
+                            <img class="float-left" src="{{ static_asset('assets/img/cards/payfast.png') }}" height="30">
+                            <label class="aiz-switch aiz-switch-success mb-0 float-right">
+                                <input type="checkbox" onchange="updateSettings(this, 'payfast')" <?php if(\App\BusinessSetting::where('type', 'payfast')->first()->value == 1) echo "checked";?>>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="alert" style="color: #004085;background-color: #cce5ff;border-color: #b8daff;margin-bottom:0;margin-top:10px;">
+                            {{ translate('You need to configure payfast correctly to enable this feature') }}. <a href="{{ route('african_credentials.index') }}">{{ translate('Configure Now') }}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+        @if(\App\Addon::where('unique_identifier', 'paytm')->first() != null && \App\Addon::where('unique_identifier', 'paytm')->first()->activated)
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0 h6 text-center">{{translate('Paytm Activation')}}</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="clearfix">
+                            <img class="float-left" src="{{ static_asset('assets/img/cards/paytm.jpg') }}" height="30">
+                            <label class="aiz-switch aiz-switch-success mb-0 float-right">
+                                <input type="checkbox" onchange="updateSettings(this, 'paytm')" <?php if(\App\BusinessSetting::where('type', 'paytm')->first()->value == 1) echo "checked";?>>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="alert" style="color: #004085;background-color: #cce5ff;border-color: #b8daff;margin-bottom:0;margin-top:10px;">
+                            {{ translate('You need to configure paytm correctly to enable this feature') }}. <a href="{{ route('paytm.index') }}">{{ translate('Configure Now') }}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
     <div class="col-lg-4">
         <div class="card">
             <div class="card-header">
@@ -492,7 +571,7 @@
             </div>
         </div>
     </div>
-    
+
 </div>
 
 <h4 class="text-center text-muted mt-4">{{translate('Social Media Login')}}</h4>
@@ -558,7 +637,7 @@
             else{
                 var value = 0;
             }
-            
+
             $.post('{{ route('business_settings.update.activation') }}', {_token:'{{ csrf_token() }}', type:type, value:value}, function(data){
                 if(data == '1'){
                     AIZ.plugins.notify('success', '{{ translate('Settings updated successfully') }}');

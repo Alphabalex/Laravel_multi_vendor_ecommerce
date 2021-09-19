@@ -10,7 +10,7 @@
                     <div class="card-body">
                         <div class="mb-5 text-center">
                             <img src="{{ uploaded_asset(get_setting('system_logo_black')) }}" class="mw-100 mb-4" height="40">
-                            <h1 class="h3 text-primary mb-0">{{ translate('Welcome to') }} {{ env('APP_NAME') }}</h1>
+                            <h1 class="h3 text-primary mb-0">{{ translate('Welcome to') }} {{get_setting('site_name')}}</h1>
                             <p>{{ translate('Login to your account.') }}</p>
                         </div>
                         <form class="pad-hor" method="POST" role="form" action="{{ route('login') }}">

@@ -17,7 +17,7 @@
                             </label>
                         </div>
                         <div class="alert" style="color: #004085;background-color: #cce5ff;border-color: #b8daff;margin-bottom:0;margin-top:10px;">
-                            {{ translate('You need to configure Mpesa correctly to enable this feature') }}. <a href="{{ route('payment_method.index') }}">{{ translate('Configure Now') }}</a>
+                            {{ translate('You need to configure Mpesa correctly to enable this feature') }}. <a href="{{ route('african_credentials.index') }}">{{ translate('Configure Now') }}</a>
                         </div>
                     </div>
                 </div>
@@ -36,7 +36,7 @@
                             </label>
                         </div>
                         <div class="alert" style="color: #004085;background-color: #cce5ff;border-color: #b8daff;margin-bottom:0;margin-top:10px;">
-                            {{ translate('You need to configure flutterwave correctly to enable this feature') }}. <a href="{{ route('payment_method.index') }}">{{ translate('Configure Now') }}</a>
+                            {{ translate('You need to configure flutterwave correctly to enable this feature') }}. <a href="{{ route('african_credentials.index') }}">{{ translate('Configure Now') }}</a>
                         </div>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                             </label>
                         </div>
                         <div class="alert" style="color: #004085;background-color: #cce5ff;border-color: #b8daff;margin-bottom:0;margin-top:10px;">
-                            {{ translate('You need to configure payfast correctly to enable this feature') }}. <a href="{{ route('payment_method.index') }}">{{ translate('Configure Now') }}</a>
+                            {{ translate('You need to configure payfast correctly to enable this feature') }}. <a href="{{ route('african_credentials.index') }}">{{ translate('Configure Now') }}</a>
                         </div>
                     </div>
                 </div>
