@@ -7,7 +7,7 @@
 #
 # Host: localhost (MySQL 5.7.26)
 # Database: ecommerce
-# Generation Time: 2021-09-15 21:22:15 +0000
+# Generation Time: 2021-09-19 23:25:37 +0000
 # ************************************************************
 
 
@@ -48,10 +48,12 @@ VALUES
 	(3,'refund','auction','1.0',1,'auction.png','2021-09-03 10:16:22','2021-09-03 10:16:22'),
 	(4,'club_point','club_point','1.3',1,'club_points.png','2021-09-03 10:16:42','2021-09-03 10:16:42'),
 	(5,'Offline Payment','offline_payment','1.3',1,'offline_banner.jpg','2021-09-03 10:17:11','2021-09-03 10:17:11'),
-	(6,'OTP','otp_system','1.5',1,'otp_system.jpg','2021-09-03 10:17:39','2021-09-03 10:17:39'),
+	(6,'OTP','otp_system','1.6',1,'otp_system.jpg','2021-09-03 10:17:39','2021-09-16 23:53:57'),
 	(7,'Paytm','paytm','1.1',1,'paytm.png','2021-09-03 10:18:02','2021-09-03 10:18:02'),
 	(8,'Point of Sale','pos_system','1.5',1,'pos_banner.jpg','2021-09-03 10:18:43','2021-09-14 14:01:54'),
-	(9,'refund','refund_request','1.2',1,'refund_request.png','2021-09-03 10:19:08','2021-09-03 10:19:08');
+	(9,'refund','refund_request','1.2',1,'refund_request.png','2021-09-03 10:19:08','2021-09-03 10:19:08'),
+	(10,'Seller Subscription System','seller_subscription','1.3',1,'seller_subscription.jpg','2021-09-16 23:37:32','2021-09-16 23:37:55'),
+	(11,'delivery_boy','delivery_boy','1.1',1,'delivery_boy.png','2021-09-16 23:56:45','2021-09-16 23:56:45');
 
 /*!40000 ALTER TABLE `addons` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -78,6 +80,16 @@ CREATE TABLE `addresses` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+LOCK TABLES `addresses` WRITE;
+/*!40000 ALTER TABLE `addresses` DISABLE KEYS */;
+
+INSERT INTO `addresses` (`id`, `user_id`, `address`, `country`, `city`, `longitude`, `latitude`, `postal_code`, `phone`, `set_default`, `created_at`, `updated_at`)
+VALUES
+	(1,8,'16 Aminu Ajibode Avenue, Unity Estate, Abule-odu, Egbeda, Lagos Nigeria','Nigeria','Alimosho',NULL,NULL,'100275','08085744967',0,'2021-09-16 15:47:19','2021-09-16 15:47:19'),
+	(2,8,'19 kolawole Shonibare street, off coker road, Ilupeju','Nigeria','Ipaja',NULL,NULL,'100275','08085744967',0,'2021-09-16 15:49:48','2021-09-16 15:49:48');
+
+/*!40000 ALTER TABLE `addresses` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table affiliate_configs
@@ -629,13 +641,13 @@ VALUES
 	(36,'facebook_chat','0',NULL,'2019-04-15 12:45:04','2019-04-15 12:45:04'),
 	(37,'email_verification','0',NULL,'2019-04-30 08:30:07','2019-04-30 08:30:07'),
 	(38,'wallet_system','1',NULL,'2019-05-19 09:05:44','2021-09-13 23:11:27'),
-	(39,'coupon_system','0',NULL,'2019-06-11 10:46:18','2019-06-11 10:46:18'),
+	(39,'coupon_system','1',NULL,'2019-06-11 10:46:18','2021-09-16 23:14:52'),
 	(40,'current_version','5.2',NULL,'2019-06-11 10:46:18','2019-06-11 10:46:18'),
 	(41,'instamojo_payment','0',NULL,'2019-07-06 10:58:03','2019-07-06 10:58:03'),
 	(42,'instamojo_sandbox','1',NULL,'2019-07-06 10:58:43','2019-07-06 10:58:43'),
 	(43,'razorpay','0',NULL,'2019-07-06 10:58:43','2019-07-06 10:58:43'),
 	(44,'paystack','1',NULL,'2019-07-21 14:00:38','2021-09-07 18:32:29'),
-	(45,'pickup_point','0',NULL,'2019-10-17 12:50:39','2019-10-17 12:50:39'),
+	(45,'pickup_point','1',NULL,'2019-10-17 12:50:39','2021-09-16 23:14:54'),
 	(46,'maintenance_mode','0',NULL,'2019-10-17 12:51:04','2019-10-17 12:51:04'),
 	(47,'voguepay','0',NULL,'2019-10-17 12:51:24','2019-10-17 12:51:24'),
 	(48,'voguepay_sandbox','0',NULL,'2019-10-17 12:51:38','2019-10-17 12:51:38'),
@@ -643,7 +655,7 @@ VALUES
 	(51,'conversation_system','1',NULL,'2020-01-21 08:23:21','2020-01-21 08:23:21'),
 	(52,'guest_checkout_active','1',NULL,'2020-01-22 08:36:38','2020-01-22 08:36:38'),
 	(53,'facebook_pixel','0',NULL,'2020-01-22 12:43:58','2020-01-22 12:43:58'),
-	(55,'classified_product','0',NULL,'2020-05-13 14:01:05','2020-05-13 14:01:05'),
+	(55,'classified_product','1',NULL,'2020-05-13 14:01:05','2021-09-16 23:14:50'),
 	(56,'pos_activation_for_seller','1',NULL,'2020-06-11 10:45:02','2020-06-11 10:45:02'),
 	(57,'shipping_type','product_wise_shipping',NULL,'2020-07-01 14:49:56','2020-07-01 14:49:56'),
 	(58,'flat_rate_shipping_cost','0',NULL,'2020-07-01 14:49:56','2020-07-01 14:49:56'),
@@ -671,30 +683,30 @@ VALUES
 	(80,'instagram_link',NULL,NULL,'2020-11-16 08:26:36','2020-11-16 08:26:36'),
 	(81,'youtube_link',NULL,NULL,'2020-11-16 08:26:36','2020-11-16 08:26:36'),
 	(82,'linkedin_link',NULL,NULL,'2020-11-16 08:26:36','2020-11-16 08:26:36'),
-	(83,'payment_method_images',NULL,NULL,'2020-11-16 08:26:36','2020-11-16 08:26:36'),
-	(84,'home_slider_images','[]',NULL,'2020-11-16 08:26:36','2020-11-16 08:26:36'),
-	(85,'home_slider_links','[]',NULL,'2020-11-16 08:26:36','2020-11-16 08:26:36'),
-	(86,'home_banner1_images','[]',NULL,'2020-11-16 08:26:36','2020-11-16 08:26:36'),
-	(87,'home_banner1_links','[]',NULL,'2020-11-16 08:26:36','2020-11-16 08:26:36'),
-	(88,'home_banner2_images','[]',NULL,'2020-11-16 08:26:36','2020-11-16 08:26:36'),
-	(89,'home_banner2_links','[]',NULL,'2020-11-16 08:26:36','2020-11-16 08:26:36'),
-	(90,'home_categories','[]',NULL,'2020-11-16 08:26:36','2020-11-16 08:26:36'),
-	(91,'top10_categories','[]',NULL,'2020-11-16 08:26:36','2020-11-16 08:26:36'),
-	(92,'top10_brands','[]',NULL,'2020-11-16 08:26:36','2020-11-16 08:26:36'),
+	(83,'payment_method_images','119,120,121,122',NULL,'2020-11-16 08:26:36','2021-09-19 18:15:43'),
+	(84,'home_slider_images','[\"78\",\"28\",\"5\"]',NULL,'2020-11-16 08:26:36','2021-09-19 18:20:19'),
+	(85,'home_slider_links','[null,null,null]',NULL,'2020-11-16 08:26:36','2021-09-19 18:20:19'),
+	(86,'home_banner1_images','[\"69\",\"51\",\"43\"]',NULL,'2020-11-16 08:26:36','2021-09-19 18:21:34'),
+	(87,'home_banner1_links','[null,null,null]',NULL,'2020-11-16 08:26:36','2021-09-19 18:21:34'),
+	(88,'home_banner2_images','[\"86\",\"35\"]',NULL,'2020-11-16 08:26:36','2021-09-19 18:32:57'),
+	(89,'home_banner2_links','[null,\"http:\\/\\/active5:8888\\/flash-deal\\/ramadan-sale-myits\"]',NULL,'2020-11-16 08:26:36','2021-09-19 18:32:57'),
+	(90,'home_categories','[\"1\",\"2\",\"3\",\"4\"]',NULL,'2020-11-16 08:26:36','2021-09-19 18:23:24'),
+	(91,'top10_categories','[\"2\",\"3\",\"4\",\"5\",\"7\",\"8\",\"9\",\"10\",\"11\",\"12\"]',NULL,'2020-11-16 08:26:36','2021-09-19 18:24:35'),
+	(92,'top10_brands','[\"1\",\"2\",\"4\",\"5\",\"7\",\"8\",\"10\",\"11\",\"13\",\"14\"]',NULL,'2020-11-16 08:26:36','2021-09-19 18:24:35'),
 	(93,'website_name','eCommerce',NULL,'2020-11-16 08:26:36','2021-09-03 10:43:57'),
 	(94,'site_motto','Best eCommerce website',NULL,'2020-11-16 08:26:36','2021-09-03 10:43:57'),
 	(95,'site_icon','1',NULL,'2020-11-16 08:26:36','2021-09-03 10:43:57'),
-	(96,'base_color','#e62e04',NULL,'2020-11-16 08:26:36','2020-11-16 08:26:36'),
-	(97,'base_hov_color','#e62e04',NULL,'2020-11-16 08:26:36','2020-11-16 08:26:36'),
+	(96,'base_color','#088F8F',NULL,'2020-11-16 08:26:36','2021-09-19 22:09:48'),
+	(97,'base_hov_color','#6F8FAF',NULL,'2020-11-16 08:26:36','2021-09-19 22:09:48'),
 	(98,'meta_title',NULL,NULL,'2020-11-16 08:26:36','2020-11-16 08:26:36'),
 	(99,'meta_description',NULL,NULL,'2020-11-16 08:26:36','2020-11-16 08:26:36'),
 	(100,'meta_keywords',NULL,NULL,'2020-11-16 08:26:36','2020-11-16 08:26:36'),
 	(101,'meta_image','1',NULL,'2020-11-16 08:26:36','2021-09-03 10:45:09'),
-	(102,'site_name','Halalworkchop',NULL,'2020-11-16 08:26:36','2021-09-15 20:49:23'),
+	(102,'site_name','Halalworkchop',NULL,'2020-11-16 08:26:36','2021-09-19 22:44:36'),
 	(103,'system_logo_white','1',NULL,'2020-11-16 08:26:36','2021-09-15 20:49:23'),
 	(104,'system_logo_black','1',NULL,'2020-11-16 08:26:36','2021-09-15 20:49:23'),
 	(105,'timezone',NULL,NULL,'2020-11-16 08:26:36','2020-11-16 08:26:36'),
-	(106,'admin_login_background','65',NULL,'2020-11-16 08:26:36','2021-09-15 20:49:23'),
+	(106,'admin_login_background','80',NULL,'2020-11-16 08:26:36','2021-09-19 22:50:06'),
 	(107,'iyzico_sandbox','1',NULL,'2020-12-30 17:45:56','2020-12-30 17:45:56'),
 	(108,'iyzico','0',NULL,'2020-12-30 17:45:56','2021-09-13 14:19:19'),
 	(109,'decimal_separator','1',NULL,'2020-12-30 17:45:56','2020-12-30 17:45:56'),
@@ -702,21 +714,21 @@ VALUES
 	(111,'bkash','0',NULL,'2021-01-22 11:30:03','2021-01-22 11:30:03'),
 	(112,'bkash_sandbox','1',NULL,'2021-01-22 11:30:03','2021-01-22 11:30:03'),
 	(113,'header_menu_labels','[\"Home\",\"Flash Sale\",\"Blogs\",\"All Brands\",\"All Categories\"]',NULL,'2021-02-16 03:43:11','2021-02-16 03:52:18'),
-	(114,'header_menu_links','[\"http:\\/\\/active5:8888\",\"http:\\/\\/active5:8888\\/flash-deals\",\"http:\\/\\/active5:8888\\/blog\",\"http:\\/\\/active5:8888\\/brands\",\"http:\\/\\/active5:8888\\/categories\"]',NULL,'2021-02-16 03:43:11','2021-09-14 00:15:55'),
+	(114,'header_menu_links','[\"http:\\/\\/halalworkchop:8888\",\"http:\\/\\/halalworkchop:8888\\/flash-deals\",\"http:\\/\\/halalworkchop:8888\\/blog\",\"http:\\/\\/halalworkchop:8888\\/brands\",\"http:\\/\\/halalworkchop:8888\\/categories\"]',NULL,'2021-02-16 03:43:11','2021-09-19 21:47:52'),
 	(115,'proxypay','0',NULL,'2021-06-20 12:25:42','2021-09-13 14:19:34'),
 	(116,'proxypay_sandbox','1',NULL,'2021-06-20 12:25:42','2021-06-20 12:25:42'),
 	(117,'google_map','0',NULL,'2021-07-27 16:49:39','2021-07-27 16:49:39'),
 	(118,'google_firebase','0',NULL,'2021-07-27 16:49:39','2021-07-27 16:49:39'),
-	(119,'mpesa','0',NULL,'2021-09-03 11:16:05','2021-09-03 11:16:05'),
-	(120,'flutterwave','1',NULL,'2021-09-03 11:16:05','2021-09-07 17:30:03'),
+	(119,'mpesa','0',NULL,'2021-09-03 11:16:05','2021-09-19 23:40:07'),
+	(120,'flutterwave','0',NULL,'2021-09-03 11:16:05','2021-09-17 23:47:34'),
 	(121,'payfast_sandbox','1',NULL,'2021-09-03 11:16:05','2021-09-03 11:16:05'),
 	(122,'payfast','0',NULL,'2021-09-03 11:16:05','2021-09-13 14:15:15'),
 	(123,'club_point_convert_rate','10',NULL,'2019-03-12 06:58:23','2019-03-12 06:58:23'),
 	(124,'refund_request_time','20',NULL,'2019-03-12 05:58:23','2021-09-07 18:28:09'),
 	(125,'cookies_agreement_text','<p>Authoritatively whiteboard B2B channels via integrated niche markets. Energistically coordinate parallel.</p>',NULL,'2021-09-03 10:44:54','2021-09-03 10:44:54'),
 	(126,'show_cookies_agreement','on',NULL,'2021-09-03 10:44:54','2021-09-03 10:44:54'),
-	(127,'topbar_banner',NULL,NULL,'2021-09-03 11:12:32','2021-09-03 11:12:32'),
-	(128,'topbar_banner_link',NULL,NULL,'2021-09-03 11:12:32','2021-09-03 11:12:32'),
+	(127,'topbar_banner','69',NULL,'2021-09-03 11:12:32','2021-09-17 22:13:23'),
+	(128,'topbar_banner_link','http://halalworkchop:8888/flash-deals',NULL,'2021-09-03 11:12:32','2021-09-19 21:48:49'),
 	(129,'widget_one','Exclusive','en','2021-09-03 11:14:57','2021-09-03 11:14:57'),
 	(130,'widget_one_labels','[\"Exclusive\"]','en','2021-09-03 11:14:57','2021-09-03 11:14:57'),
 	(131,'frontend_copyright_text','copyright @Balextek Inc. 2021','en','2021-09-03 11:16:17','2021-09-03 11:16:17'),
@@ -724,7 +736,12 @@ VALUES
 	(133,'play_store_link',NULL,NULL,'2021-09-03 11:16:50','2021-09-03 11:16:50'),
 	(134,'app_store_link',NULL,NULL,'2021-09-03 11:16:50','2021-09-03 11:16:50'),
 	(135,'contact_address','16 Aminu Ajibode Avenue, Unity Estate, Abule-odu, Egbeda, Lagos Nigeria','en','2021-09-03 11:16:58','2021-09-03 11:16:58'),
-	(136,'guest_checkout','1',NULL,'2021-09-13 23:10:37','2021-09-13 23:10:37');
+	(136,'guest_checkout','1',NULL,'2021-09-13 23:10:37','2021-09-13 23:10:37'),
+	(137,'product_approve_by_admin','1',NULL,'2021-09-16 23:14:56','2021-09-16 23:14:56'),
+	(138,'show_website_popup',NULL,NULL,'2021-09-17 22:14:28','2021-09-19 18:27:54'),
+	(139,'website_popup_content','<p><br></p>',NULL,'2021-09-17 22:14:28','2021-09-19 18:27:54'),
+	(140,'show_subscribe_form','on',NULL,'2021-09-17 22:14:28','2021-09-17 22:14:28'),
+	(141,'paytm','0',NULL,'2021-09-20 00:04:34','2021-09-20 00:09:08');
 
 /*!40000 ALTER TABLE `business_settings` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -794,15 +811,15 @@ VALUES
 	(1,0,0,'Women Clothing & Fashion',0,0.00,'71','85',1,1,0,'women-clothing-fashion','Women Clothing & Fashion',NULL,'2021-09-15 20:38:30','2021-09-15 19:38:30'),
 	(2,0,0,'Men Clothing & Fashion',0,0.00,'44','64',1,0,0,'men-clothing-fashion','Men Clothing & Fashion',NULL,'2021-09-15 20:40:20','2021-09-15 19:40:20'),
 	(3,0,0,'Computer & Accessories',0,0.00,'47','46',1,1,0,'computer-accessories','Computer & Accessories',NULL,'2021-09-15 20:42:12','2021-09-15 19:42:12'),
-	(4,0,0,'Automobile & Motorcycle',0,0.00,'58','36',1,0,0,'Automobile--Motorcycle-g0wvB','Automobile & Motorcycle',NULL,'2021-09-15 20:44:33','2021-09-15 19:44:33'),
-	(5,0,0,'Kids & toy',0,0.00,'38','37',1,0,0,'Kids--toy-idH6A','Kids & toy',NULL,'2021-09-15 22:06:28','2021-09-15 22:06:28'),
-	(6,0,0,'Sports & outdoor',0,0.00,'33','75',1,0,0,'Sports--outdoor-6SWTg','Sports & outdoor',NULL,'2021-09-15 22:06:27','2021-09-15 22:06:27'),
+	(4,0,0,'Automobile & Motorcycle',0,0.00,'58','36',1,0,0,'Automobile--Motorcycle-g0wvB','Automobile & Motorcycle',NULL,'2021-09-17 21:57:28','2021-09-17 21:57:28'),
+	(5,0,0,'Kids & toy',0,0.00,'38','37',1,0,0,'Kids--toy-idH6A','Kids & toy',NULL,'2021-09-17 21:57:27','2021-09-17 21:57:27'),
+	(6,0,0,'Sports & outdoor',0,0.00,'33','75',1,0,0,'Sports--outdoor-6SWTg','Sports & outdoor',NULL,'2021-09-17 21:57:25','2021-09-17 21:57:25'),
 	(7,0,0,'Jewelry & Watches',0,0.00,'87','59',1,0,0,'Jewelry--Watches-ko7bD','Jewelry & Watches',NULL,'2021-09-15 22:06:29','2021-09-15 22:06:29'),
 	(8,0,0,'Cellphones & Tablets',0,0.00,'66','67',1,0,0,'Cellphones--Tablets-y6Rwo','Cellphones & Tablets',NULL,'2021-09-15 22:06:23','2021-09-15 22:06:23'),
-	(9,0,0,'Beauty, Health & Hair',0,0.00,'8','42',1,0,0,'Beauty-Health--Hair-2v3PR','Beauty, Health & Hair',NULL,'2021-09-15 22:06:30','2021-09-15 22:06:30'),
-	(10,0,0,'Home Improvement & Tools',0,0.00,'56','55',1,0,0,'Home-Improvement--Tools-QYhTW','Home Improvement & Tools',NULL,'2021-09-15 22:06:33','2021-09-15 22:06:33'),
-	(11,0,0,'Home decoration & Appliance',0,0.00,'45','54',1,0,0,'Home-decoration--Appliance-mBgli','Home decoration & Appliance',NULL,'2021-09-15 22:06:33','2021-09-15 22:06:33'),
-	(12,0,0,'Toy',0,0.00,'84','83',1,0,0,'Toy-QWPA8','Toy',NULL,'2021-09-15 22:06:35','2021-09-15 22:06:35'),
+	(9,0,0,'Beauty, Health & Hair',0,0.00,'8','42',0,0,0,'Beauty-Health--Hair-2v3PR','Beauty, Health & Hair',NULL,'2021-09-17 21:51:13','2021-09-17 21:51:13'),
+	(10,0,0,'Home Improvement & Tools',0,0.00,'56','55',0,0,0,'Home-Improvement--Tools-QYhTW','Home Improvement & Tools',NULL,'2021-09-17 21:51:14','2021-09-17 21:51:14'),
+	(11,0,0,'Home decoration & Appliance',0,0.00,'45','54',0,0,0,'Home-decoration--Appliance-mBgli','Home decoration & Appliance',NULL,'2021-09-17 21:51:16','2021-09-17 21:51:16'),
+	(12,0,0,'Toy',0,0.00,'84','83',0,0,0,'Toy-QWPA8','Toy',NULL,'2021-09-17 21:51:18','2021-09-17 21:51:18'),
 	(13,1,1,'Hot Categories',0,0.00,NULL,NULL,0,0,0,'Hot-Categories-degPV','Hot Categories',NULL,'2021-09-15 19:55:28','2021-09-15 19:55:28'),
 	(14,1,1,'Wedding & events',0,0.00,NULL,NULL,0,0,0,'Wedding--events-c3gUS','Wedding & events',NULL,'2021-09-15 19:56:00','2021-09-15 19:56:00'),
 	(15,1,1,'Tops & sets',0,0.00,NULL,NULL,0,0,0,'Tops--sets-PRr3N','Tops & sets',NULL,'2021-09-15 19:56:43','2021-09-15 19:56:43'),
@@ -935,6 +952,15 @@ CREATE TABLE `club_point_details` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+LOCK TABLES `club_point_details` WRITE;
+/*!40000 ALTER TABLE `club_point_details` DISABLE KEYS */;
+
+INSERT INTO `club_point_details` (`id`, `club_point_id`, `product_id`, `product_qty`, `point`, `created_at`, `updated_at`)
+VALUES
+	(1,1,6,0,20.00,'2021-09-19 22:07:38','2021-09-19 22:07:38');
+
+/*!40000 ALTER TABLE `club_point_details` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table club_points
@@ -953,6 +979,15 @@ CREATE TABLE `club_points` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+LOCK TABLES `club_points` WRITE;
+/*!40000 ALTER TABLE `club_points` DISABLE KEYS */;
+
+INSERT INTO `club_points` (`id`, `user_id`, `points`, `order_id`, `convert_status`, `created_at`, `updated_at`)
+VALUES
+	(1,8,20.00,10,0,'2021-09-19 22:07:38','2021-09-19 22:07:38');
+
+/*!40000 ALTER TABLE `club_points` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table colors
@@ -1137,6 +1172,24 @@ CREATE TABLE `combined_orders` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+LOCK TABLES `combined_orders` WRITE;
+/*!40000 ALTER TABLE `combined_orders` DISABLE KEYS */;
+
+INSERT INTO `combined_orders` (`id`, `user_id`, `shipping_address`, `grand_total`, `created_at`, `updated_at`)
+VALUES
+	(1,8,'{\"id\":1,\"user_id\":8,\"address\":\"16 Aminu Ajibode Avenue, Unity Estate, Abule-odu, Egbeda, Lagos Nigeria\",\"country\":\"Nigeria\",\"city\":\"Alimosho\",\"longitude\":null,\"latitude\":null,\"postal_code\":\"100275\",\"phone\":\"08085744967\",\"set_default\":0,\"created_at\":\"2021-09-16T14:47:19.000000Z\",\"updated_at\":\"2021-09-16T14:47:19.000000Z\",\"name\":\"Mr. Customer\",\"email\":\"customer@example.com\"}',25500.00,'2021-09-16 15:50:39','2021-09-16 15:50:39'),
+	(2,8,'{\"id\":1,\"user_id\":8,\"address\":\"16 Aminu Ajibode Avenue, Unity Estate, Abule-odu, Egbeda, Lagos Nigeria\",\"country\":\"Nigeria\",\"city\":\"Alimosho\",\"longitude\":null,\"latitude\":null,\"postal_code\":\"100275\",\"phone\":\"08085744967\",\"set_default\":0,\"created_at\":\"2021-09-16T14:47:19.000000Z\",\"updated_at\":\"2021-09-16T14:47:19.000000Z\",\"name\":\"Mr. Customer\",\"email\":\"customer@example.com\"}',25500.00,'2021-09-16 15:50:54','2021-09-16 15:50:54'),
+	(3,8,'{\"id\":1,\"user_id\":8,\"address\":\"16 Aminu Ajibode Avenue, Unity Estate, Abule-odu, Egbeda, Lagos Nigeria\",\"country\":\"Nigeria\",\"city\":\"Alimosho\",\"longitude\":null,\"latitude\":null,\"postal_code\":\"100275\",\"phone\":\"08085744967\",\"set_default\":0,\"created_at\":\"2021-09-16T14:47:19.000000Z\",\"updated_at\":\"2021-09-16T14:47:19.000000Z\",\"name\":\"Mr. Customer\",\"email\":\"customer@example.com\"}',360000.00,'2021-09-16 22:55:56','2021-09-16 22:55:56'),
+	(4,8,'{\"id\":1,\"user_id\":8,\"address\":\"16 Aminu Ajibode Avenue, Unity Estate, Abule-odu, Egbeda, Lagos Nigeria\",\"country\":\"Nigeria\",\"city\":\"Alimosho\",\"longitude\":null,\"latitude\":null,\"postal_code\":\"100275\",\"phone\":\"08085744967\",\"set_default\":0,\"created_at\":\"2021-09-16T14:47:19.000000Z\",\"updated_at\":\"2021-09-16T14:47:19.000000Z\",\"name\":\"Mr. Customer\",\"email\":\"customer@example.com\"}',360000.00,'2021-09-16 22:56:19','2021-09-16 22:56:19'),
+	(5,8,'{\"id\":1,\"user_id\":8,\"address\":\"16 Aminu Ajibode Avenue, Unity Estate, Abule-odu, Egbeda, Lagos Nigeria\",\"country\":\"Nigeria\",\"city\":\"Alimosho\",\"longitude\":null,\"latitude\":null,\"postal_code\":\"100275\",\"phone\":\"08085744967\",\"set_default\":0,\"created_at\":\"2021-09-16T14:47:19.000000Z\",\"updated_at\":\"2021-09-16T14:47:19.000000Z\",\"name\":\"Mr. Customer\",\"email\":\"customer@example.com\"}',360000.00,'2021-09-16 22:57:00','2021-09-16 22:57:00'),
+	(6,8,'{\"id\":1,\"user_id\":8,\"address\":\"16 Aminu Ajibode Avenue, Unity Estate, Abule-odu, Egbeda, Lagos Nigeria\",\"country\":\"Nigeria\",\"city\":\"Alimosho\",\"longitude\":null,\"latitude\":null,\"postal_code\":\"100275\",\"phone\":\"08085744967\",\"set_default\":0,\"created_at\":\"2021-09-16T14:47:19.000000Z\",\"updated_at\":\"2021-09-16T14:47:19.000000Z\",\"name\":\"Mr. Customer\",\"email\":\"customer@example.com\"}',25500.00,'2021-09-17 23:17:48','2021-09-17 23:17:49'),
+	(7,8,'{\"id\":1,\"user_id\":8,\"address\":\"16 Aminu Ajibode Avenue, Unity Estate, Abule-odu, Egbeda, Lagos Nigeria\",\"country\":\"Nigeria\",\"city\":\"Alimosho\",\"longitude\":null,\"latitude\":null,\"postal_code\":\"100275\",\"phone\":\"08085744967\",\"set_default\":0,\"created_at\":\"2021-09-16T14:47:19.000000Z\",\"updated_at\":\"2021-09-16T14:47:19.000000Z\",\"name\":\"Mr. Customer\",\"email\":\"customer@example.com\"}',25500.00,'2021-09-17 23:37:11','2021-09-17 23:37:11'),
+	(8,8,'{\"id\":1,\"user_id\":8,\"address\":\"16 Aminu Ajibode Avenue, Unity Estate, Abule-odu, Egbeda, Lagos Nigeria\",\"country\":\"Nigeria\",\"city\":\"Alimosho\",\"longitude\":null,\"latitude\":null,\"postal_code\":\"100275\",\"phone\":\"08085744967\",\"set_default\":0,\"created_at\":\"2021-09-16T14:47:19.000000Z\",\"updated_at\":\"2021-09-16T14:47:19.000000Z\",\"name\":\"Mr. Customer\",\"email\":\"customer@example.com\"}',25500.00,'2021-09-17 23:41:01','2021-09-17 23:41:01'),
+	(9,8,'{\"id\":1,\"user_id\":8,\"address\":\"16 Aminu Ajibode Avenue, Unity Estate, Abule-odu, Egbeda, Lagos Nigeria\",\"country\":\"Nigeria\",\"city\":\"Alimosho\",\"longitude\":null,\"latitude\":null,\"postal_code\":\"100275\",\"phone\":\"08085744967\",\"set_default\":0,\"created_at\":\"2021-09-16T14:47:19.000000Z\",\"updated_at\":\"2021-09-16T14:47:19.000000Z\",\"name\":\"Mr. Customer\",\"email\":\"customer@example.com\"}',25500.00,'2021-09-17 23:52:09','2021-09-17 23:52:09'),
+	(10,8,'{\"id\":1,\"user_id\":8,\"address\":\"16 Aminu Ajibode Avenue, Unity Estate, Abule-odu, Egbeda, Lagos Nigeria\",\"country\":\"Nigeria\",\"city\":\"Alimosho\",\"longitude\":null,\"latitude\":null,\"postal_code\":\"100275\",\"phone\":\"08085744967\",\"set_default\":0,\"created_at\":\"2021-09-16T14:47:19.000000Z\",\"updated_at\":\"2021-09-16T14:47:19.000000Z\",\"name\":\"Mr. Customer\",\"email\":\"customer@example.com\"}',12000.00,'2021-09-19 22:04:39','2021-09-19 22:04:39');
+
+/*!40000 ALTER TABLE `combined_orders` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table commission_histories
@@ -1197,249 +1250,249 @@ LOCK TABLES `countries` WRITE;
 
 INSERT INTO `countries` (`id`, `code`, `name`, `status`, `created_at`, `updated_at`)
 VALUES
-	(1,'AF','Afghanistan',1,NULL,NULL),
-	(2,'AL','Albania',1,NULL,NULL),
-	(3,'DZ','Algeria',1,NULL,NULL),
-	(4,'DS','American Samoa',1,NULL,NULL),
-	(5,'AD','Andorra',1,NULL,NULL),
-	(6,'AO','Angola',1,NULL,NULL),
-	(7,'AI','Anguilla',1,NULL,NULL),
-	(8,'AQ','Antarctica',1,NULL,NULL),
-	(9,'AG','Antigua and Barbuda',1,NULL,NULL),
-	(10,'AR','Argentina',1,NULL,NULL),
-	(11,'AM','Armenia',1,NULL,NULL),
-	(12,'AW','Aruba',1,NULL,NULL),
-	(13,'AU','Australia',1,NULL,NULL),
-	(14,'AT','Austria',1,NULL,NULL),
-	(15,'AZ','Azerbaijan',1,NULL,NULL),
-	(16,'BS','Bahamas',1,NULL,NULL),
-	(17,'BH','Bahrain',1,NULL,NULL),
-	(18,'BD','Bangladesh',1,NULL,NULL),
-	(19,'BB','Barbados',1,NULL,NULL),
-	(20,'BY','Belarus',1,NULL,NULL),
-	(21,'BE','Belgium',1,NULL,NULL),
-	(22,'BZ','Belize',1,NULL,NULL),
-	(23,'BJ','Benin',1,NULL,NULL),
-	(24,'BM','Bermuda',1,NULL,NULL),
-	(25,'BT','Bhutan',1,NULL,NULL),
-	(26,'BO','Bolivia',1,NULL,NULL),
-	(27,'BA','Bosnia and Herzegovina',1,NULL,NULL),
-	(28,'BW','Botswana',1,NULL,NULL),
-	(29,'BV','Bouvet Island',1,NULL,NULL),
-	(30,'BR','Brazil',1,NULL,NULL),
-	(31,'IO','British Indian Ocean Territory',1,NULL,NULL),
-	(32,'BN','Brunei Darussalam',1,NULL,NULL),
-	(33,'BG','Bulgaria',1,NULL,NULL),
-	(34,'BF','Burkina Faso',1,NULL,NULL),
-	(35,'BI','Burundi',1,NULL,NULL),
-	(36,'KH','Cambodia',1,NULL,NULL),
-	(37,'CM','Cameroon',1,NULL,NULL),
-	(38,'CA','Canada',1,NULL,NULL),
-	(39,'CV','Cape Verde',1,NULL,NULL),
-	(40,'KY','Cayman Islands',1,NULL,NULL),
-	(41,'CF','Central African Republic',1,NULL,NULL),
-	(42,'TD','Chad',1,NULL,NULL),
-	(43,'CL','Chile',1,NULL,NULL),
-	(44,'CN','China',1,NULL,NULL),
-	(45,'CX','Christmas Island',1,NULL,NULL),
-	(46,'CC','Cocos (Keeling) Islands',1,NULL,NULL),
-	(47,'CO','Colombia',1,NULL,NULL),
-	(48,'KM','Comoros',1,NULL,NULL),
-	(49,'CG','Congo',1,NULL,NULL),
-	(50,'CK','Cook Islands',1,NULL,NULL),
-	(51,'CR','Costa Rica',1,NULL,NULL),
-	(52,'HR','Croatia (Hrvatska)',1,NULL,NULL),
-	(53,'CU','Cuba',1,NULL,NULL),
-	(54,'CY','Cyprus',1,NULL,NULL),
-	(55,'CZ','Czech Republic',1,NULL,NULL),
-	(56,'DK','Denmark',1,NULL,NULL),
-	(57,'DJ','Djibouti',1,NULL,NULL),
-	(58,'DM','Dominica',1,NULL,NULL),
-	(59,'DO','Dominican Republic',1,NULL,NULL),
-	(60,'TP','East Timor',1,NULL,NULL),
-	(61,'EC','Ecuador',1,NULL,NULL),
-	(62,'EG','Egypt',1,NULL,NULL),
-	(63,'SV','El Salvador',1,NULL,NULL),
-	(64,'GQ','Equatorial Guinea',1,NULL,NULL),
-	(65,'ER','Eritrea',1,NULL,NULL),
-	(66,'EE','Estonia',1,NULL,NULL),
-	(67,'ET','Ethiopia',1,NULL,NULL),
-	(68,'FK','Falkland Islands (Malvinas)',1,NULL,NULL),
-	(69,'FO','Faroe Islands',1,NULL,NULL),
-	(70,'FJ','Fiji',1,NULL,NULL),
-	(71,'FI','Finland',1,NULL,NULL),
-	(72,'FR','France',1,NULL,NULL),
-	(73,'FX','France, Metropolitan',1,NULL,NULL),
-	(74,'GF','French Guiana',1,NULL,NULL),
-	(75,'PF','French Polynesia',1,NULL,NULL),
-	(76,'TF','French Southern Territories',1,NULL,NULL),
+	(1,'AF','Afghanistan',0,NULL,NULL),
+	(2,'AL','Albania',0,NULL,NULL),
+	(3,'DZ','Algeria',0,NULL,NULL),
+	(4,'DS','American Samoa',0,NULL,NULL),
+	(5,'AD','Andorra',0,NULL,NULL),
+	(6,'AO','Angola',0,NULL,NULL),
+	(7,'AI','Anguilla',0,NULL,NULL),
+	(8,'AQ','Antarctica',0,NULL,NULL),
+	(9,'AG','Antigua and Barbuda',0,NULL,NULL),
+	(10,'AR','Argentina',0,NULL,NULL),
+	(11,'AM','Armenia',0,NULL,NULL),
+	(12,'AW','Aruba',0,NULL,NULL),
+	(13,'AU','Australia',0,NULL,NULL),
+	(14,'AT','Austria',0,NULL,NULL),
+	(15,'AZ','Azerbaijan',0,NULL,NULL),
+	(16,'BS','Bahamas',0,NULL,NULL),
+	(17,'BH','Bahrain',0,NULL,NULL),
+	(18,'BD','Bangladesh',0,NULL,NULL),
+	(19,'BB','Barbados',0,NULL,NULL),
+	(20,'BY','Belarus',0,NULL,NULL),
+	(21,'BE','Belgium',0,NULL,NULL),
+	(22,'BZ','Belize',0,NULL,NULL),
+	(23,'BJ','Benin',0,NULL,NULL),
+	(24,'BM','Bermuda',0,NULL,NULL),
+	(25,'BT','Bhutan',0,NULL,NULL),
+	(26,'BO','Bolivia',0,NULL,NULL),
+	(27,'BA','Bosnia and Herzegovina',0,NULL,NULL),
+	(28,'BW','Botswana',0,NULL,NULL),
+	(29,'BV','Bouvet Island',0,NULL,NULL),
+	(30,'BR','Brazil',0,NULL,NULL),
+	(31,'IO','British Indian Ocean Territory',0,NULL,NULL),
+	(32,'BN','Brunei Darussalam',0,NULL,NULL),
+	(33,'BG','Bulgaria',0,NULL,NULL),
+	(34,'BF','Burkina Faso',0,NULL,NULL),
+	(35,'BI','Burundi',0,NULL,NULL),
+	(36,'KH','Cambodia',0,NULL,NULL),
+	(37,'CM','Cameroon',0,NULL,NULL),
+	(38,'CA','Canada',0,NULL,NULL),
+	(39,'CV','Cape Verde',0,NULL,NULL),
+	(40,'KY','Cayman Islands',0,NULL,NULL),
+	(41,'CF','Central African Republic',0,NULL,NULL),
+	(42,'TD','Chad',0,NULL,NULL),
+	(43,'CL','Chile',0,NULL,NULL),
+	(44,'CN','China',0,NULL,NULL),
+	(45,'CX','Christmas Island',0,NULL,NULL),
+	(46,'CC','Cocos (Keeling) Islands',0,NULL,NULL),
+	(47,'CO','Colombia',0,NULL,NULL),
+	(48,'KM','Comoros',0,NULL,NULL),
+	(49,'CG','Congo',0,NULL,NULL),
+	(50,'CK','Cook Islands',0,NULL,NULL),
+	(51,'CR','Costa Rica',0,NULL,NULL),
+	(52,'HR','Croatia (Hrvatska)',0,NULL,NULL),
+	(53,'CU','Cuba',0,NULL,NULL),
+	(54,'CY','Cyprus',0,NULL,NULL),
+	(55,'CZ','Czech Republic',0,NULL,NULL),
+	(56,'DK','Denmark',0,NULL,NULL),
+	(57,'DJ','Djibouti',0,NULL,NULL),
+	(58,'DM','Dominica',0,NULL,NULL),
+	(59,'DO','Dominican Republic',0,NULL,NULL),
+	(60,'TP','East Timor',0,NULL,NULL),
+	(61,'EC','Ecuador',0,NULL,NULL),
+	(62,'EG','Egypt',0,NULL,NULL),
+	(63,'SV','El Salvador',0,NULL,NULL),
+	(64,'GQ','Equatorial Guinea',0,NULL,NULL),
+	(65,'ER','Eritrea',0,NULL,NULL),
+	(66,'EE','Estonia',0,NULL,NULL),
+	(67,'ET','Ethiopia',0,NULL,NULL),
+	(68,'FK','Falkland Islands (Malvinas)',0,NULL,NULL),
+	(69,'FO','Faroe Islands',0,NULL,NULL),
+	(70,'FJ','Fiji',0,NULL,NULL),
+	(71,'FI','Finland',0,NULL,NULL),
+	(72,'FR','France',0,NULL,NULL),
+	(73,'FX','France, Metropolitan',0,NULL,NULL),
+	(74,'GF','French Guiana',0,NULL,NULL),
+	(75,'PF','French Polynesia',0,NULL,NULL),
+	(76,'TF','French Southern Territories',0,NULL,NULL),
 	(77,'GA','Gabon',1,NULL,NULL),
 	(78,'GM','Gambia',1,NULL,NULL),
-	(79,'GE','Georgia',1,NULL,NULL),
-	(80,'DE','Germany',1,NULL,NULL),
+	(79,'GE','Georgia',0,NULL,NULL),
+	(80,'DE','Germany',0,NULL,NULL),
 	(81,'GH','Ghana',1,NULL,NULL),
-	(82,'GI','Gibraltar',1,NULL,NULL),
-	(83,'GK','Guernsey',1,NULL,NULL),
-	(84,'GR','Greece',1,NULL,NULL),
-	(85,'GL','Greenland',1,NULL,NULL),
-	(86,'GD','Grenada',1,NULL,NULL),
-	(87,'GP','Guadeloupe',1,NULL,NULL),
-	(88,'GU','Guam',1,NULL,NULL),
-	(89,'GT','Guatemala',1,NULL,NULL),
-	(90,'GN','Guinea',1,NULL,NULL),
-	(91,'GW','Guinea-Bissau',1,NULL,NULL),
-	(92,'GY','Guyana',1,NULL,NULL),
-	(93,'HT','Haiti',1,NULL,NULL),
-	(94,'HM','Heard and Mc Donald Islands',1,NULL,NULL),
-	(95,'HN','Honduras',1,NULL,NULL),
-	(96,'HK','Hong Kong',1,NULL,NULL),
-	(97,'HU','Hungary',1,NULL,NULL),
-	(98,'IS','Iceland',1,NULL,NULL),
-	(99,'IN','India',1,NULL,NULL),
-	(100,'IM','Isle of Man',1,NULL,NULL),
-	(101,'ID','Indonesia',1,NULL,NULL),
-	(102,'IR','Iran (Islamic Republic of)',1,NULL,NULL),
-	(103,'IQ','Iraq',1,NULL,NULL),
-	(104,'IE','Ireland',1,NULL,NULL),
-	(105,'IL','Israel',1,NULL,NULL),
-	(106,'IT','Italy',1,NULL,NULL),
-	(107,'CI','Ivory Coast',1,NULL,NULL),
-	(108,'JE','Jersey',1,NULL,NULL),
-	(109,'JM','Jamaica',1,NULL,NULL),
-	(110,'JP','Japan',1,NULL,NULL),
-	(111,'JO','Jordan',1,NULL,NULL),
-	(112,'KZ','Kazakhstan',1,NULL,NULL),
+	(82,'GI','Gibraltar',0,NULL,NULL),
+	(83,'GK','Guernsey',0,NULL,NULL),
+	(84,'GR','Greece',0,NULL,NULL),
+	(85,'GL','Greenland',0,NULL,NULL),
+	(86,'GD','Grenada',0,NULL,NULL),
+	(87,'GP','Guadeloupe',0,NULL,NULL),
+	(88,'GU','Guam',0,NULL,NULL),
+	(89,'GT','Guatemala',0,NULL,NULL),
+	(90,'GN','Guinea',0,NULL,NULL),
+	(91,'GW','Guinea-Bissau',0,NULL,NULL),
+	(92,'GY','Guyana',0,NULL,NULL),
+	(93,'HT','Haiti',0,NULL,NULL),
+	(94,'HM','Heard and Mc Donald Islands',0,NULL,NULL),
+	(95,'HN','Honduras',0,NULL,NULL),
+	(96,'HK','Hong Kong',0,NULL,NULL),
+	(97,'HU','Hungary',0,NULL,NULL),
+	(98,'IS','Iceland',0,NULL,NULL),
+	(99,'IN','India',0,NULL,NULL),
+	(100,'IM','Isle of Man',0,NULL,NULL),
+	(101,'ID','Indonesia',0,NULL,NULL),
+	(102,'IR','Iran (Islamic Republic of)',0,NULL,NULL),
+	(103,'IQ','Iraq',0,NULL,NULL),
+	(104,'IE','Ireland',0,NULL,NULL),
+	(105,'IL','Israel',0,NULL,NULL),
+	(106,'IT','Italy',0,NULL,NULL),
+	(107,'CI','Ivory Coast',0,NULL,NULL),
+	(108,'JE','Jersey',0,NULL,NULL),
+	(109,'JM','Jamaica',0,NULL,NULL),
+	(110,'JP','Japan',0,NULL,NULL),
+	(111,'JO','Jordan',0,NULL,NULL),
+	(112,'KZ','Kazakhstan',0,NULL,NULL),
 	(113,'KE','Kenya',1,NULL,NULL),
-	(114,'KI','Kiribati',1,NULL,NULL),
-	(115,'KP','Korea, Democratic People\'s Republic of',1,NULL,NULL),
-	(116,'KR','Korea, Republic of',1,NULL,NULL),
-	(117,'XK','Kosovo',1,NULL,NULL),
-	(118,'KW','Kuwait',1,NULL,NULL),
-	(119,'KG','Kyrgyzstan',1,NULL,NULL),
-	(120,'LA','Lao People\'s Democratic Republic',1,NULL,NULL),
-	(121,'LV','Latvia',1,NULL,NULL),
-	(122,'LB','Lebanon',1,NULL,NULL),
-	(123,'LS','Lesotho',1,NULL,NULL),
-	(124,'LR','Liberia',1,NULL,NULL),
-	(125,'LY','Libyan Arab Jamahiriya',1,NULL,NULL),
-	(126,'LI','Liechtenstein',1,NULL,NULL),
-	(127,'LT','Lithuania',1,NULL,NULL),
-	(128,'LU','Luxembourg',1,NULL,NULL),
-	(129,'MO','Macau',1,NULL,NULL),
-	(130,'MK','Macedonia',1,NULL,NULL),
-	(131,'MG','Madagascar',1,NULL,NULL),
-	(132,'MW','Malawi',1,NULL,NULL),
-	(133,'MY','Malaysia',1,NULL,NULL),
-	(134,'MV','Maldives',1,NULL,NULL),
+	(114,'KI','Kiribati',0,NULL,NULL),
+	(115,'KP','Korea, Democratic People\'s Republic of',0,NULL,NULL),
+	(116,'KR','Korea, Republic of',0,NULL,NULL),
+	(117,'XK','Kosovo',0,NULL,NULL),
+	(118,'KW','Kuwait',0,NULL,NULL),
+	(119,'KG','Kyrgyzstan',0,NULL,NULL),
+	(120,'LA','Lao People\'s Democratic Republic',0,NULL,NULL),
+	(121,'LV','Latvia',0,NULL,NULL),
+	(122,'LB','Lebanon',0,NULL,NULL),
+	(123,'LS','Lesotho',0,NULL,NULL),
+	(124,'LR','Liberia',0,NULL,NULL),
+	(125,'LY','Libyan Arab Jamahiriya',0,NULL,NULL),
+	(126,'LI','Liechtenstein',0,NULL,NULL),
+	(127,'LT','Lithuania',0,NULL,NULL),
+	(128,'LU','Luxembourg',0,NULL,NULL),
+	(129,'MO','Macau',0,NULL,NULL),
+	(130,'MK','Macedonia',0,NULL,NULL),
+	(131,'MG','Madagascar',0,NULL,NULL),
+	(132,'MW','Malawi',0,NULL,NULL),
+	(133,'MY','Malaysia',0,NULL,NULL),
+	(134,'MV','Maldives',0,NULL,NULL),
 	(135,'ML','Mali',1,NULL,NULL),
-	(136,'MT','Malta',1,NULL,NULL),
-	(137,'MH','Marshall Islands',1,NULL,NULL),
-	(138,'MQ','Martinique',1,NULL,NULL),
-	(139,'MR','Mauritania',1,NULL,NULL),
-	(140,'MU','Mauritius',1,NULL,NULL),
-	(141,'TY','Mayotte',1,NULL,NULL),
-	(142,'MX','Mexico',1,NULL,NULL),
-	(143,'FM','Micronesia, Federated States of',1,NULL,NULL),
-	(144,'MD','Moldova, Republic of',1,NULL,NULL),
-	(145,'MC','Monaco',1,NULL,NULL),
-	(146,'MN','Mongolia',1,NULL,NULL),
-	(147,'ME','Montenegro',1,NULL,NULL),
-	(148,'MS','Montserrat',1,NULL,NULL),
-	(149,'MA','Morocco',1,NULL,NULL),
-	(150,'MZ','Mozambique',1,NULL,NULL),
-	(151,'MM','Myanmar',1,NULL,NULL),
+	(136,'MT','Malta',0,NULL,NULL),
+	(137,'MH','Marshall Islands',0,NULL,NULL),
+	(138,'MQ','Martinique',0,NULL,NULL),
+	(139,'MR','Mauritania',0,NULL,NULL),
+	(140,'MU','Mauritius',0,NULL,NULL),
+	(141,'TY','Mayotte',0,NULL,NULL),
+	(142,'MX','Mexico',0,NULL,NULL),
+	(143,'FM','Micronesia, Federated States of',0,NULL,NULL),
+	(144,'MD','Moldova, Republic of',0,NULL,NULL),
+	(145,'MC','Monaco',0,NULL,NULL),
+	(146,'MN','Mongolia',0,NULL,NULL),
+	(147,'ME','Montenegro',0,NULL,NULL),
+	(148,'MS','Montserrat',0,NULL,NULL),
+	(149,'MA','Morocco',0,NULL,NULL),
+	(150,'MZ','Mozambique',0,NULL,NULL),
+	(151,'MM','Myanmar',0,NULL,NULL),
 	(152,'NA','Namibia',1,NULL,NULL),
-	(153,'NR','Nauru',1,NULL,NULL),
-	(154,'NP','Nepal',1,NULL,NULL),
-	(155,'NL','Netherlands',1,NULL,NULL),
-	(156,'AN','Netherlands Antilles',1,NULL,NULL),
-	(157,'NC','New Caledonia',1,NULL,NULL),
-	(158,'NZ','New Zealand',1,NULL,NULL),
-	(159,'NI','Nicaragua',1,NULL,NULL),
+	(153,'NR','Nauru',0,NULL,NULL),
+	(154,'NP','Nepal',0,NULL,NULL),
+	(155,'NL','Netherlands',0,NULL,NULL),
+	(156,'AN','Netherlands Antilles',0,NULL,NULL),
+	(157,'NC','New Caledonia',0,NULL,NULL),
+	(158,'NZ','New Zealand',0,NULL,NULL),
+	(159,'NI','Nicaragua',0,NULL,NULL),
 	(160,'NE','Niger',1,NULL,NULL),
 	(161,'NG','Nigeria',1,NULL,NULL),
-	(162,'NU','Niue',1,NULL,NULL),
-	(163,'NF','Norfolk Island',1,NULL,NULL),
-	(164,'MP','Northern Mariana Islands',1,NULL,NULL),
-	(165,'NO','Norway',1,NULL,NULL),
-	(166,'OM','Oman',1,NULL,NULL),
-	(167,'PK','Pakistan',1,NULL,NULL),
-	(168,'PW','Palau',1,NULL,NULL),
-	(169,'PS','Palestine',1,NULL,NULL),
-	(170,'PA','Panama',1,NULL,NULL),
-	(171,'PG','Papua New Guinea',1,NULL,NULL),
-	(172,'PY','Paraguay',1,NULL,NULL),
-	(173,'PE','Peru',1,NULL,NULL),
-	(174,'PH','Philippines',1,NULL,NULL),
-	(175,'PN','Pitcairn',1,NULL,NULL),
-	(176,'PL','Poland',1,NULL,NULL),
-	(177,'PT','Portugal',1,NULL,NULL),
-	(178,'PR','Puerto Rico',1,NULL,NULL),
-	(179,'QA','Qatar',1,NULL,NULL),
-	(180,'RE','Reunion',1,NULL,NULL),
-	(181,'RO','Romania',1,NULL,NULL),
-	(182,'RU','Russian Federation',1,NULL,NULL),
+	(162,'NU','Niue',0,NULL,NULL),
+	(163,'NF','Norfolk Island',0,NULL,NULL),
+	(164,'MP','Northern Mariana Islands',0,NULL,NULL),
+	(165,'NO','Norway',0,NULL,NULL),
+	(166,'OM','Oman',0,NULL,NULL),
+	(167,'PK','Pakistan',0,NULL,NULL),
+	(168,'PW','Palau',0,NULL,NULL),
+	(169,'PS','Palestine',0,NULL,NULL),
+	(170,'PA','Panama',0,NULL,NULL),
+	(171,'PG','Papua New Guinea',0,NULL,NULL),
+	(172,'PY','Paraguay',0,NULL,NULL),
+	(173,'PE','Peru',0,NULL,NULL),
+	(174,'PH','Philippines',0,NULL,NULL),
+	(175,'PN','Pitcairn',0,NULL,NULL),
+	(176,'PL','Poland',0,NULL,NULL),
+	(177,'PT','Portugal',0,NULL,NULL),
+	(178,'PR','Puerto Rico',0,NULL,NULL),
+	(179,'QA','Qatar',0,NULL,NULL),
+	(180,'RE','Reunion',0,NULL,NULL),
+	(181,'RO','Romania',0,NULL,NULL),
+	(182,'RU','Russian Federation',0,NULL,NULL),
 	(183,'RW','Rwanda',1,NULL,NULL),
-	(184,'KN','Saint Kitts and Nevis',1,NULL,NULL),
-	(185,'LC','Saint Lucia',1,NULL,NULL),
-	(186,'VC','Saint Vincent and the Grenadines',1,NULL,NULL),
-	(187,'WS','Samoa',1,NULL,NULL),
-	(188,'SM','San Marino',1,NULL,NULL),
-	(189,'ST','Sao Tome and Principe',1,NULL,NULL),
-	(190,'SA','Saudi Arabia',1,NULL,NULL),
-	(191,'SN','Senegal',1,NULL,NULL),
-	(192,'RS','Serbia',1,NULL,NULL),
-	(193,'SC','Seychelles',1,NULL,NULL),
-	(194,'SL','Sierra Leone',1,NULL,NULL),
-	(195,'SG','Singapore',1,NULL,NULL),
-	(196,'SK','Slovakia',1,NULL,NULL),
-	(197,'SI','Slovenia',1,NULL,NULL),
-	(198,'SB','Solomon Islands',1,NULL,NULL),
-	(199,'SO','Somalia',1,NULL,NULL),
+	(184,'KN','Saint Kitts and Nevis',0,NULL,NULL),
+	(185,'LC','Saint Lucia',0,NULL,NULL),
+	(186,'VC','Saint Vincent and the Grenadines',0,NULL,NULL),
+	(187,'WS','Samoa',0,NULL,NULL),
+	(188,'SM','San Marino',0,NULL,NULL),
+	(189,'ST','Sao Tome and Principe',0,NULL,NULL),
+	(190,'SA','Saudi Arabia',0,NULL,NULL),
+	(191,'SN','Senegal',0,NULL,NULL),
+	(192,'RS','Serbia',0,NULL,NULL),
+	(193,'SC','Seychelles',0,NULL,NULL),
+	(194,'SL','Sierra Leone',0,NULL,NULL),
+	(195,'SG','Singapore',0,NULL,NULL),
+	(196,'SK','Slovakia',0,NULL,NULL),
+	(197,'SI','Slovenia',0,NULL,NULL),
+	(198,'SB','Solomon Islands',0,NULL,NULL),
+	(199,'SO','Somalia',0,NULL,NULL),
 	(200,'ZA','South Africa',1,NULL,NULL),
-	(201,'GS','South Georgia South Sandwich Islands',1,NULL,NULL),
-	(202,'SS','South Sudan',1,NULL,NULL),
-	(203,'ES','Spain',1,NULL,NULL),
-	(204,'LK','Sri Lanka',1,NULL,NULL),
-	(205,'SH','St. Helena',1,NULL,NULL),
-	(206,'PM','St. Pierre and Miquelon',1,NULL,NULL),
-	(207,'SD','Sudan',1,NULL,NULL),
-	(208,'SR','Suriname',1,NULL,NULL),
-	(209,'SJ','Svalbard and Jan Mayen Islands',1,NULL,NULL),
-	(210,'SZ','Swaziland',1,NULL,NULL),
-	(211,'SE','Sweden',1,NULL,NULL),
-	(212,'CH','Switzerland',1,NULL,NULL),
-	(213,'SY','Syrian Arab Republic',1,NULL,NULL),
-	(214,'TW','Taiwan',1,NULL,NULL),
-	(215,'TJ','Tajikistan',1,NULL,NULL),
-	(216,'TZ','Tanzania, United Republic of',1,NULL,NULL),
-	(217,'TH','Thailand',1,NULL,NULL),
+	(201,'GS','South Georgia South Sandwich Islands',0,NULL,NULL),
+	(202,'SS','South Sudan',0,NULL,NULL),
+	(203,'ES','Spain',0,NULL,NULL),
+	(204,'LK','Sri Lanka',0,NULL,NULL),
+	(205,'SH','St. Helena',0,NULL,NULL),
+	(206,'PM','St. Pierre and Miquelon',0,NULL,NULL),
+	(207,'SD','Sudan',0,NULL,NULL),
+	(208,'SR','Suriname',0,NULL,NULL),
+	(209,'SJ','Svalbard and Jan Mayen Islands',0,NULL,NULL),
+	(210,'SZ','Swaziland',0,NULL,NULL),
+	(211,'SE','Sweden',0,NULL,NULL),
+	(212,'CH','Switzerland',0,NULL,NULL),
+	(213,'SY','Syrian Arab Republic',0,NULL,NULL),
+	(214,'TW','Taiwan',0,NULL,NULL),
+	(215,'TJ','Tajikistan',0,NULL,NULL),
+	(216,'TZ','Tanzania, United Republic of',0,NULL,NULL),
+	(217,'TH','Thailand',0,NULL,NULL),
 	(218,'TG','Togo',1,NULL,NULL),
-	(219,'TK','Tokelau',1,NULL,NULL),
-	(220,'TO','Tonga',1,NULL,NULL),
-	(221,'TT','Trinidad and Tobago',1,NULL,NULL),
-	(222,'TN','Tunisia',1,NULL,NULL),
-	(223,'TR','Turkey',1,NULL,NULL),
-	(224,'TM','Turkmenistan',1,NULL,NULL),
-	(225,'TC','Turks and Caicos Islands',1,NULL,NULL),
-	(226,'TV','Tuvalu',1,NULL,NULL),
+	(219,'TK','Tokelau',0,NULL,NULL),
+	(220,'TO','Tonga',0,NULL,NULL),
+	(221,'TT','Trinidad and Tobago',0,NULL,NULL),
+	(222,'TN','Tunisia',0,NULL,NULL),
+	(223,'TR','Turkey',0,NULL,NULL),
+	(224,'TM','Turkmenistan',0,NULL,NULL),
+	(225,'TC','Turks and Caicos Islands',0,NULL,NULL),
+	(226,'TV','Tuvalu',0,NULL,NULL),
 	(227,'UG','Uganda',1,NULL,NULL),
-	(228,'UA','Ukraine',1,NULL,NULL),
-	(229,'AE','United Arab Emirates',1,NULL,NULL),
-	(230,'GB','United Kingdom',1,NULL,NULL),
-	(231,'US','United States',1,NULL,NULL),
-	(232,'UM','United States minor outlying islands',1,NULL,NULL),
-	(233,'UY','Uruguay',1,NULL,NULL),
-	(234,'UZ','Uzbekistan',1,NULL,NULL),
-	(235,'VU','Vanuatu',1,NULL,NULL),
-	(236,'VA','Vatican City State',1,NULL,NULL),
-	(237,'VE','Venezuela',1,NULL,NULL),
-	(238,'VN','Vietnam',1,NULL,NULL),
-	(239,'VG','Virgin Islands (British)',1,NULL,NULL),
-	(240,'VI','Virgin Islands (U.S.)',1,NULL,NULL),
-	(241,'WF','Wallis and Futuna Islands',1,NULL,NULL),
-	(242,'EH','Western Sahara',1,NULL,NULL),
-	(243,'YE','Yemen',1,NULL,NULL),
+	(228,'UA','Ukraine',0,NULL,NULL),
+	(229,'AE','United Arab Emirates',0,NULL,NULL),
+	(230,'GB','United Kingdom',0,NULL,NULL),
+	(231,'US','United States',0,NULL,NULL),
+	(232,'UM','United States minor outlying islands',0,NULL,NULL),
+	(233,'UY','Uruguay',0,NULL,NULL),
+	(234,'UZ','Uzbekistan',0,NULL,NULL),
+	(235,'VU','Vanuatu',0,NULL,NULL),
+	(236,'VA','Vatican City State',0,NULL,NULL),
+	(237,'VE','Venezuela',0,NULL,NULL),
+	(238,'VN','Vietnam',0,NULL,NULL),
+	(239,'VG','Virgin Islands (British)',0,NULL,NULL),
+	(240,'VI','Virgin Islands (U.S.)',0,NULL,NULL),
+	(241,'WF','Wallis and Futuna Islands',0,NULL,NULL),
+	(242,'EH','Western Sahara',0,NULL,NULL),
+	(243,'YE','Yemen',0,NULL,NULL),
 	(244,'ZR','Zaire',1,NULL,NULL),
 	(245,'ZM','Zambia',1,NULL,NULL),
 	(246,'ZW','Zimbabwe',1,NULL,NULL);
@@ -1509,30 +1562,30 @@ LOCK TABLES `currencies` WRITE;
 INSERT INTO `currencies` (`id`, `name`, `symbol`, `exchange_rate`, `status`, `code`, `created_at`, `updated_at`)
 VALUES
 	(1,'U.S. Dollar','$',1.00000,1,'USD','2018-10-09 12:35:08','2018-10-17 06:50:52'),
-	(2,'Australian Dollar','$',1.28000,1,'AUD','2018-10-09 12:35:08','2019-02-04 06:51:55'),
-	(5,'Brazilian Real','R$',3.25000,1,'BRL','2018-10-09 12:35:08','2018-10-17 06:51:00'),
-	(6,'Canadian Dollar','$',1.27000,1,'CAD','2018-10-09 12:35:08','2018-10-09 12:35:08'),
-	(7,'Czech Koruna','Kč',20.65000,1,'CZK','2018-10-09 12:35:08','2018-10-09 12:35:08'),
-	(8,'Danish Krone','kr',6.05000,1,'DKK','2018-10-09 12:35:08','2018-10-09 12:35:08'),
+	(2,'Australian Dollar','$',1.28000,0,'AUD','2018-10-09 12:35:08','2021-09-17 22:15:21'),
+	(5,'Brazilian Real','R$',3.25000,0,'BRL','2018-10-09 12:35:08','2021-09-17 22:15:22'),
+	(6,'Canadian Dollar','$',1.27000,0,'CAD','2018-10-09 12:35:08','2021-09-17 22:15:23'),
+	(7,'Czech Koruna','Kč',20.65000,0,'CZK','2018-10-09 12:35:08','2021-09-17 22:15:24'),
+	(8,'Danish Krone','kr',6.05000,0,'DKK','2018-10-09 12:35:08','2021-09-17 22:15:26'),
 	(9,'Euro','€',0.85000,1,'EUR','2018-10-09 12:35:08','2018-10-09 12:35:08'),
-	(10,'Hong Kong Dollar','$',7.83000,1,'HKD','2018-10-09 12:35:08','2018-10-09 12:35:08'),
-	(11,'Hungarian Forint','Ft',255.24000,1,'HUF','2018-10-09 12:35:08','2018-10-09 12:35:08'),
-	(12,'Israeli New Sheqel','₪',3.48000,1,'ILS','2018-10-09 12:35:08','2018-10-09 12:35:08'),
-	(13,'Japanese Yen','¥',107.12000,1,'JPY','2018-10-09 12:35:08','2018-10-09 12:35:08'),
-	(14,'Malaysian Ringgit','RM',3.91000,1,'MYR','2018-10-09 12:35:08','2018-10-09 12:35:08'),
-	(15,'Mexican Peso','$',18.72000,1,'MXN','2018-10-09 12:35:08','2018-10-09 12:35:08'),
-	(16,'Norwegian Krone','kr',7.83000,1,'NOK','2018-10-09 12:35:08','2018-10-09 12:35:08'),
-	(17,'New Zealand Dollar','$',1.38000,1,'NZD','2018-10-09 12:35:08','2018-10-09 12:35:08'),
-	(18,'Philippine Peso','₱',52.26000,1,'PHP','2018-10-09 12:35:08','2018-10-09 12:35:08'),
-	(19,'Polish Zloty','zł',3.39000,1,'PLN','2018-10-09 12:35:08','2018-10-09 12:35:08'),
-	(20,'Pound Sterling','£',0.72000,1,'GBP','2018-10-09 12:35:08','2018-10-09 12:35:08'),
-	(21,'Russian Ruble','руб',55.93000,1,'RUB','2018-10-09 12:35:08','2018-10-09 12:35:08'),
-	(22,'Singapore Dollar','$',1.32000,1,'SGD','2018-10-09 12:35:08','2018-10-09 12:35:08'),
-	(23,'Swedish Krona','kr',8.19000,1,'SEK','2018-10-09 12:35:08','2018-10-09 12:35:08'),
-	(24,'Swiss Franc','CHF',0.94000,1,'CHF','2018-10-09 12:35:08','2018-10-09 12:35:08'),
-	(26,'Thai Baht','฿',31.39000,1,'THB','2018-10-09 12:35:08','2018-10-09 12:35:08'),
-	(27,'Taka','৳',84.00000,1,'BDT','2018-10-09 12:35:08','2018-12-02 06:16:13'),
-	(28,'Indian Rupee','Rs',68.45000,1,'Rupee','2019-07-07 11:33:46','2019-07-07 11:33:46'),
+	(10,'Hong Kong Dollar','$',7.83000,0,'HKD','2018-10-09 12:35:08','2021-09-17 22:15:28'),
+	(11,'Hungarian Forint','Ft',255.24000,0,'HUF','2018-10-09 12:35:08','2021-09-17 22:15:35'),
+	(12,'Israeli New Sheqel','₪',3.48000,0,'ILS','2018-10-09 12:35:08','2021-09-17 22:15:36'),
+	(13,'Japanese Yen','¥',107.12000,0,'JPY','2018-10-09 12:35:08','2021-09-17 22:15:37'),
+	(14,'Malaysian Ringgit','RM',3.91000,0,'MYR','2018-10-09 12:35:08','2021-09-17 22:15:38'),
+	(15,'Mexican Peso','$',18.72000,0,'MXN','2018-10-09 12:35:08','2021-09-17 22:15:39'),
+	(16,'Norwegian Krone','kr',7.83000,0,'NOK','2018-10-09 12:35:08','2021-09-17 22:15:40'),
+	(17,'New Zealand Dollar','$',1.38000,0,'NZD','2018-10-09 12:35:08','2021-09-17 22:15:41'),
+	(18,'Philippine Peso','₱',52.26000,0,'PHP','2018-10-09 12:35:08','2021-09-17 22:15:42'),
+	(19,'Polish Zloty','zł',3.39000,0,'PLN','2018-10-09 12:35:08','2021-09-17 22:15:43'),
+	(20,'Pound Sterling','£',0.72000,0,'GBP','2018-10-09 12:35:08','2021-09-17 22:15:44'),
+	(21,'Russian Ruble','руб',55.93000,0,'RUB','2018-10-09 12:35:08','2021-09-17 22:15:52'),
+	(22,'Singapore Dollar','$',1.32000,0,'SGD','2018-10-09 12:35:08','2021-09-17 22:15:53'),
+	(23,'Swedish Krona','kr',8.19000,0,'SEK','2018-10-09 12:35:08','2021-09-17 22:15:54'),
+	(24,'Swiss Franc','CHF',0.94000,0,'CHF','2018-10-09 12:35:08','2021-09-17 22:15:59'),
+	(26,'Thai Baht','฿',31.39000,0,'THB','2018-10-09 12:35:08','2021-09-17 22:15:58'),
+	(27,'Taka','৳',84.00000,0,'BDT','2018-10-09 12:35:08','2021-09-17 22:15:57'),
+	(28,'Indian Rupee','Rs',68.45000,0,'Rupee','2019-07-07 11:33:46','2021-09-17 22:15:17'),
 	(29,'Nigerian Naira','₦',450.00000,1,'NGN','2021-09-03 11:12:56','2021-09-03 11:12:56');
 
 /*!40000 ALTER TABLE `currencies` ENABLE KEYS */;
@@ -1575,6 +1628,17 @@ CREATE TABLE `customer_package_translations` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+LOCK TABLES `customer_package_translations` WRITE;
+/*!40000 ALTER TABLE `customer_package_translations` DISABLE KEYS */;
+
+INSERT INTO `customer_package_translations` (`id`, `customer_package_id`, `name`, `lang`, `created_at`, `updated_at`)
+VALUES
+	(1,1,'Silver','en','2021-09-17 22:06:37','2021-09-17 22:06:37'),
+	(2,2,'Gold','en','2021-09-17 22:07:25','2021-09-17 22:07:25'),
+	(3,3,'Platinum','en','2021-09-17 22:07:55','2021-09-17 22:07:55');
+
+/*!40000 ALTER TABLE `customer_package_translations` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table customer_packages
@@ -1593,6 +1657,17 @@ CREATE TABLE `customer_packages` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+LOCK TABLES `customer_packages` WRITE;
+/*!40000 ALTER TABLE `customer_packages` DISABLE KEYS */;
+
+INSERT INTO `customer_packages` (`id`, `name`, `amount`, `product_upload`, `logo`, `created_at`, `updated_at`)
+VALUES
+	(1,'Silver',3000.00,30,'73','2021-09-17 22:06:37','2021-09-17 22:06:37'),
+	(2,'Gold',5000.00,50,'53','2021-09-17 22:07:25','2021-09-17 22:07:25'),
+	(3,'Platinum',7500.00,100,'68','2021-09-17 22:07:55','2021-09-17 22:07:55');
+
+/*!40000 ALTER TABLE `customer_packages` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table customer_product_translations
@@ -1677,6 +1752,45 @@ VALUES
 UNLOCK TABLES;
 
 
+# Dump of table delivery_boys
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `delivery_boys`;
+
+CREATE TABLE `delivery_boys` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `total_collection` double(25,2) NOT NULL DEFAULT '0.00',
+  `total_earning` double(25,2) NOT NULL DEFAULT '0.00',
+  `monthly_salary` double(25,2) DEFAULT NULL,
+  `order_commission` double(25,2) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table delivery_histories
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `delivery_histories`;
+
+CREATE TABLE `delivery_histories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `delivery_boy_id` int(11) DEFAULT NULL,
+  `order_id` int(11) NOT NULL,
+  `delivery_status` varchar(255) NOT NULL,
+  `payment_type` varchar(20) NOT NULL,
+  `earning` double(25,2) NOT NULL DEFAULT '0.00',
+  `collection` double(25,2) NOT NULL DEFAULT '0.00',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
 # Dump of table firebase_notifications
 # ------------------------------------------------------------
 
@@ -1713,6 +1827,16 @@ CREATE TABLE `flash_deal_products` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+LOCK TABLES `flash_deal_products` WRITE;
+/*!40000 ALTER TABLE `flash_deal_products` DISABLE KEYS */;
+
+INSERT INTO `flash_deal_products` (`id`, `flash_deal_id`, `product_id`, `discount`, `discount_type`, `created_at`, `updated_at`)
+VALUES
+	(1,1,4,0.00,NULL,'2021-09-19 18:31:02','2021-09-19 18:31:02'),
+	(2,1,3,0.00,NULL,'2021-09-19 18:31:02','2021-09-19 18:31:02');
+
+/*!40000 ALTER TABLE `flash_deal_products` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table flash_deal_translations
@@ -1753,6 +1877,15 @@ CREATE TABLE `flash_deals` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+LOCK TABLES `flash_deals` WRITE;
+/*!40000 ALTER TABLE `flash_deals` DISABLE KEYS */;
+
+INSERT INTO `flash_deals` (`id`, `title`, `start_date`, `end_date`, `status`, `featured`, `background_color`, `text_color`, `banner`, `slug`, `created_at`, `updated_at`)
+VALUES
+	(1,'Ramadan Sale',1632092400,1633388340,1,1,'#FFFFFF','dark','35','ramadan-sale-myits','2021-09-19 18:31:02','2021-09-19 18:31:47');
+
+/*!40000 ALTER TABLE `flash_deals` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table general_settings
@@ -1843,7 +1976,9 @@ LOCK TABLES `languages` WRITE;
 INSERT INTO `languages` (`id`, `name`, `code`, `rtl`, `created_at`, `updated_at`)
 VALUES
 	(1,'English','en',0,'2019-01-20 13:13:20','2019-01-20 13:13:20'),
-	(4,'Arabic','sa',1,'2019-04-28 19:34:12','2019-04-28 19:34:12');
+	(4,'Arabic','sa',1,'2019-04-28 19:34:12','2019-04-28 19:34:12'),
+	(5,'Hausa','ng',0,'2021-09-19 18:49:44','2021-09-19 18:49:58'),
+	(7,'French','fr',0,'2021-09-19 18:56:31','2021-09-19 18:56:31');
 
 /*!40000 ALTER TABLE `languages` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1943,6 +2078,20 @@ CREATE TABLE `notifications` (
   KEY `notifications_notifiable_type_notifiable_id_index` (`notifiable_type`,`notifiable_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+LOCK TABLES `notifications` WRITE;
+/*!40000 ALTER TABLE `notifications` DISABLE KEYS */;
+
+INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`)
+VALUES
+	('190e6fb5-a20d-420a-b350-d143946de7f1','App\\Notifications\\OrderNotification','App\\User',9,'{\"order_id\":10,\"order_code\":\"20210919-22043969\",\"user_id\":8,\"seller_id\":9,\"status\":\"paid\"}',NULL,'2021-09-19 22:07:38','2021-09-19 22:07:38'),
+	('4d4faf8f-c357-4edd-a23b-cb30f70151b2','App\\Notifications\\OrderNotification','App\\User',8,'{\"order_id\":10,\"order_code\":\"20210919-22043969\",\"user_id\":8,\"seller_id\":9,\"status\":\"placed\"}',NULL,'2021-09-19 22:04:41','2021-09-19 22:04:41'),
+	('5d7b4f62-d8f3-4796-84a4-ccbb3415c37d','App\\Notifications\\OrderNotification','App\\User',8,'{\"order_id\":10,\"order_code\":\"20210919-22043969\",\"user_id\":8,\"seller_id\":9,\"status\":\"on_the_way\"}',NULL,'2021-09-19 22:07:32','2021-09-19 22:07:32'),
+	('8d548a8d-e260-44fc-bf12-a409c8230869','App\\Notifications\\OrderNotification','App\\User',8,'{\"order_id\":10,\"order_code\":\"20210919-22043969\",\"user_id\":8,\"seller_id\":9,\"status\":\"paid\"}',NULL,'2021-09-19 22:07:38','2021-09-19 22:07:38'),
+	('b4216816-e126-42a3-8ace-3f3d5ca61c0e','App\\Notifications\\OrderNotification','App\\User',9,'{\"order_id\":10,\"order_code\":\"20210919-22043969\",\"user_id\":8,\"seller_id\":9,\"status\":\"on_the_way\"}',NULL,'2021-09-19 22:07:32','2021-09-19 22:07:32'),
+	('c08f15c1-114f-41af-8179-524916288a71','App\\Notifications\\OrderNotification','App\\User',9,'{\"order_id\":10,\"order_code\":\"20210919-22043969\",\"user_id\":8,\"seller_id\":9,\"status\":\"placed\"}',NULL,'2021-09-19 22:04:41','2021-09-19 22:04:41');
+
+/*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table oauth_access_tokens
@@ -2107,6 +2256,16 @@ CREATE TABLE `order_details` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+LOCK TABLES `order_details` WRITE;
+/*!40000 ALTER TABLE `order_details` DISABLE KEYS */;
+
+INSERT INTO `order_details` (`id`, `order_id`, `seller_id`, `product_id`, `variation`, `price`, `tax`, `shipping_cost`, `quantity`, `payment_status`, `delivery_status`, `shipping_type`, `pickup_point_id`, `product_referral_code`, `created_at`, `updated_at`)
+VALUES
+	(9,9,9,2,'Black',25000.00,500.00,0.00,1,'unpaid','pending','home_delivery',NULL,NULL,'2021-09-17 23:52:09','2021-09-17 23:52:09'),
+	(10,10,9,6,'AliceBlue-Linen',11000.00,500.00,500.00,1,'paid','on_the_way','home_delivery',NULL,NULL,'2021-09-19 22:04:39','2021-09-19 22:07:38');
+
+/*!40000 ALTER TABLE `order_details` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table orders
@@ -2120,6 +2279,7 @@ CREATE TABLE `orders` (
   `user_id` int(11) DEFAULT NULL,
   `guest_id` int(11) DEFAULT NULL,
   `seller_id` int(11) DEFAULT NULL,
+  `assign_delivery_boy` int(11) DEFAULT NULL,
   `shipping_address` longtext COLLATE utf8_unicode_ci,
   `delivery_status` varchar(20) COLLATE utf8_unicode_ci DEFAULT 'pending',
   `payment_type` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -2135,13 +2295,26 @@ CREATE TABLE `orders` (
   `date` int(20) NOT NULL,
   `viewed` int(1) NOT NULL DEFAULT '0',
   `delivery_viewed` int(1) NOT NULL DEFAULT '1',
+  `cancel_request` tinyint(1) NOT NULL DEFAULT '0',
+  `cancel_request_at` datetime DEFAULT NULL,
   `payment_status_viewed` int(1) DEFAULT '1',
   `commission_calculated` int(11) NOT NULL DEFAULT '0',
+  `delivery_history_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+LOCK TABLES `orders` WRITE;
+/*!40000 ALTER TABLE `orders` DISABLE KEYS */;
+
+INSERT INTO `orders` (`id`, `combined_order_id`, `user_id`, `guest_id`, `seller_id`, `assign_delivery_boy`, `shipping_address`, `delivery_status`, `payment_type`, `manual_payment`, `manual_payment_data`, `payment_status`, `payment_details`, `grand_total`, `request`, `receipt`, `coupon_discount`, `code`, `date`, `viewed`, `delivery_viewed`, `cancel_request`, `cancel_request_at`, `payment_status_viewed`, `commission_calculated`, `delivery_history_date`, `created_at`, `updated_at`)
+VALUES
+	(9,9,8,NULL,9,NULL,'{\"id\":1,\"user_id\":8,\"address\":\"16 Aminu Ajibode Avenue, Unity Estate, Abule-odu, Egbeda, Lagos Nigeria\",\"country\":\"Nigeria\",\"city\":\"Alimosho\",\"longitude\":null,\"latitude\":null,\"postal_code\":\"100275\",\"phone\":\"08085744967\",\"set_default\":0,\"created_at\":\"2021-09-16T14:47:19.000000Z\",\"updated_at\":\"2021-09-16T14:47:19.000000Z\",\"name\":\"Mr. Customer\",\"email\":\"customer@example.com\"}','pending','paystack',0,NULL,'unpaid',NULL,25500.00,NULL,NULL,0.00,'20210917-23520999',1631919129,0,0,0,NULL,0,0,'2021-09-17 23:52:09','2021-09-17 23:52:09','2021-09-17 23:52:09'),
+	(10,10,8,NULL,9,NULL,'{\"id\":1,\"user_id\":8,\"address\":\"16 Aminu Ajibode Avenue, Unity Estate, Abule-odu, Egbeda, Lagos Nigeria\",\"country\":\"Nigeria\",\"city\":\"Alimosho\",\"longitude\":null,\"latitude\":null,\"postal_code\":\"100275\",\"phone\":\"08085744967\",\"set_default\":0,\"created_at\":\"2021-09-16T14:47:19.000000Z\",\"updated_at\":\"2021-09-16T14:47:19.000000Z\",\"name\":\"Mr. Customer\",\"email\":\"customer@example.com\"}','on_the_way','cash_on_delivery',0,NULL,'paid',NULL,12000.00,NULL,NULL,0.00,'20210919-22043969',1632085479,0,0,0,NULL,0,1,'2021-09-19 22:04:39','2021-09-19 22:04:39','2021-09-19 22:07:38');
+
+/*!40000 ALTER TABLE `orders` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table otp_configurations
@@ -2170,7 +2343,8 @@ VALUES
 	(5,'twillo','0','2020-03-22 10:54:03','2021-09-07 17:33:14'),
 	(6,'ssl_wireless','0','2020-03-22 10:54:03','2020-03-22 04:54:20'),
 	(7,'fast2sms','0','2020-03-22 10:54:03','2020-03-22 04:54:20'),
-	(8,'mimo','0','2020-12-27 10:54:03','2020-12-28 04:54:20');
+	(8,'mimo','0','2020-12-27 10:54:03','2020-12-28 04:54:20'),
+	(9,'mimsms','0','2021-09-16 23:53:57','2021-09-16 23:53:57');
 
 /*!40000 ALTER TABLE `otp_configurations` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -2364,11 +2538,17 @@ LOCK TABLES `product_stocks` WRITE;
 INSERT INTO `product_stocks` (`id`, `product_id`, `variant`, `sku`, `price`, `qty`, `image`, `created_at`, `updated_at`)
 VALUES
 	(3,1,'128GB-16GB',NULL,350000.00,10,NULL,'2021-09-15 20:18:34','2021-09-15 20:18:34'),
-	(5,2,'Black',NULL,25000.00,10,NULL,'2021-09-15 20:27:09','2021-09-15 20:27:09'),
+	(5,2,'Black',NULL,25000.00,9,NULL,'2021-09-15 20:27:09','2021-09-17 23:52:09'),
 	(6,3,'',NULL,0.00,1,NULL,'2021-09-15 20:34:30','2021-09-15 20:34:30'),
 	(13,4,'Black-64GB-8GB',NULL,350000.00,10,NULL,'2021-09-15 21:50:24','2021-09-15 21:50:24'),
 	(14,4,'Blue-64GB-8GB',NULL,350000.00,10,NULL,'2021-09-15 21:50:24','2021-09-15 21:50:24'),
-	(15,4,'White-64GB-8GB',NULL,360000.00,10,NULL,'2021-09-15 21:50:24','2021-09-15 21:50:24');
+	(15,4,'White-64GB-8GB',NULL,360000.00,10,NULL,'2021-09-15 21:50:24','2021-09-17 23:47:57'),
+	(17,6,'AliceBlue-Linen',NULL,12000.00,9,NULL,'2021-09-19 22:01:43','2021-09-19 22:04:39'),
+	(18,6,'AliceBlue-Wool',NULL,12000.00,10,NULL,'2021-09-19 22:01:43','2021-09-19 22:01:43'),
+	(19,6,'Black-Linen',NULL,12000.00,10,NULL,'2021-09-19 22:01:43','2021-09-19 22:01:43'),
+	(20,6,'Black-Wool',NULL,12000.00,10,NULL,'2021-09-19 22:01:43','2021-09-19 22:01:43'),
+	(21,6,'LightGrey-Linen',NULL,12000.00,10,NULL,'2021-09-19 22:01:43','2021-09-19 22:01:43'),
+	(22,6,'LightGrey-Wool',NULL,12000.00,10,NULL,'2021-09-19 22:01:43','2021-09-19 22:01:43');
 
 /*!40000 ALTER TABLE `product_stocks` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -2398,7 +2578,9 @@ VALUES
 	(3,1,3,2.00,'percent','2021-09-15 20:18:34','2021-09-15 20:18:34'),
 	(5,2,3,500.00,'amount','2021-09-15 20:27:09','2021-09-15 20:27:09'),
 	(6,3,3,0.00,'amount','2021-09-15 20:34:30','2021-09-15 20:34:30'),
-	(9,4,3,0.00,'amount','2021-09-15 21:50:24','2021-09-15 21:50:24');
+	(9,4,3,0.00,'amount','2021-09-15 21:50:24','2021-09-15 21:50:24'),
+	(10,5,3,0.00,'amount','2021-09-19 21:43:54','2021-09-19 21:43:54'),
+	(11,6,3,500.00,'amount','2021-09-19 22:01:43','2021-09-19 22:01:43');
 
 /*!40000 ALTER TABLE `product_taxes` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -2428,7 +2610,6 @@ INSERT INTO `product_translations` (`id`, `product_id`, `name`, `unit`, `descrip
 VALUES
 	(1,1,'Samsung Note 20','10','<p>Dynamically fabricate standards compliant channels with resource-leveling interfaces. Holisticly target enabled.</p>','en','2021-09-07 18:25:33','2021-09-07 18:25:33'),
 	(2,2,'Analog Black Dial Men\'s Watch-32-BK-CK','pc','<p>Phosfluorescently synergize professional niches before virtual meta-services. Holisticly reinvent an expanded array of data after functional deliverables. Completely coordinate worldwide architectures vis-a-vis superior niche markets. Rapidiously visualize world-class functionalities for interdependent growth strategies. Efficiently formulate synergistic manufactured products after focused manufactured products.</p><p><br></p><p>Completely impact resource sucking core competencies before emerging products. Conveniently parallel task optimal methodologies without one-to-one channels.</p>','en','2021-09-15 20:25:07','2021-09-15 20:25:07'),
-	(3,3,'iPhone 13 pro max','pc','<p>Compellingly repurpose dynamic web services vis-a-vis emerging manufactured products. Interactively transition cutting-edge e-markets and progressive e-commerce. Appropriately redefine customer directed paradigms whereas emerging e-tailers. Progressively fabricate plug-and-play markets rather than multidisciplinary metrics. Appropriately impact customer.<br></p>','en','2021-09-15 20:34:30','2021-09-15 20:34:30'),
 	(4,4,'iPhone 11 pro max','Pc','<p>Professionally seize turnkey models and cross-unit systems. Distinctively parallel task vertical web services rather than multifunctional partnerships. Authoritatively conceptualize web-enabled core competencies before interdependent content. Compellingly envisioneer standardized \"outside the box\" thinking for intuitive bandwidth.<br></p>','en','2021-09-15 20:45:38','2021-09-15 20:45:38');
 
 /*!40000 ALTER TABLE `product_translations` ENABLE KEYS */;
@@ -2511,9 +2692,9 @@ LOCK TABLES `products` WRITE;
 INSERT INTO `products` (`id`, `name`, `added_by`, `user_id`, `category_id`, `brand_id`, `photos`, `thumbnail_img`, `video_provider`, `video_link`, `tags`, `description`, `unit_price`, `purchase_price`, `variant_product`, `attributes`, `choice_options`, `colors`, `variations`, `todays_deal`, `published`, `approved`, `stock_visibility_state`, `cash_on_delivery`, `featured`, `seller_featured`, `current_stock`, `unit`, `min_qty`, `low_stock_quantity`, `discount`, `discount_type`, `discount_start_date`, `discount_end_date`, `starting_bid`, `auction_start_date`, `auction_end_date`, `tax`, `tax_type`, `shipping_type`, `shipping_cost`, `is_quantity_multiplied`, `est_shipping_days`, `num_of_sale`, `meta_title`, `meta_description`, `meta_img`, `pdf`, `slug`, `refundable`, `earn_point`, `rating`, `barcode`, `digital`, `auction_product`, `file_name`, `file_path`, `created_at`, `updated_at`)
 VALUES
 	(1,'Samsung Note 20','admin',9,29,1,'3','3','youtube',NULL,'samsung note 20,note 20,samsung note','<p>Dynamically fabricate standards compliant channels with resource-leveling interfaces. Holisticly target enabled.</p>',350000.00,NULL,1,'[\"3\",\"4\"]','[{\"attribute_id\":\"3\",\"values\":[\"128GB\"]},{\"attribute_id\":\"4\",\"values\":[\"16GB\"]}]','[]',NULL,0,1,1,'text',1,1,0,0,'10',1,2,10000.00,'amount',1631750400,1634342340,0.00,NULL,NULL,NULL,NULL,'free','0',0,5,0,'Samsung note 20','Dynamically fabricate standards compliant channels with resource-leveling interfaces. Holisticly target enabled.','3',NULL,'samsung-note-20-1uags',1,10.00,0.00,'1112356466',0,0,NULL,NULL,'2021-09-07 18:25:33','2021-09-15 20:18:34'),
-	(2,'Analog Black Dial Men\'s Watch-32-BK-CK','admin',9,2,2,'81,11,13','81','youtube',NULL,'men,watch,fashion','<p>Phosfluorescently synergize professional niches before virtual meta-services. Holisticly reinvent an expanded array of data after functional deliverables. Completely coordinate worldwide architectures vis-a-vis superior niche markets. Rapidiously visualize world-class functionalities for interdependent growth strategies. Efficiently formulate synergistic manufactured products after focused manufactured products.</p><p><br></p><p>Completely impact resource sucking core competencies before emerging products. Conveniently parallel task optimal methodologies without one-to-one channels.</p>',25000.00,NULL,1,'[]','[]','[\"#000000\"]',NULL,1,1,1,'quantity',1,1,0,0,'pc',1,1,0.00,'amount',0,0,0.00,NULL,NULL,NULL,NULL,'free','0',0,3,0,'Analog Black Dial Men\'s Watch','Phosfluorescently synergize professional niches before virtual meta-services. Holisticly reinvent an expanded array of data after functional deliverables. Completely coordinate worldwide architectures vis-a-vis superior niche markets. Rapidiously visualize world-class functionalities for interdependent growth strategies. Efficiently formulate synergistic manufactured products after focused manufactured products.\r\n\r\nCompletely impact resource sucking core competencies before emerging products. Conveniently parallel task optimal methodologies without one-to-one channels.','81',NULL,'analog-black-dial-mens-watch-32-bk-ck',1,2.00,0.00,NULL,0,0,NULL,NULL,'2021-09-15 20:25:06','2021-09-15 20:27:09'),
-	(3,'iPhone 13 pro max','admin',9,29,5,'66','66','youtube',NULL,'iphone,iphone 13 pro max','<p>Compellingly repurpose dynamic web services vis-a-vis emerging manufactured products. Interactively transition cutting-edge e-markets and progressive e-commerce. Appropriately redefine customer directed paradigms whereas emerging e-tailers. Progressively fabricate plug-and-play markets rather than multidisciplinary metrics. Appropriately impact customer.<br></p>',0.00,NULL,0,'[]','[]','[]',NULL,0,1,1,'quantity',0,0,0,0,NULL,1,NULL,NULL,NULL,NULL,NULL,500000.00,1631664000,1632182340,NULL,NULL,'free','0',0,1,0,'iPhone 13 pro max','Proactively embrace client-centered communities without strategic functionalities. Dramatically scale interdependent meta-services via accurate partnerships. Authoritatively strategize multifunctional results with intuitive ROI. Seamlessly morph efficient solutions and timely information. Holisticly whiteboard customized expertise before functional innovation.','66',NULL,'iPhone-13-pro-max-beb7A',0,0.00,0.00,NULL,0,1,NULL,NULL,'2021-09-15 20:34:30','2021-09-15 20:34:30'),
-	(4,'iPhone 11 pro max','seller',3,29,5,'117,116,115','117','youtube',NULL,'iphone,iphone 11 pro max,iphone 11','<p>Professionally seize turnkey models and cross-unit systems. Distinctively parallel task vertical web services rather than multifunctional partnerships. Authoritatively conceptualize web-enabled core competencies before interdependent content. Compellingly envisioneer standardized \"outside the box\" thinking for intuitive bandwidth.<br></p>',350000.00,NULL,1,'[\"3\",\"4\"]','[{\"attribute_id\":\"3\",\"values\":[\"64GB\"]},{\"attribute_id\":\"4\",\"values\":[\"8GB\"]}]','[\"#000000\",\"#0000FF\",\"#FFFFFF\"]',NULL,0,1,1,'quantity',1,1,1,0,'Pc',1,1,0.00,'amount',0,0,0.00,NULL,NULL,NULL,NULL,'free','0',0,NULL,0,'iPhone 11 pro max','Professionally seize turnkey models and cross-unit systems. Distinctively parallel task vertical web services rather than multifunctional partnerships. Authoritatively conceptualize web-enabled core competencies before interdependent content. Compellingly envisioneer standardized \"outside the box\" thinking for intuitive bandwidth.','116',NULL,'iphone-11-pro-max',1,5.00,0.00,NULL,0,0,NULL,NULL,'2021-09-15 20:45:38','2021-09-15 21:50:24');
+	(2,'Analog Black Dial Men\'s Watch-32-BK-CK','admin',9,2,2,'81,11,13','81','youtube',NULL,'men,watch,fashion','<p>Phosfluorescently synergize professional niches before virtual meta-services. Holisticly reinvent an expanded array of data after functional deliverables. Completely coordinate worldwide architectures vis-a-vis superior niche markets. Rapidiously visualize world-class functionalities for interdependent growth strategies. Efficiently formulate synergistic manufactured products after focused manufactured products.</p><p><br></p><p>Completely impact resource sucking core competencies before emerging products. Conveniently parallel task optimal methodologies without one-to-one channels.</p>',25000.00,NULL,1,'[]','[]','[\"#000000\"]',NULL,1,1,1,'quantity',1,1,0,0,'pc',1,1,0.00,'amount',0,0,0.00,NULL,NULL,NULL,NULL,'free','0',0,3,6,'Analog Black Dial Men\'s Watch','Phosfluorescently synergize professional niches before virtual meta-services. Holisticly reinvent an expanded array of data after functional deliverables. Completely coordinate worldwide architectures vis-a-vis superior niche markets. Rapidiously visualize world-class functionalities for interdependent growth strategies. Efficiently formulate synergistic manufactured products after focused manufactured products.\r\n\r\nCompletely impact resource sucking core competencies before emerging products. Conveniently parallel task optimal methodologies without one-to-one channels.','81',NULL,'analog-black-dial-mens-watch-32-bk-ck',1,2.00,0.00,NULL,0,0,NULL,NULL,'2021-09-15 20:25:06','2021-09-17 23:52:09'),
+	(4,'iPhone 11 pro max','seller',3,29,5,'117,116,115','117','youtube',NULL,'iphone,iphone 11 pro max,iphone 11','<p>Professionally seize turnkey models and cross-unit systems. Distinctively parallel task vertical web services rather than multifunctional partnerships. Authoritatively conceptualize web-enabled core competencies before interdependent content. Compellingly envisioneer standardized \"outside the box\" thinking for intuitive bandwidth.<br></p>',350000.00,NULL,1,'[\"3\",\"4\"]','[{\"attribute_id\":\"3\",\"values\":[\"64GB\"]},{\"attribute_id\":\"4\",\"values\":[\"8GB\"]}]','[\"#000000\",\"#0000FF\",\"#FFFFFF\"]',NULL,0,1,1,'quantity',1,1,1,0,'Pc',1,1,10.00,'percent',1632092400,1633388340,0.00,NULL,NULL,NULL,NULL,'free','0',0,NULL,3,'iPhone 11 pro max','Professionally seize turnkey models and cross-unit systems. Distinctively parallel task vertical web services rather than multifunctional partnerships. Authoritatively conceptualize web-enabled core competencies before interdependent content. Compellingly envisioneer standardized \"outside the box\" thinking for intuitive bandwidth.','116',NULL,'iphone-11-pro-max',1,10.00,0.00,NULL,0,0,NULL,NULL,'2021-09-15 20:45:38','2021-09-19 18:31:02'),
+	(6,'summer jacket','admin',9,2,10,'76,14,10','14','youtube',NULL,'summer jacket,jackets,men jacket','<p><b>Uniquely negotiate top-line methodologies vis-a-vis alternative</b> collaboration and idea-sharing. Distinctively envisioneer competitive bandwidth through premium content. Completely architect resource-leveling portals via distinctive human capital. Uniquely innovate e-business methodologies through functional schemas. Progressively visualize client-centric human.<br></p>',12000.00,NULL,1,'[\"2\"]','[{\"attribute_id\":\"2\",\"values\":[\"Linen\",\"Wool\"]}]','[\"#F0F8FF\",\"#000000\",\"#D3D3D3\"]',NULL,0,1,1,'quantity',1,1,0,0,'10 pcs',1,1,1000.00,'amount',NULL,NULL,0.00,NULL,NULL,NULL,NULL,'flat_rate','500',0,3,1,'summer jacket','Phosfluorescently fabricate accurate human capital before corporate sources. Conveniently optimize exceptional services before distributed experiences. Continually reconceptualize emerging alignments for multidisciplinary networks. Rapidiously harness performance based information for enabled interfaces. Assertively reconceptualize proactive total linkage.','76',NULL,'summer-jacket',1,20.00,0.00,NULL,0,0,NULL,NULL,'2021-09-19 22:01:43','2021-09-19 22:04:39');
 
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -2659,9 +2840,89 @@ INSERT INTO `searches` (`id`, `query`, `count`, `created_at`, `updated_at`)
 VALUES
 	(2,'dcs',1,'2020-03-08 01:29:09','2020-03-08 01:29:09'),
 	(3,'das',3,'2020-03-08 01:29:15','2020-03-08 01:29:50'),
-	(4,'samsung note',1,'2021-09-13 14:04:45','2021-09-13 14:04:45');
+	(4,'samsung note',3,'2021-09-13 14:04:45','2021-09-17 22:27:23');
 
 /*!40000 ALTER TABLE `searches` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table seller_package_payments
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `seller_package_payments`;
+
+CREATE TABLE `seller_package_payments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `seller_package_id` int(11) NOT NULL,
+  `payment_method` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `payment_details` longtext COLLATE utf8_unicode_ci NOT NULL,
+  `approval` int(1) NOT NULL,
+  `offline_payment` int(1) NOT NULL COMMENT '1=offline payment\r\n2=online paymnet',
+  `reciept` varchar(150) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+
+# Dump of table seller_package_translations
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `seller_package_translations`;
+
+CREATE TABLE `seller_package_translations` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `seller_package_id` bigint(20) NOT NULL,
+  `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `lang` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+LOCK TABLES `seller_package_translations` WRITE;
+/*!40000 ALTER TABLE `seller_package_translations` DISABLE KEYS */;
+
+INSERT INTO `seller_package_translations` (`id`, `seller_package_id`, `name`, `lang`, `created_at`, `updated_at`)
+VALUES
+	(1,4,'Silver','en','2021-09-16 23:44:41','2021-09-16 23:44:41'),
+	(2,5,'Gold','en','2021-09-16 23:46:18','2021-09-16 23:46:18'),
+	(3,6,'Platinum','en','2021-09-16 23:47:58','2021-09-16 23:47:58');
+
+/*!40000 ALTER TABLE `seller_package_translations` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table seller_packages
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `seller_packages`;
+
+CREATE TABLE `seller_packages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `amount` double(11,2) NOT NULL DEFAULT '0.00',
+  `product_upload` int(11) NOT NULL DEFAULT '0',
+  `digital_product_upload` int(11) NOT NULL DEFAULT '0',
+  `logo` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `duration` int(11) NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+LOCK TABLES `seller_packages` WRITE;
+/*!40000 ALTER TABLE `seller_packages` DISABLE KEYS */;
+
+INSERT INTO `seller_packages` (`id`, `name`, `amount`, `product_upload`, `digital_product_upload`, `logo`, `duration`, `created_at`, `updated_at`)
+VALUES
+	(4,'Silver',5000.00,100,20,'73',30,'2021-09-16 23:44:41','2021-09-16 23:44:41'),
+	(5,'Gold',10000.00,200,40,'53',70,'2021-09-16 23:46:18','2021-09-16 23:46:51'),
+	(6,'Platinum',20000.00,1000,100,'68',120,'2021-09-16 23:47:58','2021-09-16 23:47:58');
+
+/*!40000 ALTER TABLE `seller_packages` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
@@ -2692,6 +2953,10 @@ DROP TABLE IF EXISTS `sellers`;
 CREATE TABLE `sellers` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
+  `seller_package_id` int(11) DEFAULT NULL,
+  `remaining_uploads` int(11) NOT NULL DEFAULT '0',
+  `remaining_digital_uploads` int(11) NOT NULL DEFAULT '0',
+  `invalid_at` date DEFAULT NULL,
   `verification_status` int(1) NOT NULL DEFAULT '0',
   `verification_info` longtext COLLATE utf8_unicode_ci,
   `cash_on_delivery_status` int(1) NOT NULL DEFAULT '0',
@@ -2710,9 +2975,9 @@ CREATE TABLE `sellers` (
 LOCK TABLES `sellers` WRITE;
 /*!40000 ALTER TABLE `sellers` DISABLE KEYS */;
 
-INSERT INTO `sellers` (`id`, `user_id`, `verification_status`, `verification_info`, `cash_on_delivery_status`, `admin_to_pay`, `bank_name`, `bank_acc_name`, `bank_acc_no`, `bank_routing_no`, `bank_payment_status`, `created_at`, `updated_at`)
+INSERT INTO `sellers` (`id`, `user_id`, `seller_package_id`, `remaining_uploads`, `remaining_digital_uploads`, `invalid_at`, `verification_status`, `verification_info`, `cash_on_delivery_status`, `admin_to_pay`, `bank_name`, `bank_acc_name`, `bank_acc_no`, `bank_routing_no`, `bank_payment_status`, `created_at`, `updated_at`)
 VALUES
-	(1,3,1,'[{\"type\":\"text\",\"label\":\"Name\",\"value\":\"Mr. Seller\"},{\"type\":\"select\",\"label\":\"Marital Status\",\"value\":\"Married\"},{\"type\":\"multi_select\",\"label\":\"Company\",\"value\":\"[\\\"Company\\\"]\"},{\"type\":\"select\",\"label\":\"Gender\",\"value\":\"Male\"},{\"type\":\"file\",\"label\":\"Image\",\"value\":\"uploads\\/verification_form\\/CRWqFifcbKqibNzllBhEyUSkV6m1viknGXMEhtiW.png\"}]',1,78.40,'Kuda','Sulayman Fareed','1101294503',NULL,1,'2018-10-07 05:42:57','2021-09-15 20:41:24');
+	(1,3,NULL,0,0,NULL,1,'[{\"type\":\"text\",\"label\":\"Name\",\"value\":\"Mr. Seller\"},{\"type\":\"select\",\"label\":\"Marital Status\",\"value\":\"Married\"},{\"type\":\"multi_select\",\"label\":\"Company\",\"value\":\"[\\\"Company\\\"]\"},{\"type\":\"select\",\"label\":\"Gender\",\"value\":\"Male\"},{\"type\":\"file\",\"label\":\"Image\",\"value\":\"uploads\\/verification_form\\/CRWqFifcbKqibNzllBhEyUSkV6m1viknGXMEhtiW.png\"}]',1,78.40,'Kuda','Sulayman Fareed','1101294503',NULL,1,'2018-10-07 05:42:57','2021-09-15 20:41:24');
 
 /*!40000 ALTER TABLE `sellers` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -29689,7 +29954,161 @@ VALUES
 	(26979,'en','Sort by','Sort by','2021-09-15 22:05:55','2021-09-15 22:05:55'),
 	(26980,'en','reviews','reviews','2021-09-15 22:10:56','2021-09-15 22:10:56'),
 	(26981,'en','Withdraw request history','Withdraw request history','2021-09-15 22:11:24','2021-09-15 22:11:24'),
-	(26982,'en','Be A Seller','Be A Seller','2021-09-15 22:11:24','2021-09-15 22:11:24');
+	(26982,'en','Be A Seller','Be A Seller','2021-09-15 22:11:24','2021-09-15 22:11:24'),
+	(26983,'en','Add New Address now','Add New Address now','2021-09-16 14:35:54','2021-09-16 14:35:54'),
+	(26984,'en','Add New Address Now','Add New Address Now','2021-09-16 14:50:38','2021-09-16 14:50:38'),
+	(26985,'en','Address NOW','Address NOW','2021-09-16 14:52:33','2021-09-16 14:52:33'),
+	(26986,'en','terms and conditions','terms and conditions','2021-09-16 15:50:23','2021-09-16 15:50:23'),
+	(26987,'en','return policy','return policy','2021-09-16 15:50:23','2021-09-16 15:50:23'),
+	(26988,'en','privacy policy','privacy policy','2021-09-16 15:50:23','2021-09-16 15:50:23'),
+	(26989,'en','Order id','Order id','2021-09-16 15:53:04','2021-09-16 15:53:04'),
+	(26990,'en','Shipping address','Shipping address','2021-09-16 15:53:05','2021-09-16 15:53:05'),
+	(26991,'en','Order date','Order date','2021-09-16 15:53:05','2021-09-16 15:53:05'),
+	(26992,'en','Order status','Order status','2021-09-16 15:53:05','2021-09-16 15:53:05'),
+	(26993,'en','Paypal Client Id','Paypal Client Id','2021-09-16 16:04:05','2021-09-16 16:04:05'),
+	(26994,'en','Stripe Key','Stripe Key','2021-09-16 16:04:05','2021-09-16 16:04:05'),
+	(26995,'en','Stripe Secret','Stripe Secret','2021-09-16 16:04:05','2021-09-16 16:04:05'),
+	(26996,'en','Inhouse Orders','Inhouse Orders','2021-09-16 23:01:00','2021-09-16 23:01:00'),
+	(26997,'en','Payment Method','Payment Method','2021-09-16 23:01:00','2021-09-16 23:01:00'),
+	(26998,'en','file','file','2021-09-16 23:15:43','2021-09-16 23:15:43'),
+	(26999,'en','PayStack','PayStack','2021-09-17 22:04:41','2021-09-17 22:04:41'),
+	(27000,'en','Flutterwave','Flutterwave','2021-09-17 22:04:42','2021-09-17 22:04:42'),
+	(27001,'en','cancel','cancel','2021-09-17 22:04:42','2021-09-17 22:04:42'),
+	(27002,'en','Package logo','Package logo','2021-09-17 22:05:48','2021-09-17 22:05:48'),
+	(27003,'en','Twilio OTP','Twilio OTP','2021-09-17 22:11:55','2021-09-17 22:11:55'),
+	(27004,'en','MIMSMS','MIMSMS','2021-09-17 22:11:55','2021-09-17 22:11:55'),
+	(27005,'en','Template Id','Template Id','2021-09-17 22:12:05','2021-09-17 22:12:05'),
+	(27006,'en','Twilio Credential','Twilio Credential','2021-09-17 22:12:12','2021-09-17 22:12:12'),
+	(27007,'en','VALID TWILIO NUMBER','VALID TWILIO NUMBER','2021-09-17 22:12:12','2021-09-17 22:12:12'),
+	(27008,'en','Entity ID','Entity ID','2021-09-17 22:12:12','2021-09-17 22:12:12'),
+	(27009,'en','LANGUAGE','LANGUAGE','2021-09-17 22:12:12','2021-09-17 22:12:12'),
+	(27010,'en','MIMSMS Credential','MIMSMS Credential','2021-09-17 22:12:12','2021-09-17 22:12:12'),
+	(27011,'en','MIM_API_KEY','MIM_API_KEY','2021-09-17 22:12:12','2021-09-17 22:12:12'),
+	(27012,'en','MIM_SENDER_ID','MIM_SENDER_ID','2021-09-17 22:12:12','2021-09-17 22:12:12'),
+	(27013,'en','Home Page','Home Page','2021-09-17 22:13:50','2021-09-17 22:13:50'),
+	(27014,'en','Global SEO','Global SEO','2021-09-17 22:14:00','2021-09-17 22:14:00'),
+	(27015,'en','Exchange rate','Exchange rate','2021-09-17 22:15:05','2021-09-17 22:15:05'),
+	(27016,'en','Select Country','Select Country','2021-09-17 22:17:07','2021-09-17 22:17:07'),
+	(27017,'en','Flash Deals','Flash Deals','2021-09-17 22:19:31','2021-09-17 22:19:31'),
+	(27018,'en','Offline Seller Package Payment Requests','Offline Seller Package Payment Requests','2021-09-17 22:20:38','2021-09-17 22:20:38'),
+	(27019,'en','Offline Seller Package Payment approved successfully','Offline Seller Package Payment approved successfully','2021-09-17 22:20:38','2021-09-17 22:20:38'),
+	(27020,'en','Select sendmail for Mail Driver if you face any issue after configuring smtp as Mail Driver','Select sendmail for Mail Driver if you face any issue after configuring smtp as Mail Driver','2021-09-17 22:22:16','2021-09-17 22:22:16'),
+	(27021,'en','Register your shop','Register your shop','2021-09-17 22:32:00','2021-09-17 22:32:00'),
+	(27022,'en','Filter by Delivery Status','Filter by Delivery Status','2021-09-17 23:47:45','2021-09-17 23:47:45'),
+	(27023,'en','options','options','2021-09-17 23:47:45','2021-09-17 23:47:45'),
+	(27024,'en','Order has been deleted successfully','Order has been deleted successfully','2021-09-17 23:47:57','2021-09-17 23:47:57'),
+	(27025,'en','Content..','Content..','2021-09-19 18:26:47','2021-09-19 18:26:47'),
+	(27026,'en','If any product has discount or exists in another flash deal, the discount will be replaced by this discount & time limit.','If any product has discount or exists in another flash deal, the discount will be replaced by this discount & time limit.','2021-09-19 18:28:50','2021-09-19 18:28:50'),
+	(27027,'ng','All Category','Duk Nau\'i','2021-09-19 18:51:50','2021-09-19 18:51:50'),
+	(27028,'ng','All','Duk','2021-09-19 18:51:50','2021-09-19 18:51:50'),
+	(27029,'ng','Flash Sale','Flash Sale','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27030,'ng','View More','Duba Ƙari','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27031,'ng','Add to wishlist','Ƙara zuwa jerin abubuwan so','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27032,'ng','Add to compare','Ƙara don kwatantawa','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27033,'ng','Add to cart','Add to cart','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27034,'ng','Club Point','Ƙungiyar Club','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27035,'ng','Classified Ads','Tallace -tallace Masu Raba','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27036,'ng','Used','Anyi amfani','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27037,'ng','Top 10 Categories','Manyan Kungiyoyi 10','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27038,'ng','View All Categories','Duba Duk Kategorien','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27039,'ng','Top 10 Brands','Manyan Manyan 10','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27040,'ng','View All Brands','Duba Duk samfura','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27041,'ng','Terms & conditions','Sharuɗɗa & yanayi','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27042,'ng','Best Selling','Mafi Siyarwa','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27043,'ng','Top 20','Manyan 20','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27044,'ng','Featured Products','Sababbin Samfura','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27045,'ng','Best Sellers','Mafi kyawun Masu Sayarwa','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27046,'ng','Visit Store','Ziyarci Shagon','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27047,'ng','Popular Suggestions','Shahararrun Shawarwari','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27048,'ng','Category Suggestions','Shawarwari na Bangare','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27049,'ng','Automobile & Motorcycle','Mota & Babur','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27050,'ng','Price range','Farashin farashi','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27051,'ng','Filter by color','Tace ta launi','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27052,'ng','Home','Gida','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27053,'ng','Newest','Sabuwa','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27054,'ng','Oldest','Tsoho','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27055,'ng','Price low to high','Farashin low zuwa high','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27056,'ng','Price high to low','Farashi mai girma zuwa ƙasa','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27057,'ng','Brands','Alamu','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27058,'ng','All Brands','Duk Brands','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27059,'ng','All Sellers','Duk Masu Sayarwa','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27060,'ng','Inhouse product','Samfurin cikin gida','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27061,'ng','Message Seller','Mai Saƙo','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27062,'ng','Price','Farashin','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27063,'ng','Discount Price','Farashin Farashi','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27064,'ng','Color','Launi','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27065,'ng','Quantity','Yawa','2021-09-19 18:51:51','2021-09-19 18:51:51'),
+	(27066,'ng','available','samuwa','2021-09-19 18:51:52','2021-09-19 18:51:52'),
+	(27067,'ng','Total Price','Jimlar Farashi','2021-09-19 18:51:52','2021-09-19 18:51:52'),
+	(27068,'ng','Out of Stock','Ba a gama Ba','2021-09-19 18:51:52','2021-09-19 18:51:52'),
+	(27069,'ng','Refund','Maidawa','2021-09-19 18:51:52','2021-09-19 18:51:52'),
+	(27070,'ng','Share','Raba','2021-09-19 18:51:52','2021-09-19 18:51:52'),
+	(27071,'ng','Sold By','Sayar da','2021-09-19 18:51:52','2021-09-19 18:51:52'),
+	(27072,'ng','customer reviews','abokin ciniki reviews','2021-09-19 18:51:52','2021-09-19 18:51:52'),
+	(27073,'ng','Top Selling Products','Manyan Siyarwa','2021-09-19 18:51:52','2021-09-19 18:51:52'),
+	(27074,'ng','Description','Bayani','2021-09-19 18:51:52','2021-09-19 18:51:52'),
+	(27075,'ng','Video','Bidiyo','2021-09-19 18:51:52','2021-09-19 18:51:52'),
+	(27076,'ng','Reviews','Sharhi','2021-09-19 18:51:52','2021-09-19 18:51:52'),
+	(27077,'england','All Category','Gbogbo Ẹka','2021-09-19 18:55:09','2021-09-19 18:55:09'),
+	(27078,'england','All','Gbogbo','2021-09-19 18:55:09','2021-09-19 18:55:09'),
+	(27079,'england','Flash Sale','Tita filasi','2021-09-19 18:55:09','2021-09-19 18:55:09'),
+	(27080,'england','View More','Wo Die','2021-09-19 18:55:09','2021-09-19 18:55:09'),
+	(27081,'england','Add to wishlist','Fi kun akosile awon nkan ti o fe','2021-09-19 18:55:09','2021-09-19 18:55:09'),
+	(27082,'england','Add to compare','Fikun lati ṣe afiwe','2021-09-19 18:55:09','2021-09-19 18:55:09'),
+	(27083,'england','Add to cart','Fi kun Awon nkan ti o nra','2021-09-19 18:55:09','2021-09-19 18:55:09'),
+	(27084,'england','Club Point','Ologba Point','2021-09-19 18:55:09','2021-09-19 18:55:09'),
+	(27085,'england','Classified Ads','Awọn ipolowo Kilasifaedi','2021-09-19 18:55:09','2021-09-19 18:55:09'),
+	(27086,'england','Used','Ti lo','2021-09-19 18:55:09','2021-09-19 18:55:09'),
+	(27087,'england','Top 10 Categories','Top 10 Isori','2021-09-19 18:55:09','2021-09-19 18:55:09'),
+	(27088,'england','View All Categories','Wo Gbogbo Isori','2021-09-19 18:55:09','2021-09-19 18:55:09'),
+	(27089,'england','Top 10 Brands','Awọn burandi 10 ti o ga julọ','2021-09-19 18:55:09','2021-09-19 18:55:09'),
+	(27090,'england','View All Brands','Wo Gbogbo Awọn burandi','2021-09-19 18:55:09','2021-09-19 18:55:09'),
+	(27091,'england','Terms & conditions','Awọn ofin & ipo','2021-09-19 18:55:09','2021-09-19 18:55:09'),
+	(27092,'england','Best Selling','Ti o dara ju Tita','2021-09-19 18:55:09','2021-09-19 18:55:09'),
+	(27093,'england','Top 20','Top 20','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27094,'england','Featured Products','Ere ifihan Products','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27095,'england','Best Sellers','Awọn olutaja to dara julọ','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27096,'england','Visit Store','Ṣabẹwo Ile itaja','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27097,'england','Popular Suggestions','Awọn imọran ti o gbajumọ','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27098,'england','Category Suggestions','Awọn imọran Ẹka','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27099,'england','Automobile & Motorcycle','Ọkọ ayọkẹlẹ & Alupupu','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27100,'england','Price range','Iwọn owo','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27101,'england','Filter by color','Àlẹmọ nipa awọ','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27102,'england','Home','Ile','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27103,'england','Newest','Titun','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27104,'england','Oldest','Atijọ julọ','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27105,'england','Price low to high','Owo kekere si giga','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27106,'england','Price high to low','Owo ga si kekere','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27107,'england','Brands','Awọn burandi','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27108,'england','All Brands','Gbogbo Awọn burandi','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27109,'england','All Sellers','Gbogbo Awọn ti o ntaa','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27110,'england','Inhouse product','Ọja inu ile','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27111,'england','Message Seller','Oluṣowo Ifiranṣẹ','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27112,'england','Price','Iye owo','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27113,'england','Discount Price','Eni Iye','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27114,'england','Color','Awọ','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27115,'england','Quantity','Opoiye','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27116,'england','available','wa','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27117,'england','Total Price','Lapapọ Iye','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27118,'england','Out of Stock','Ko si ọja','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27119,'england','Refund','Idapada','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27120,'england','Share','Pin','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27121,'england','Sold By','Ta Nipa','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27122,'england','customer reviews','onibara agbeyewo','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27123,'england','Top Selling Products','Awọn ọja Tita Tita','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27124,'england','Description','Apejuwe','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27125,'england','Video','Fidio','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27126,'england','Reviews','Agbeyewo','2021-09-19 18:55:10','2021-09-19 18:55:10'),
+	(27127,'en','My Bidded Amount','My Bidded Amount','2021-09-19 19:08:01','2021-09-19 19:08:01'),
+	(27128,'en','Highest Bid Amount','Highest Bid Amount','2021-09-19 19:08:01','2021-09-19 19:08:01'),
+	(27129,'en','Order code: ','Order code: ','2021-09-19 22:04:42','2021-09-19 22:04:42'),
+	(27130,'en','has been Placed','has been Placed','2021-09-19 22:04:42','2021-09-19 22:04:42'),
+	(27131,'en','Qty','Qty','2021-09-19 22:06:40','2021-09-19 22:06:40'),
+	(27132,'en','On the way','On the way','2021-09-19 22:07:30','2021-09-19 22:07:30'),
+	(27133,'en','has been Paid','has been Paid','2021-09-19 22:07:44','2021-09-19 22:07:44'),
+	(27134,'en','has been On the way','has been On the way','2021-09-19 22:07:44','2021-09-19 22:07:44'),
+	(27135,'en','Paytm Activation','Paytm Activation','2021-09-20 00:06:52','2021-09-20 00:06:52'),
+	(27136,'en','You need to configure paytm correctly to enable this feature','You need to configure paytm correctly to enable this feature','2021-09-20 00:06:52','2021-09-20 00:06:52');
 
 /*!40000 ALTER TABLE `translations` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -29835,7 +30254,12 @@ VALUES
 	(114,'logo','uploads/all/WSKNvb4OeS6oljXUpbu4elFrSTHZH02NQQ6NviSN.jpg',3,84341,'jpg','image','2021-09-15 20:39:15','2021-09-15 20:39:15',NULL),
 	(115,'banner_login','uploads/all/ewMSa879aVtSOUwO4yiDpGgDAbN8eBiOOMXWSzTr.webp',3,101248,'jpg','image','2021-09-15 20:43:26','2021-09-15 20:43:26',NULL),
 	(116,'banner_reset_password','uploads/all/u9rn8EzJrXhJxA0M7bGd4MLewLCoPoyimhShdqPq.jpg',3,74005,'jpg','image','2021-09-15 20:43:27','2021-09-15 20:43:27',NULL),
-	(117,'banner_registration','uploads/all/hHSddYfi7sdn68R6HO7RSRCJG0DbxRfv1fkRoXFw.jpg',3,197947,'jpg','image','2021-09-15 20:43:28','2021-09-15 20:43:28',NULL);
+	(117,'banner_registration','uploads/all/hHSddYfi7sdn68R6HO7RSRCJG0DbxRfv1fkRoXFw.jpg',3,197947,'jpg','image','2021-09-15 20:43:28','2021-09-15 20:43:28',NULL),
+	(118,'my_passport','uploads/all/9tBpr4PFh7hMFqLJ3Kkk4E2VLz4D9w5jIubBS7Wn.jpg',9,66816,'jpg','image','2021-09-15 23:42:39','2021-09-15 23:42:39',NULL),
+	(119,'rave_payment','uploads/all/frXkrvLtFDbG375jakphdZpVSuflDAK5axA9fzbS.png',9,5592,'png','image','2021-09-19 18:15:25','2021-09-19 18:15:25',NULL),
+	(120,'paypal','uploads/all/MnN1gcQiNONdutpBdxWFvoX5xZtM96NgexnCVmxS.png',9,24762,'png','image','2021-09-19 18:15:25','2021-09-19 18:15:25',NULL),
+	(121,'paystack','uploads/all/upKVnchlmiI7hHr3Kwd8HFYMaLakeAz88UDN75Mc.png',9,38467,'png','image','2021-09-19 18:15:25','2021-09-19 18:15:25',NULL),
+	(122,'flutterwave','uploads/all/uo6vxep1QcKZZsbMIwLSY1cpmoQki5dHIHzFjfBD.png',9,36018,'png','image','2021-09-19 18:15:25','2021-09-19 18:15:25',NULL);
 
 /*!40000 ALTER TABLE `uploads` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -29882,10 +30306,10 @@ LOCK TABLES `users` WRITE;
 
 INSERT INTO `users` (`id`, `referred_by`, `provider_id`, `user_type`, `name`, `email`, `email_verified_at`, `verification_code`, `new_email_verificiation_code`, `password`, `remember_token`, `device_token`, `avatar`, `avatar_original`, `address`, `country`, `city`, `postal_code`, `phone`, `balance`, `banned`, `referral_code`, `customer_package_id`, `remaining_uploads`, `created_at`, `updated_at`)
 VALUES
-	(3,NULL,NULL,'seller','techbros Inc','seller@example.com','2018-12-11 19:00:00',NULL,NULL,'$2y$10$eUKRlkmm2TAug75cfGQ4i.WoUbcJ2uVPqUlVkox.cv4CCyGEIMQEm','E5EYMb8KNGRXR76ZIBJ3qfyBCaKsSuwz1o7yqMRvvnchnUXf9YT3aNBpaoeg',NULL,'https://lh3.googleusercontent.com/-7OnRtLyua5Q/AAAAAAAAAAI/AAAAAAAADRk/VqWKMl4f8CI/photo.jpg?sz=50','114',NULL,NULL,NULL,NULL,'+2349016627982',0.00,0,'3dLUoHsR1l',NULL,NULL,'2018-10-07 05:42:57','2021-09-15 20:41:24'),
-	(8,NULL,NULL,'customer','Mr. Customer','customer@example.com','2018-12-11 19:00:00',NULL,NULL,'$2y$10$eUKRlkmm2TAug75cfGQ4i.WoUbcJ2uVPqUlVkox.cv4CCyGEIMQEm','wycYyXFLMUUXJdDHWsFPFQ87GnYHoKnTes2m34kUIRfGAIc7c1Jl9jsv5bpp',NULL,'https://lh3.googleusercontent.com/-7OnRtLyua5Q/AAAAAAAAAAI/AAAAAAAADRk/VqWKMl4f8CI/photo.jpg?sz=50',NULL,'Demo address','US','Demo city','1234',NULL,0.00,0,'8zJTyXTlTT',NULL,NULL,'2018-10-07 05:42:57','2020-03-03 05:26:11'),
-	(9,NULL,NULL,'admin','Balogun Abdulquddus','babusunnah@gmail.com','2021-09-03 10:09:33',NULL,NULL,'$2y$10$mHoS1jQ4bhBLIMRUEXLT7OAramZT9NzUxHNopq8ovLGyzn1H2EXwK',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0.00,0,NULL,NULL,0,'2021-09-03 10:13:33','2021-09-03 10:13:33'),
-	(10,NULL,NULL,'customer','Balogun Abdulquddus',NULL,'2021-09-13 02:09:33','501284',NULL,'$2y$10$6I6U3Sp81toIHcyna3bJhudEYYGKIS2HeicllBu4hMnr4QrwbiQnW',NULL,NULL,NULL,'6',NULL,NULL,NULL,NULL,'+2348085744967',0.00,0,NULL,NULL,0,'2021-09-13 14:31:40','2021-09-13 14:58:23');
+	(3,NULL,NULL,'seller','techbros Inc','seller@example.com','2018-12-11 19:00:00',NULL,NULL,'$2y$10$eUKRlkmm2TAug75cfGQ4i.WoUbcJ2uVPqUlVkox.cv4CCyGEIMQEm','R4ogIhGrMw9zAMJhhqT6pm1DaFwhHOJ6Wk7bgHqhXZGPBTTqNuQhQfGCLUzn',NULL,'https://lh3.googleusercontent.com/-7OnRtLyua5Q/AAAAAAAAAAI/AAAAAAAADRk/VqWKMl4f8CI/photo.jpg?sz=50','114',NULL,NULL,NULL,NULL,'+2349016627982',0.00,0,'3dLUoHsR1l',NULL,NULL,'2018-10-07 05:42:57','2021-09-15 20:41:24'),
+	(8,NULL,NULL,'customer','Mr. Customer','customer@example.com','2018-12-11 19:00:00',NULL,NULL,'$2y$10$eUKRlkmm2TAug75cfGQ4i.WoUbcJ2uVPqUlVkox.cv4CCyGEIMQEm','TgAi1uxUCsYPd3HvXEqxvJ4IWCz8S4ICvvsplpjmynhRSR595ccSjk1o8OFo',NULL,'https://lh3.googleusercontent.com/-7OnRtLyua5Q/AAAAAAAAAAI/AAAAAAAADRk/VqWKMl4f8CI/photo.jpg?sz=50',NULL,'Demo address','US','Demo city','1234',NULL,0.00,0,'8zJTyXTlTT',NULL,NULL,'2018-10-07 05:42:57','2020-03-03 05:26:11'),
+	(9,NULL,NULL,'admin','Balogun Abdulquddus','babusunnah@gmail.com','2021-09-03 10:09:33',NULL,NULL,'$2y$10$mHoS1jQ4bhBLIMRUEXLT7OAramZT9NzUxHNopq8ovLGyzn1H2EXwK',NULL,NULL,NULL,'118',NULL,NULL,NULL,NULL,NULL,0.00,0,NULL,NULL,0,'2021-09-03 10:13:33','2021-09-15 23:42:46'),
+	(10,NULL,NULL,'customer','Balogun Abdulquddus',NULL,'2021-09-13 02:09:33','501284',NULL,'$2y$10$6I6U3Sp81toIHcyna3bJhudEYYGKIS2HeicllBu4hMnr4QrwbiQnW','4DqA6HhdHwg0yKqYuzMhI0E2iXh9tIjRVrZsyZs0Ip4tw3N3yukdzDIAgTip',NULL,NULL,'6',NULL,NULL,NULL,NULL,'+2348085744967',0.00,0,NULL,NULL,0,'2021-09-13 14:31:40','2021-09-13 14:58:23');
 
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
