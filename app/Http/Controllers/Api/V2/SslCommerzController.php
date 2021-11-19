@@ -4,11 +4,11 @@
 namespace App\Http\Controllers\Api\V2;
 
 
-use App\BusinessSetting;
+use App\Models\BusinessSetting;
 use App\Http\Controllers\SSLCommerz;
-use App\Order;
-use App\User;
-use App\Wallet;
+use App\Models\CombinedOrder;
+use App\Models\User;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 # IF BROWSE FROM LOCAL HOST, KEEP true
 if(!defined("SSLCZ_IS_LOCAL_HOST")){
@@ -29,12 +29,11 @@ class SslCommerzController extends Controller
     {
         # IF SANDBOX TRUE, THEN IT WILL CONNECT WITH SSLCOMMERZ SANDBOX (TEST) SYSTEM
         if (BusinessSetting::where('type', 'sslcommerz_sandbox')->first()->value == 1) {
-            define("SSLCZ_IS_SANDBOX", true);
+            $this->setSSLCommerzMode(true);
         } else {
-            define("SSLCZ_IS_SANDBOX", false);
+            $this->setSSLCommerzMode(false);
         }
 
-        $this->setSSLCommerzMode((SSLCZ_IS_SANDBOX) ? 1 : 0);
         $this->store_id = env('SSLCZ_STORE_ID');
         $this->store_pass = env('SSLCZ_STORE_PASSWD');
 
@@ -46,7 +45,7 @@ class SslCommerzController extends Controller
     {
 
         $payment_type = $request->payment_type;
-        $order_id = $request->order_id;
+        $combined_order_id = $request->combined_order_id;
         $amount = $request->amount;
         $user_id = $request->user_id;
 
@@ -55,18 +54,21 @@ class SslCommerzController extends Controller
         $post_data['currency'] = "BDT";
 
         if ($request->payment_type == "cart_payment") {
-            $post_data['tran_id'] = 'ADMO-' . $request->order_id . '-' . date('Ymd'); // tran_id must be unique
+            $post_data['tran_id'] = 'AIZ-' . $request->combined_order_id . '-' . date('Ymd'); // tran_id must be unique
 
         } else if ($request->payment_type == "wallet_payment") {
-            $post_data['tran_id'] = 'ADMW-' . $request->user_id . '-' . date('Ymd');
+            $post_data['tran_id'] = 'AIZ-' . $request->user_id . '-' . date('Ymd');
         }
 
         $post_data['value_a'] = $post_data['tran_id'];
 
         if ($request->payment_type == "cart_payment") {
-            $post_data['value_b'] = $request->order_id;
+
+            $combined_order = CombinedOrder::find($combined_order_id);
+
+            $post_data['value_b'] = $request->combined_order_id;
             $post_data['value_c'] = $request->payment_type;
-            $post_data['value_d'] = $request->amount;
+            $post_data['value_d'] = $combined_order->grand_total;
         } else if ($request->payment_type == "wallet_payment") {
             $post_data['value_a'] = $request->user_id;
             $post_data['value_b'] = 'sslcommerz';
@@ -116,7 +118,7 @@ class SslCommerzController extends Controller
 
                 }
 
-                return response()->json(['result' => true, 'message' => "Payment is successful"]);
+                return response()->json(['result' => true, 'message' => translate("Payment is successful")]);
             } catch (\Exception $e) {
                 return response()->json(['result' => false, 'message' => $e->getMessage()]);
             }
@@ -126,7 +128,7 @@ class SslCommerzController extends Controller
 
         return response()->json([
             'result' => false,
-            'message' => 'Payment Failed'
+            'message' => translate('Payment Failed')
         ]);
 
         /*return response()->json([
@@ -145,7 +147,7 @@ class SslCommerzController extends Controller
     {
         return response()->json([
             'result' => false,
-            'message' => 'Payment Failed'
+            'message' => translate('Payment Failed')
         ]);
     }
 
@@ -153,7 +155,7 @@ class SslCommerzController extends Controller
     {
         return response()->json([
             'result' => false,
-            'message' => 'Payment Cancelled'
+            'message' => translate('Payment Cancelled')
         ]);
     }
 

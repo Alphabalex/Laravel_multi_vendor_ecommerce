@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Search;
-use App\Product;
-use App\Category;
-use App\FlashDeal;
-use App\Brand;
-use App\Color;
-use App\Shop;
-use App\Attribute;
-use App\AttributeCategory;
+use App\Models\Search;
+use App\Models\Product;
+use App\Models\Category;
+use App\Models\FlashDeal;
+use App\Models\Brand;
+use App\Models\Color;
+use App\Models\Shop;
+use App\Models\Attribute;
+use App\Models\AttributeCategory;
 use App\Utility\CategoryUtility;
 
 class SearchController extends Controller
@@ -78,7 +78,9 @@ class SearchController extends Controller
 
             $products->where(function ($q) use ($query){
                 foreach (explode(' ', trim($query)) as $word) {
-                    $q->where('name', 'like', '%'.$word.'%')->orWhere('tags', 'like', '%'.$word.'%');
+                    $q->where('name', 'like', '%'.$word.'%')->orWhere('tags', 'like', '%'.$word.'%')->orWhereHas('product_translations', function($q) use ($word){
+                        $q->where('name', 'like', '%'.$word.'%');
+                    });
                 }
             });
         }
@@ -147,10 +149,11 @@ class SearchController extends Controller
     public function ajax_search(Request $request)
     {
         $keywords = array();
-        $products = Product::where('published', 1)->where('tags', 'like', '%'.$request->search.'%')->get();
+        $query = $request->search;
+        $products = Product::where('published', 1)->where('tags', 'like', '%'.$query.'%')->get();
         foreach ($products as $key => $product) {
             foreach (explode(',',$product->tags) as $key => $tag) {
-                if(stripos($tag, $request->search) !== false){
+                if(stripos($tag, $query) !== false){
                     if(sizeof($keywords) > 5){
                         break;
                     }
@@ -166,15 +169,18 @@ class SearchController extends Controller
         $products = filter_products(Product::query());
 
         $products = $products->where('published', 1)
-                        ->where(function ($q) use($request) {
-                            $q->where('name', 'like', '%'.$request->search.'%')
-                            ->orWhere('tags', 'like', '%'.$request->search.'%');
+                        ->where(function ($q) use ($query){
+                            foreach (explode(' ', trim($query)) as $word) {
+                                $q->where('name', 'like', '%'.$word.'%')->orWhere('tags', 'like', '%'.$word.'%')->orWhereHas('product_translations', function($q) use ($word){
+                                    $q->where('name', 'like', '%'.$word.'%');
+                                });
+                            }
                         })
                     ->get();
 
-        $categories = Category::where('name', 'like', '%'.$request->search.'%')->get()->take(3);
+        $categories = Category::where('name', 'like', '%'.$query.'%')->get()->take(3);
 
-        $shops = Shop::whereIn('user_id', verified_sellers_id())->where('name', 'like', '%'.$request->search.'%')->get()->take(3);
+        $shops = Shop::whereIn('user_id', verified_sellers_id())->where('name', 'like', '%'.$query.'%')->get()->take(3);
 
         if(sizeof($keywords)>0 || sizeof($categories)>0 || sizeof($products)>0 || sizeof($shops) >0){
             return view('frontend.partials.search_content', compact('products', 'categories', 'keywords', 'shops'));

@@ -26,7 +26,7 @@
                                 <div class='form-row'>
                                     <div class='col-12 form-group required'>
                                         <label class='control-label'>{{translate('Account Number/BillRefNumber')}}</label>
-                                        <input type="text" name="BillRefNumber" class="form-control" readonly="readonly" value="{{ $order->code }}" placeholder="{{ translate('Enter Acc Number') }}" required>
+                                        <input type="text" name="BillRefNumber" class="form-control" readonly="readonly" value="{{ $combined_order->code }}" placeholder="{{ translate('Enter Acc Number') }}" required>
                                     </div>
                                 </div>
 
@@ -34,7 +34,7 @@
                                 <div class="row">
                                     <div class="col-12">
                                         @if (Session::get('payment_type') == 'cart_payment')
-                                            <button class="btn btn-base-1 btn-block" type="submit">{{translate('Pay Now')}} (Ksh{{ \App\Order::findOrFail(Session::get('order_id'))->grand_total }})</button>
+                                            <button class="btn btn-base-1 btn-block" type="submit">{{translate('Pay Now')}} (Ksh{{ \App\CombinedOrder::findOrFail(Session::get('combined_order_id'))->grand_total }})</button>
                                         @elseif(Session::get('payment_type') == 'wallet_payment')
                                             <button class="btn btn-base-1 btn-block" type="submit">{{translate('Pay Now')}} (Ksh{{ Session::get('payment_data')['amount'] }})</button>
                                         @elseif(Session::get('payment_type') == 'customer_package_payment')

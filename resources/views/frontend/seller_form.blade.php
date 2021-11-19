@@ -60,15 +60,6 @@
                                 <label>{{ translate('Shop Name')}} <span class="text-primary">*</span></label>
                                 <input type="text" class="form-control" placeholder="{{ translate('Shop Name')}}" name="name" required>
                             </div>
-                            <!-- <div class="form-group">
-                                <label>{{ translate('Logo')}}</label>
-                                <div class="custom-file">
-                                    <label class="custom-file-label">
-                                        <input type="file" class="custom-file-input" name="logo" accept="image/*">
-                                        <span class="custom-file-name">{{ translate('Choose image') }}</span>
-                                    </label>
-                                </div>
-                            </div> -->
                             <div class="form-group">
                                 <label>{{ translate('Address')}} <span class="text-primary">*</span></label>
                                 <input type="text" class="form-control mb-3" placeholder="{{ translate('Address')}}" name="address" required>

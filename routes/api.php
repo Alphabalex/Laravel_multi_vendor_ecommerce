@@ -1,7 +1,7 @@
 <?php
 
 
-Route::prefix('v2/auth')->group(function () {
+Route::group(['prefix' => 'v2/auth', 'middleware' => ['app_language']], function() {
     Route::post('login', 'Api\V2\AuthController@login');
     Route::post('signup', 'Api\V2\AuthController@signup');
     Route::post('social-login', 'Api\V2\AuthController@socialLogin');
@@ -16,7 +16,7 @@ Route::prefix('v2/auth')->group(function () {
     Route::post('confirm_code', 'Api\V2\AuthController@confirmCode');
 });
 
-Route::prefix('v2')->group(function () {
+Route::group(['prefix' => 'v2', 'middleware' => ['app_language']], function() {
     Route::prefix('delivery-boy')->group(function () {
         Route::get('dashboard-summary/{id}', 'Api\V2\DeliveryBoyController@dashboard_summary')->middleware('auth:api');
         Route::get('deliveries/completed/{id}', 'Api\V2\DeliveryBoyController@completed_delivery')->middleware('auth:api');
@@ -31,6 +31,10 @@ Route::prefix('v2')->group(function () {
         Route::get('cancel-request/{id}', 'Api\V2\DeliveryBoyController@cancel_request')->middleware('auth:api');
         Route::post('change-delivery-status', 'Api\V2\DeliveryBoyController@change_delivery_status')->middleware('auth:api');
     });
+
+
+    Route::get('get-search-suggestions', 'Api\V2\SearchSuggestionController@getList');
+    Route::get('languages', 'Api\V2\LanguageController@getList');
 
     Route::get('chat/conversations/{id}', 'Api\V2\ChatController@conversations')->middleware('auth:api');
     Route::get('chat/messages/{id}', 'Api\V2\ChatController@messages')->middleware('auth:api');
@@ -88,7 +92,7 @@ Route::prefix('v2')->group(function () {
     Route::get('products/home', 'Api\V2\ProductController@home');
     Route::apiResource('products', 'Api\V2\ProductController')->except(['store', 'update', 'destroy']);
 
-    Route::get('cart-summary/{user_id}/{owner_id}', 'Api\V2\CartController@summary')->middleware('auth:api');
+    Route::get('cart-summary/{user_id}', 'Api\V2\CartController@summary')->middleware('auth:api');
     Route::post('carts/process', 'Api\V2\CartController@process')->middleware('auth:api');
     Route::post('carts/add', 'Api\V2\CartController@add')->middleware('auth:api');
     Route::post('carts/change-quantity', 'Api\V2\CartController@changeQuantity')->middleware('auth:api');
@@ -147,7 +151,11 @@ Route::prefix('v2')->group(function () {
     Route::post('get-user-by-access_token', 'Api\V2\UserController@getUserInfoByAccessToken');
 
     Route::get('cities', 'Api\V2\AddressController@getCities');
+    Route::get('states', 'Api\V2\AddressController@getStates');
     Route::get('countries', 'Api\V2\AddressController@getCountries');
+
+    Route::get('cities-by-state/{state_id}', 'Api\V2\AddressController@getCitiesByState');
+    Route::get('states-by-country/{country_id}', 'Api\V2\AddressController@getStatesByCountry');
 
     Route::post('shipping_cost', 'Api\V2\ShippingController@shipping_cost')->middleware('auth:api');
 
@@ -164,7 +172,7 @@ Route::prefix('v2')->group(function () {
     Route::any('paypal/payment/done', 'Api\V2\PaypalController@getDone')->name('api.paypal.done');
     Route::any('paypal/payment/cancel', 'Api\V2\PaypalController@getCancel')->name('api.paypal.cancel');
 
-    Route::any('razorpay/pay-with-razorpay', 'Api\V2\RazorpayController@payWithRazorpay')->name('api.razorpay.pay');
+    Route::any('razorpay/pay-with-razorpay', 'Api\V2\RazorpayController@payWithRazorpay')->name('api.razorpay.payment');
     Route::any('razorpay/payment', 'Api\V2\RazorpayController@payment')->name('api.razorpay.payment');
     Route::post('razorpay/success', 'Api\V2\RazorpayController@success')->name('api.razorpay.success');
 
@@ -192,8 +200,17 @@ Route::prefix('v2')->group(function () {
     Route::post('sslcommerz/fail', 'Api\V2\SslCommerzController@payment_fail');
     Route::post('sslcommerz/cancel', 'Api\V2\SslCommerzController@payment_cancel');
 
+    Route::any('flutterwave/payment/url', 'Api\V2\FlutterwaveController@getUrl')->name('api.flutterwave.url');
+    Route::any('flutterwave/payment/callback', 'Api\V2\FlutterwaveController@callback')->name('api.flutterwave.callback');
+
+    Route::any('paytm/payment/pay', 'Api\V2\PaytmController@pay')->name('api.paytm.pay');
+    Route::any('paytm/payment/callback', 'Api\V2\PaytmController@callback')->name('api.paytm.callback');
+
     Route::post('payments/pay/wallet', 'Api\V2\WalletController@processPayment')->middleware('auth:api');
     Route::post('payments/pay/cod', 'Api\V2\PaymentController@cashOnDelivery')->middleware('auth:api');
+    Route::post('payments/pay/manual', 'Api\V2\PaymentController@manualPayment')->middleware('auth:api');
+
+    Route::post('offline/payment/submit', 'Api\V2\OfflinePaymentController@submit')->name('api.offline.payment.submit');
 
     Route::post('order/store', 'Api\V2\OrderController@store')->middleware('auth:api');
     Route::get('profile/counters/{user_id}', 'Api\V2\ProfileController@counters')->middleware('auth:api');
@@ -201,6 +218,9 @@ Route::prefix('v2')->group(function () {
     Route::post('profile/update-device-token', 'Api\V2\ProfileController@update_device_token')->middleware('auth:api');
     Route::post('profile/update-image', 'Api\V2\ProfileController@updateImage')->middleware('auth:api');
     Route::post('profile/image-upload', 'Api\V2\ProfileController@imageUpload')->middleware('auth:api');
+    Route::post('profile/check-phone-and-email', 'Api\V2\ProfileController@checkIfPhoneAndEmailAvailable')->middleware('auth:api');
+
+    Route::post('file/image-upload', 'Api\V2\FileController@imageUpload')->middleware('auth:api');
 
     Route::get('wallet/balance/{id}', 'Api\V2\WalletController@balance')->middleware('auth:api');
     Route::get('wallet/history/{id}', 'Api\V2\WalletController@walletRechargeHistory')->middleware('auth:api');

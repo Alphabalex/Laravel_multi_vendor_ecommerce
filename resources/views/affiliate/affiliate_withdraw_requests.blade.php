@@ -20,35 +20,37 @@
                 </thead>
                 <tbody>
                 @foreach($affiliate_withdraw_requests as $key => $affiliate_withdraw_request)
-                @php $status = $affiliate_withdraw_request->status ; @endphp
-                    <tr>
-                        <td>{{ ($key+1) + ($affiliate_withdraw_requests->currentPage() - 1)*$affiliate_withdraw_requests->perPage() }}</td>
-                        <td>{{ $affiliate_withdraw_request->created_at}}</td>
-                        <td>{{ $affiliate_withdraw_request->user->name}}</td>
-                        <td>{{ $affiliate_withdraw_request->user->email}}</td>
-                        <td>{{ single_price($affiliate_withdraw_request->amount)}}</td>
-                        <td>
-                            @if($status == 1)
-                              <span class="badge badge-inline badge-success">{{translate('Approved')}}</span>
-                            @elseif($status == 2)
-                              <span class="badge badge-inline badge-danger">{{translate('Rejected')}}</span>
-                            @else
-                              <span class="badge badge-inline badge-info">{{translate('Pending')}}</span>
-                            @endif
-                        </td>
-                        <td class="text-right">
-                          @if($status == 0)
-                              <a href="#" class="btn btn-soft-primary btn-icon btn-circle btn-sm" onclick="show_affiliate_withdraw_modal('{{$affiliate_withdraw_request->id}}');" title="{{ translate('Pay Now') }}">
-                                  <i class="las la-money-bill"></i>
-                              </a>
-                              <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm" onclick="affiliate_withdraw_reject_modal('{{route('affiliate.withdraw_request.reject', $affiliate_withdraw_request->id)}}');" title="{{ translate('Reject') }}">
-                                  <i class="las la-trash"></i>
-                              </a>
-                            @else
-                                {{ translate('No Action Available')}}
-                            @endif
-                        </td>
-                    </tr>
+                    @php $status = $affiliate_withdraw_request->status ; @endphp
+                    @if ($affiliate_withdraw_request->user != null)
+                        <tr>
+                            <td>{{ ($key+1) + ($affiliate_withdraw_requests->currentPage() - 1)*$affiliate_withdraw_requests->perPage() }}</td>
+                            <td>{{ $affiliate_withdraw_request->created_at}}</td>
+                            <td>{{ optional($affiliate_withdraw_request->user)->name}}</td>
+                            <td>{{ optional($affiliate_withdraw_request->user)->email}}</td>
+                            <td>{{ single_price($affiliate_withdraw_request->amount)}}</td>
+                            <td>
+                                @if($status == 1)
+                                <span class="badge badge-inline badge-success">{{translate('Approved')}}</span>
+                                @elseif($status == 2)
+                                <span class="badge badge-inline badge-danger">{{translate('Rejected')}}</span>
+                                @else
+                                <span class="badge badge-inline badge-info">{{translate('Pending')}}</span>
+                                @endif
+                            </td>
+                            <td class="text-right">
+                            @if($status == 0)
+                                <a href="#" class="btn btn-soft-primary btn-icon btn-circle btn-sm" onclick="show_affiliate_withdraw_modal('{{$affiliate_withdraw_request->id}}');" title="{{ translate('Pay Now') }}">
+                                    <i class="las la-money-bill"></i>
+                                </a>
+                                <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm" onclick="affiliate_withdraw_reject_modal('{{route('affiliate.withdraw_request.reject', $affiliate_withdraw_request->id)}}');" title="{{ translate('Reject') }}">
+                                    <i class="las la-trash"></i>
+                                </a>
+                                @else
+                                    {{ translate('No Action Available')}}
+                                @endif
+                            </td>
+                        </tr>
+                    @endif
                 @endforeach
                 </tbody>
             </table>

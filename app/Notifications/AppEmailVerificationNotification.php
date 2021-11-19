@@ -9,7 +9,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\URL;
 use App\Mail\EmailManager;
 use Auth;
-use App\User;
+use App\Models\User;
 
 class AppEmailVerificationNotification extends Notification
 {

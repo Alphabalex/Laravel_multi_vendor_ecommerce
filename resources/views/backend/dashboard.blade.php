@@ -20,7 +20,7 @@
                             <span class="fs-12 d-block">{{ translate('Total') }}</span>
                             {{ translate('Customer') }}
                         </div>
-                        <div class="h3 fw-700 mb-3">{{ \App\Customer::count() }}</div>
+                        <div class="h3 fw-700 mb-3">{{ \App\Models\Customer::count() }}</div>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
                         <path fill="rgba(255,255,255,0.3)" fill-opacity="1" d="M0,128L34.3,112C68.6,96,137,64,206,96C274.3,128,343,224,411,250.7C480,277,549,235,617,213.3C685.7,192,754,192,823,181.3C891.4,171,960,149,1029,117.3C1097.1,85,1166,43,1234,58.7C1302.9,75,1371,149,1406,186.7L1440,224L1440,320L1405.7,320C1371.4,320,1303,320,1234,320C1165.7,320,1097,320,1029,320C960,320,891,320,823,320C754.3,320,686,320,617,320C548.6,320,480,320,411,320C342.9,320,274,320,206,320C137.1,320,69,320,34,320L0,320Z"></path>
@@ -34,7 +34,7 @@
                             <span class="fs-12 d-block">{{ translate('Total') }}</span>
                             {{ translate('Order') }}
                         </div>
-                        <div class="h3 fw-700 mb-3">{{ \App\Order::count() }}</div>
+                        <div class="h3 fw-700 mb-3">{{ \App\Models\Order::count() }}</div>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
                         <path fill="rgba(255,255,255,0.3)" fill-opacity="1" d="M0,128L34.3,112C68.6,96,137,64,206,96C274.3,128,343,224,411,250.7C480,277,549,235,617,213.3C685.7,192,754,192,823,181.3C891.4,171,960,149,1029,117.3C1097.1,85,1166,43,1234,58.7C1302.9,75,1371,149,1406,186.7L1440,224L1440,320L1405.7,320C1371.4,320,1303,320,1234,320C1165.7,320,1097,320,1029,320C960,320,891,320,823,320C754.3,320,686,320,617,320C548.6,320,480,320,411,320C342.9,320,274,320,206,320C137.1,320,69,320,34,320L0,320Z"></path>
@@ -48,7 +48,7 @@
                             <span class="fs-12 d-block">{{ translate('Total') }}</span>
                             {{ translate('Product category') }}
                         </div>
-                        <div class="h3 fw-700 mb-3">{{ \App\Category::count() }}</div>
+                        <div class="h3 fw-700 mb-3">{{ \App\Models\Category::count() }}</div>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
                         <path fill="rgba(255,255,255,0.3)" fill-opacity="1" d="M0,128L34.3,112C68.6,96,137,64,206,96C274.3,128,343,224,411,250.7C480,277,549,235,617,213.3C685.7,192,754,192,823,181.3C891.4,171,960,149,1029,117.3C1097.1,85,1166,43,1234,58.7C1302.9,75,1371,149,1406,186.7L1440,224L1440,320L1405.7,320C1371.4,320,1303,320,1234,320C1165.7,320,1097,320,1029,320C960,320,891,320,823,320C754.3,320,686,320,617,320C548.6,320,480,320,411,320C342.9,320,274,320,206,320C137.1,320,69,320,34,320L0,320Z"></path>
@@ -62,7 +62,7 @@
                             <span class="fs-12 d-block">{{ translate('Total') }}</span>
                             {{ translate('Product brand') }}
                         </div>
-                        <div class="h3 fw-700 mb-3">{{ \App\Brand::count() }}</div>
+                        <div class="h3 fw-700 mb-3">{{ \App\Models\Brand::count() }}</div>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
                         <path fill="rgba(255,255,255,0.3)" fill-opacity="1" d="M0,128L34.3,112C68.6,96,137,64,206,96C274.3,128,343,224,411,250.7C480,277,549,235,617,213.3C685.7,192,754,192,823,181.3C891.4,171,960,149,1029,117.3C1097.1,85,1166,43,1234,58.7C1302.9,75,1371,149,1406,186.7L1440,224L1440,320L1405.7,320C1371.4,320,1303,320,1234,320C1165.7,320,1097,320,1029,320C960,320,891,320,823,320C754.3,320,686,320,617,320C548.6,320,480,320,411,320C342.9,320,274,320,206,320C137.1,320,69,320,34,320L0,320Z"></path>
@@ -131,7 +131,7 @@
     </div>
     <div class="card-body">
         <div class="aiz-carousel gutters-10 half-outside-arrow" data-items="6" data-xl-items="5" data-lg-items="4" data-md-items="3" data-sm-items="2" data-arrows='true'>
-            @foreach (filter_products(\App\Product::where('published', 1)->orderBy('num_of_sale', 'desc'))->limit(12)->get() as $key => $product)
+            @foreach (filter_products(\App\Models\Product::where('published', 1)->orderBy('num_of_sale', 'desc'))->limit(12)->get() as $key => $product)
                 <div class="carousel-box">
                     <div class="aiz-card-box border border-light rounded shadow-sm hov-shadow-md mb-2 has-transition bg-white">
                         <div class="position-relative">
@@ -181,9 +181,9 @@
             datasets: [
                 {
                     data: [
-                        {{ \App\Product::where('published', 1)->count() }},
-                        {{ \App\Product::where('published', 1)->where('added_by', 'seller')->count() }},
-                        {{ \App\Product::where('published', 1)->where('added_by', 'admin')->count() }}
+                        {{ \App\Models\Product::where('published', 1)->count() }},
+                        {{ \App\Models\Product::where('published', 1)->where('added_by', 'seller')->count() }},
+                        {{ \App\Models\Product::where('published', 1)->where('added_by', 'admin')->count() }}
                     ],
                     backgroundColor: [
                         "#fd3995",
@@ -227,9 +227,9 @@
             datasets: [
                 {
                     data: [
-                        {{ \App\Seller::count() }},
-                        {{ \App\Seller::where('verification_status', 1)->count() }},
-                        {{ \App\Seller::where('verification_status', 0)->count() }}
+                        {{ \App\Models\Seller::count() }},
+                        {{ \App\Models\Seller::where('verification_status', 1)->count() }},
+                        {{ \App\Models\Seller::where('verification_status', 0)->count() }}
                     ],
                     backgroundColor: [
                         "#fd3995",

@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api\V2;
 
 use App\ClubPoint;
 use App\Http\Resources\V2\RefundRequestCollection;
-use App\OrderDetail;
+use App\Models\OrderDetail;
 use App\RefundRequest;
-use App\User;
-use App\Wallet;
+use App\Models\User;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 
 class RefundRequestController extends Controller
@@ -38,7 +38,7 @@ class RefundRequestController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Request Sent'
+            'message' => translate('Request Sent')
         ]);
 
 

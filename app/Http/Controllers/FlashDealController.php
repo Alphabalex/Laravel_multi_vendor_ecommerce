@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\FlashDeal;
-use App\FlashDealTranslation;
-use App\FlashDealProduct;
-use App\Product;
+use App\Models\FlashDeal;
+use App\Models\FlashDealTranslation;
+use App\Models\FlashDealProduct;
+use App\Models\Product;
 use Illuminate\Support\Str;
 
 class FlashDealController extends Controller

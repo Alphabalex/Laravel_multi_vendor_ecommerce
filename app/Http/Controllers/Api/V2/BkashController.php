@@ -3,9 +3,9 @@
 
 namespace App\Http\Controllers\Api\V2;
 
-use App\Order;
-use App\User;
-use App\Wallet;
+use App\Models\CombinedOrder;
+use App\Models\User;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 
 class BkashController extends Controller
@@ -15,7 +15,7 @@ class BkashController extends Controller
     {
 
         $payment_type = $request->payment_type;
-        $order_id = $request->order_id;
+        $combined_order_id = $request->combined_order_id;
         $amount = $request->amount;
         $user_id = $request->user_id;
 
@@ -41,13 +41,17 @@ class BkashController extends Controller
             curl_close($url);
             $token = json_decode($resultdata)->id_token;
 
+            if($payment_type == 'cart_payment'){
+                $combined_order = CombinedOrder::find($combined_order_id);
+                $amount = $combined_order->grand_total;
+            }
 
 
             return response()->json([
                 'token' => $token,
                 'result' => true,
-                'url' => route('api.bkash.webpage', ["token" => $token, "amount" => $request->amount]),
-                'message' => 'Payment page is found'
+                'url' => route('api.bkash.webpage', ["token" => $token, "amount" => $amount]),
+                'message' => translate('Payment page is found')
             ]);
         } catch (\Exception $exception) {
             return response()->json([
@@ -128,7 +132,7 @@ class BkashController extends Controller
 
             if ($payment_type == 'cart_payment') {
 
-                checkout_done($request->order_id, $request->payment_details);
+                checkout_done($request->combined_order_id, $request->payment_details);
             }
 
             if ($payment_type == 'wallet_payment') {
@@ -136,7 +140,7 @@ class BkashController extends Controller
                 wallet_payment_done($request->user_id, $request->amount, 'Bkash', $request->payment_details);
             }
 
-            return response()->json(['result' => true, 'message' => "Payment is successful"]);
+            return response()->json(['result' => true, 'message' => translate("Payment is successful")]);
 
 
         } catch (\Exception $e) {
@@ -148,7 +152,7 @@ class BkashController extends Controller
     {
         return response()->json([
             'result' => true,
-            'message' => 'Payment Success',
+            'message' => translate('Payment Success'),
             'payment_details' => $request->payment_details
         ]);
 
@@ -158,7 +162,7 @@ class BkashController extends Controller
     {
         return response()->json([
             'result' => false,
-            'message' => 'Payment Failed',
+            'message' => translate('Payment Failed'),
             'payment_details' => $request->payment_details
         ]);
     }

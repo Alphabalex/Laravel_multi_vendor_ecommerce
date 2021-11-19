@@ -19,7 +19,7 @@
     <input type="hidden" id="merchant_id" name="v_merchant_id" value="{{ env('VOGUE_MERCHANT_ID') }}">
 @endif
 @php
-    $customer_package = \App\CustomerPackage::findOrFail(Session::get('payment_data')['customer_package_id']);
+    $customer_package = \App\Models\CustomerPackage::findOrFail(Session::get('payment_data')['customer_package_id']);
 @endphp
 
 <script>
@@ -32,7 +32,7 @@
          Voguepay.init({
              v_merchant_id: document.getElementById("merchant_id").value,
              total: '{{ $customer_package->amount }}',
-             cur: '{{\App\Currency::findOrFail(get_setting('system_default_currency'))->first()->value)->code}}',
+             cur: '{{\App\Models\Currency::findOrFail(get_setting('system_default_currency'))->first()->value)->code}}',
              merchant_ref: 'ref123',
              loadText:'Custom load text',
              customer: {

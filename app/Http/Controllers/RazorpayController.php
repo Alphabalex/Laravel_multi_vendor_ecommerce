@@ -6,12 +6,12 @@ use Illuminate\Http\Request;
 
 use Session;
 use Redirect;
-use App\CombinedOrder;
-use App\Seller;
+use App\Models\CombinedOrder;
+use App\Models\Seller;
 use Razorpay\Api\Api;
 use Illuminate\Support\Facades\Input;
-use App\CustomerPackage;
-use App\SellerPackage;
+use App\Models\CustomerPackage;
+use App\Models\SellerPackage;
 use App\Http\Controllers\CustomerPackageController;
 use Auth;
 

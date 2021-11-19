@@ -11,7 +11,7 @@
         <div class="card">
             <div class="card-body p-0">
               <ul class="nav nav-tabs nav-fill border-light">
-                @foreach (\App\Language::all() as $key => $language)
+                @foreach (\App\Models\Language::all() as $key => $language)
                   <li class="nav-item">
                     <a class="nav-link text-reset @if ($language->code == $lang) active @else bg-soft-dark border-light border-left-0 @endif py-3" href="{{ route('flash_deals.edit', ['id'=>$flash_deal->id, 'lang'=> $language->code] ) }}">
                       <img src="{{ static_asset('assets/img/flags/'.$language->code.'.png') }}" height="11" class="mr-1">
@@ -78,9 +78,9 @@
                         <label class="col-sm-3 col-from-label" for="products">{{translate('Products')}}</label>
                         <div class="col-sm-9">
                             <select name="products[]" id="products" class="form-control aiz-selectpicker" multiple required data-placeholder="{{ translate('Choose Products') }}" data-live-search="true" data-selected-text-format="count">
-                                @foreach(\App\Product::all() as $product)
+                                @foreach(\App\Models\Product::all() as $product)
                                     @php
-                                        $flash_deal_product = \App\FlashDealProduct::where('flash_deal_id', $flash_deal->id)->where('product_id', $product->id)->first();
+                                        $flash_deal_product = \App\Models\FlashDealProduct::where('flash_deal_id', $flash_deal->id)->where('product_id', $product->id)->first();
                                     @endphp
                                     <option value="{{$product->id}}" <?php if($flash_deal_product != null) echo "selected";?> >{{ $product->getTranslation('name') }}</option>
                                 @endforeach

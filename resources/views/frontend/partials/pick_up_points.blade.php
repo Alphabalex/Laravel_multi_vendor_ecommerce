@@ -5,16 +5,16 @@
     $admin_products = array();
     $seller_products = array();
     foreach (Session::get('cart') as $key => $cartItem){
-        if(\App\Product::find($cartItem['id'])->added_by == 'admin'){
+        if(\App\Models\Product::find($cartItem['id'])->added_by == 'admin'){
             array_push($admin_products, $cartItem['id']);
         }
         else{
             $product_ids = array();
-            if(array_key_exists(\App\Product::find($cartItem['id'])->user_id, $seller_products)){
-                $product_ids = $seller_products[\App\Product::find($cartItem['id'])->user_id];
+            if(isset($seller_products[\App\Models\Product::find($cartItem['id'])->user_id])){
+                $product_ids = $seller_products[\App\Models\Product::find($cartItem['id'])->user_id];
             }
             array_push($product_ids, $cartItem['id']);
-            $seller_products[\App\Product::find($cartItem['id'])->user_id] = $product_ids;
+            $seller_products[\App\Models\Product::find($cartItem['id'])->user_id] = $product_ids;
         }
     }
     // dd($seller_products);

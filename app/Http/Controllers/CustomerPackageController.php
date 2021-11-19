@@ -4,15 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Utility\PayfastUtility;
 use Illuminate\Http\Request;
-use App\CustomerPackage;
-use App\CustomerPackageTranslation;
-use App\CustomerPackagePayment;
-use App\Wallet;
-use App\BusinessSetting;
-use App\Reference;
+use App\Models\CustomerPackage;
+use App\Models\CustomerPackageTranslation;
+use App\Models\CustomerPackagePayment;
 use Auth;
 use Session;
-use App\User;
+use App\Models\User;
 use App\Http\Controllers\PublicSslCommerzPaymentController;
 use App\Http\Controllers\InstamojoController;
 use App\Http\Controllers\RazorpayController;
@@ -162,7 +159,7 @@ class CustomerPackageController extends Controller
         } elseif ($request->payment_option == 'stripe') {
             $stripe = new StripePaymentController;
             return $stripe->stripe();
-        } elseif ($request->payment_option == 'sslcommerz_payment') {
+        } elseif ($request->payment_option == 'sslcommerz') {
             $sslcommerz = new PublicSslCommerzPaymentController;
             return $sslcommerz->index($request);
         } elseif ($request->payment_option == 'instamojo') {

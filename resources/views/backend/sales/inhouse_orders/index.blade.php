@@ -1,9 +1,6 @@
 @extends('backend.layouts.app')
 
 @section('content')
-@php
-    $refund_request_addon = \App\Addon::where('unique_identifier', 'refund_request')->first();
-@endphp
 
 <div class="card">
     <form class="" id="sort_orders" action="" method="GET">
@@ -58,7 +55,7 @@
                     <th data-breakpoints="md">{{translate('Delivery Status')}}</th>
                     <th data-breakpoints="md">{{translate('Payment Method')}}</th>
                     <th data-breakpoints="md">{{translate('Payment Status')}}</th>
-                    @if ($refund_request_addon != null && $refund_request_addon->activated == 1)
+                    @if (addon_is_activated('refund_request'))
                         <th>{{translate('Refund')}}</th>
                     @endif
                     <th class="text-right" width="15%">{{translate('Options')}}</th>
@@ -102,7 +99,7 @@
                             <span class="badge badge-inline badge-danger">{{translate('Unpaid')}}</span>
                             @endif
                         </td>
-                        @if ($refund_request_addon != null && $refund_request_addon->activated == 1)
+                        @if (addon_is_activated('refund_request'))
                             <td>
                                 @if (count($order->refund_requests) > 0)
                                     {{ count($order->refund_requests) }} {{ translate('Refund') }}
@@ -116,7 +113,7 @@
                             <a class="btn btn-soft-primary btn-icon btn-circle btn-sm" href="{{route('inhouse_orders.show', encrypt($order->id))}}" title="{{ translate('View') }}">
                                 <i class="las la-eye"></i>
                             </a>
-                            <a class="btn btn-soft-primary btn-icon btn-circle btn-sm" href="{{ route('invoice.download', $order->id) }}" title="{{ translate('Download Invoice') }}">
+                            <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{ route('invoice.download', $order->id) }}" title="{{ translate('Download Invoice') }}">
                                 <i class="las la-download"></i>
                             </a>
                             <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('orders.destroy', $order->id)}}" title="{{ translate('Delete') }}">

@@ -1,5 +1,5 @@
 <!doctype html>
-@if(\App\Language::where('code', Session::get('locale', Config::get('app.locale')))->first()->rtl == 1)
+@if(\App\Models\Language::where('code', Session::get('locale', Config::get('app.locale')))->first()->rtl == 1)
 <html dir="rtl" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 @else
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -22,7 +22,7 @@
 
 	<!-- aiz core css -->
 	<link rel="stylesheet" href="{{ static_asset('assets/css/vendors.css') }}">
-    @if(\App\Language::where('code', Session::get('locale', Config::get('app.locale')))->first()->rtl == 1)
+    @if(\App\Models\Language::where('code', Session::get('locale', Config::get('app.locale')))->first()->rtl == 1)
     <link rel="stylesheet" href="{{ static_asset('assets/css/bootstrap-rtl.min.css') }}">
     @endif
 	<link rel="stylesheet" href="{{ static_asset('assets/css/aiz-core.css') }}">

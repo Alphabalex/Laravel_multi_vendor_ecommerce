@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Order;
+use App\Models\Currency;
+use App\Models\Language;
+use App\Models\Order;
 use Session;
 use PDF;
-use Auth;
 use Config;
 
 class InvoiceController extends Controller
@@ -18,11 +18,11 @@ class InvoiceController extends Controller
             $currency_code = Session::get('currency_code');
         }
         else{
-            $currency_code = \App\Currency::findOrFail(get_setting('system_default_currency'))->code;
+            $currency_code = Currency::findOrFail(get_setting('system_default_currency'))->code;
         }
         $language_code = Session::get('locale', Config::get('app.locale'));
 
-        if(\App\Language::where('code', $language_code)->first()->rtl == 1){
+        if(Language::where('code', $language_code)->first()->rtl == 1){
             $direction = 'rtl';
             $text_align = 'right';
             $not_text_align = 'left';
@@ -44,7 +44,7 @@ class InvoiceController extends Controller
         }elseif($currency_code == 'ILS'){
             // Israeli font
             $font_family = "'Varela Round','sans-serif'";
-        }elseif($currency_code == 'AED' || $currency_code == 'EGP' || $language_code == 'sa' || $currency_code == 'IQD'){
+        }elseif($currency_code == 'AED' || $currency_code == 'EGP' || $language_code == 'sa' || $currency_code == 'IQD' || $language_code == 'ir'){
             // middle east/arabic font
             $font_family = "'XBRiyaz','sans-serif'";
         }else{

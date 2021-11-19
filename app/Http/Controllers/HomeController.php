@@ -3,31 +3,26 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Session;
 use Auth;
 use Hash;
-use App\Category;
-use App\FlashDeal;
-use App\Brand;
-use App\Product;
-use App\PickupPoint;
-use App\CustomerPackage;
-use App\CustomerProduct;
-use App\User;
-use App\Seller;
-use App\Shop;
-use App\Color;
-use App\Order;
-use App\BusinessSetting;
-use App\Http\Controllers\SearchController;
-use ImageOptimizer;
+use App\Models\Category;
+use App\Models\FlashDeal;
+use App\Models\Brand;
+use App\Models\Product;
+use App\Models\PickupPoint;
+use App\Models\CustomerPackage;
+use App\Models\User;
+use App\Models\Seller;
+use App\Models\Shop;
+use App\Models\Order;
+use App\Models\BusinessSetting;
+use App\Models\Coupon;
 use Cookie;
 use Illuminate\Support\Str;
 use App\Mail\SecondEmailVerifyMailManager;
 use Mail;
-use App\Utility\TranslationUtility;
-use App\Utility\CategoryUtility;
 use Illuminate\Auth\Events\PasswordReset;
+use Cache;
 
 
 class HomeController extends Controller
@@ -39,7 +34,15 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('frontend.index');
+        $featured_categories = Cache::rememberForever('featured_categories', function () {
+            return Category::where('featured', 1)->get();
+        });
+
+        $todays_deal_products = Cache::rememberForever('todays_deal_products', function () {
+            return filter_products(Product::where('published', 1)->where('todays_deal', '1'))->get();            
+        });
+
+        return view('frontend.index', compact('featured_categories', 'todays_deal_products'));
     }
 
     public function login()
@@ -56,8 +59,8 @@ class HomeController extends Controller
             return redirect()->route('home');
         }
         if($request->has('referral_code') &&
-                \App\Addon::where('unique_identifier', 'affiliate_system')->first() != null &&
-                \App\Addon::where('unique_identifier', 'affiliate_system')->first()->activated) {
+                \App\Models\Addon::where('unique_identifier', 'affiliate_system')->first() != null &&
+                \App\Models\Addon::where('unique_identifier', 'affiliate_system')->first()->activated) {
 
             try {
                 $affiliate_validation_time = \App\AffiliateConfig::where('type', 'validation_time')->first();
@@ -80,7 +83,14 @@ class HomeController extends Controller
 
     public function cart_login(Request $request)
     {
-        $user = User::whereIn('user_type', ['customer', 'seller'])->where('email', $request->email)->orWhere('phone', $request->email)->first();
+        $user = null;
+        if($request->get('phone') != null){
+            $user = User::whereIn('user_type', ['customer', 'seller'])->where('phone', "+{$request['country_code']}{$request['phone']}")->first();
+        }
+        elseif($request->get('email') != null){
+            $user = User::whereIn('user_type', ['customer', 'seller'])->where('email', $request->email)->first();
+        }
+        
         if($user != null){
             if(Hash::check($request->password, $user->password)){
                 if($request->has('remember')){
@@ -93,6 +103,9 @@ class HomeController extends Controller
             else {
                 flash(translate('Invalid email or password!'))->warning();
             }
+        }
+        else{
+            flash(translate('Invalid email or password!'))->warning();
         }
         return back();
     }
@@ -130,14 +143,11 @@ class HomeController extends Controller
 
     public function profile(Request $request)
     {
-        if(Auth::user()->user_type == 'customer'){
-            return view('frontend.user.customer.profile');
-        }
-        elseif(Auth::user()->user_type == 'delivery_boy'){
+        if(Auth::user()->user_type == 'delivery_boy'){
             return view('delivery_boys.frontend.profile');
         }
-        elseif(Auth::user()->user_type == 'seller'){
-            return view('frontend.user.seller.profile');
+        else{
+            return view('frontend.user.profile');
         }
     }
 
@@ -171,7 +181,7 @@ class HomeController extends Controller
     }
 
 
-    public function seller_update_profile(Request $request)
+    public function userProfileUpdate(Request $request)
     {
         if(env('DEMO_MODE') == 'On'){
             flash(translate('Sorry! the action is not permitted in demo '))->error();
@@ -189,23 +199,25 @@ class HomeController extends Controller
         if($request->new_password != null && ($request->new_password == $request->confirm_password)){
             $user->password = Hash::make($request->new_password);
         }
+        
         $user->avatar_original = $request->photo;
 
         $seller = $user->seller;
-        $seller->cash_on_delivery_status = $request->cash_on_delivery_status;
-        $seller->bank_payment_status = $request->bank_payment_status;
-        $seller->bank_name = $request->bank_name;
-        $seller->bank_acc_name = $request->bank_acc_name;
-        $seller->bank_acc_no = $request->bank_acc_no;
-        $seller->bank_routing_no = $request->bank_routing_no;
 
-        if($user->save() && $seller->save()){
-            flash(translate('Your Profile has been updated successfully!'))->success();
-            return back();
+        if($seller){
+            $seller->cash_on_delivery_status = $request->cash_on_delivery_status;
+            $seller->bank_payment_status = $request->bank_payment_status;
+            $seller->bank_name = $request->bank_name;
+            $seller->bank_acc_name = $request->bank_acc_name;
+            $seller->bank_acc_no = $request->bank_acc_no;
+            $seller->bank_routing_no = $request->bank_routing_no;
+
+            $seller->save();
         }
 
-        flash(translate('Sorry! Something went wrong.'))->error();
-        return back();
+        $user->save();
+
+        flash(translate('Your Profile has been updated successfully!'))->success();
     }
 
     public function flash_deal_details($slug)
@@ -254,12 +266,10 @@ class HomeController extends Controller
 
     public function product(Request $request, $slug)
     {
-        $detailedProduct  = Product::with('reviews', 'brand', 'stocks', 'user', 'user.shop')->where('slug', $slug)->where('approved', 1)->first();
+        $detailedProduct  = Product::with('reviews', 'brand', 'stocks', 'user', 'user.shop')->where('auction_product', 0)->where('slug', $slug)->where('approved', 1)->first();
 
         if($detailedProduct != null && $detailedProduct->published){
-            if($request->has('product_referral_code') &&
-                    \App\Addon::where('unique_identifier', 'affiliate_system')->first() != null &&
-                    \App\Addon::where('unique_identifier', 'affiliate_system')->first()->activated) {
+            if($request->has('product_referral_code') && addon_is_activated('affiliate_system')) {
 
                 $affiliate_validation_time = \App\AffiliateConfig::where('type', 'validation_time')->first();
                 $cookie_minute = 30 * 24;
@@ -340,9 +350,6 @@ class HomeController extends Controller
             ->with('childrenCategories')
             ->get();
         return view('frontend.user.seller.product_upload', compact('categories'));
-    }
-
-    public function profile_edit(Request $request){
     }
 
     public function show_product_edit_form(Request $request, $id)
@@ -427,14 +434,16 @@ class HomeController extends Controller
 
         $product_stock = $product->stocks->where('variant', $str)->first();
         $price = $product_stock->price;
+
+        if($product->wholesale_product){
+            $wholesalePrice = $product_stock->wholesalePrices->where('min_qty', '<=', $request->quantity)->where('max_qty', '>=', $request->quantity)->first();
+            if($wholesalePrice){
+                $price = $wholesalePrice->price;
+            }
+        }
+
         $quantity = $product_stock->qty;
         $max_limit = $product_stock->qty;
-//        if($str != null && $product->variant_product){
-//        }
-//        else{
-//            $price = $product->unit_price;
-//            $quantity = $product->current_stock;
-//        }
 
         if($quantity >= 1 && $product->min_qty <= $quantity){
             $in_stock = 1;
@@ -693,5 +702,15 @@ class HomeController extends Controller
                 ->paginate(15);
 
         return view('frontend.shop_listing', compact('shops'));
+    }
+
+    public function all_coupons(Request $request) {
+        $coupons = Coupon::where('start_date', '<=', strtotime(date('d-m-Y')))->where('end_date', '>=', strtotime(date('d-m-Y')))->paginate(15);
+        return view('frontend.coupons', compact('coupons'));
+    }
+
+    public function inhouse_products(Request $request) {
+        $products = filter_products(Product::where('added_by', 'admin'))->with('taxes')->paginate(12)->appends(request()->query());
+        return view('frontend.inhouse_products', compact('products'));
     }
 }

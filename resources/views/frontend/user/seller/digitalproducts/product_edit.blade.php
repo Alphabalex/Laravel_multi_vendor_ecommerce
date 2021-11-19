@@ -19,7 +19,7 @@
         <div class="card mb-0 border-bottom-0">
             <div class="card-body p-0">
                 <ul class="nav nav-tabs nav-fill border-light">
-                    @foreach (\App\Language::all() as $key => $language)
+                    @foreach (\App\Models\Language::all() as $key => $language)
                         <li class="nav-item">
                             <a class="nav-link text-reset @if ($language->code == $lang) active @else bg-soft-dark border-light border-left-0 @endif py-3" href="{{ route('seller.digitalproducts.edit', ['id'=>$product->id, 'lang'=> $language->code] ) }}">
                                 <img src="{{ static_asset('assets/img/flags/'.$language->code.'.png') }}" height="11" class="mr-1">
@@ -45,7 +45,7 @@
                     <label class="col-lg-3 col-from-label">{{translate('Category')}} <span class="text-danger">*</span></label>
                     <div class="col-lg-9">
                         <select class="form-control aiz-selectpicker" name="category_id" id="category_id" data-selected={{ $product->category_id }} required>
-                            @foreach(\App\Category::where('parent_id', 0)->where('digital', 1)->with('childrenCategories')->get(); as $category)
+                            @foreach(\App\Models\Category::where('parent_id', 0)->where('digital', 1)->with('childrenCategories')->get(); as $category)
                                 <option value="{{ $category->id }}">{{ $category->getTranslation('name') }}</option>
                                 @foreach ($category->childrenCategories as $childCategory)
                                     @include('categories.child_category', ['child_category' => $childCategory])

@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Resources\V2\WalletCollection;
-use App\User;
-use App\Wallet;
-use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 
 class WalletController extends Controller
@@ -16,7 +15,7 @@ class WalletController extends Controller
         $latest = Wallet::where('user_id', $id)->latest()->first();
         return response()->json([
             'balance' => format_price($user->balance),
-            'last_recharged' => $latest == null ? "Not Available" : Carbon::createFromTimestamp(strtotime($latest->created_at))->diffForHumans(),
+            'last_recharged' => $latest == null ? "Not Available" : $latest->created_at->diffForHumans(),
         ]);
     }
 
@@ -31,14 +30,21 @@ class WalletController extends Controller
         $user = User::find($request->user_id);
 
         if ($user->balance >= $request->amount) {
-            $user->balance -= $request->amount;
-            $user->save();
-            return $order->store($request,true);
+            
+            $response =  $order->store($request, true);            
+            $decoded_response = $response->original;
+            if ($decoded_response['result'] == true) { // only decrease user balance with a success
+                $user->balance -= $request->amount;
+                $user->save();            
+            }
+
+            return $response;
+
         } else {
             return response()->json([
                 'result' => false,
-                'order_id' => 0,
-                'message' => 'Insufficient wallet balance'
+                'combined_order_id' => 0,
+                'message' => translate('Insufficient wallet balance')
             ]);
         }
     }

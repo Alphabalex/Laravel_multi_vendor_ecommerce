@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api\V2;
 
-use App\CustomerPackage;
+use App\Models\CustomerPackage;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CustomerPackageController;
 use App\Http\Controllers\WalletController;
-use App\Order;
+use App\Models\CombinedOrder;
 use Illuminate\Http\Request;
 use Stripe\Exception\CardException;
 use Stripe\PaymentIntent;
@@ -17,10 +17,10 @@ class StripeController extends Controller
     public function stripe(Request $request)
     {
         $payment_type = $request->payment_type;
-        $order_id = $request->order_id;
+        $combined_order_id = $request->combined_order_id;
         $amount = $request->amount;
         $user_id = $request->user_id;
-        return view('frontend.payment.stripe_app', compact('payment_type', 'order_id', 'amount', 'user_id'));
+        return view('frontend.payment.stripe_app', compact('payment_type', 'combined_order_id', 'amount', 'user_id'));
     }
 
     public function create_checkout_session(Request $request)
@@ -28,8 +28,8 @@ class StripeController extends Controller
         $amount = 0;
 
         if ($request->payment_type == 'cart_payment') {
-            $order = Order::findOrFail($request->order_id);
-            $amount = round($order->grand_total * 100);
+            $combined_order = CombinedOrder::find($request->combined_order_id);
+            $amount = round($combined_order->grand_total * 100);
         } elseif ($request->payment_type == 'wallet_payment') {
             $amount = round($request->amount * 100);
         }
@@ -42,7 +42,7 @@ class StripeController extends Controller
             'line_items' => [
                 [
                     'price_data' => [
-                        'currency' => \App\Currency::findOrFail(\App\BusinessSetting::where('type', 'system_default_currency')->first()->value)->code,
+                        'currency' => \App\Models\Currency::findOrFail(\App\Models\BusinessSetting::where('type', 'system_default_currency')->first()->value)->code,
                         'product_data' => [
                             'name' => "Payment"
                         ],
@@ -52,7 +52,7 @@ class StripeController extends Controller
                 ]
             ],
             'mode' => 'payment',
-            'success_url' => route('api.stripe.success', ["payment_type" => $request->payment_type, "order_id" => $request->order_id, "amount" => $request->amount, "user_id" => $request->user_id]),
+            'success_url' => route('api.stripe.success', ["payment_type" => $request->payment_type, "combined_order_id" => $request->combined_order_id, "amount" => $request->amount, "user_id" => $request->user_id]),
             'cancel_url' => route('api.stripe.cancel'),
         ]);
 
@@ -68,7 +68,7 @@ class StripeController extends Controller
 
             if ($payment_type == 'cart_payment') {
 
-                checkout_done($request->order_id, json_encode($payment));
+                checkout_done($request->combined_order_id, json_encode($payment));
             }
 
             if ($payment_type == 'wallet_payment') {
@@ -76,16 +76,16 @@ class StripeController extends Controller
                 wallet_payment_done($request->user_id, $request->amount, 'Stripe', json_encode($payment));
             }
 
-            return response()->json(['result' => true, 'message' => "Payment is successful"]);
+            return response()->json(['result' => true, 'message' => translate("Payment is successful")]);
 
 
         } catch (\Exception $e) {
-            return response()->json(['result' => false, 'message' => "Payment is unsuccessful"]);
+            return response()->json(['result' => false, 'message' => translate("Payment is unsuccessful")]);
         }
     }
 
     public function cancel(Request $request)
     {
-        return response()->json(['result' => false, 'message' => "Payment is cancelled"]);
+        return response()->json(['result' => false, 'message' => translate("Payment is cancelled")]);
     }
 }

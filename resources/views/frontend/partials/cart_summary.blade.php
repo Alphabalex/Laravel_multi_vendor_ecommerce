@@ -16,7 +16,7 @@
             @endphp
             @foreach ($carts as $key => $cartItem)
                 @php
-                    $product = \App\Product::find($cartItem['product_id']);
+                    $product = \App\Models\Product::find($cartItem['product_id']);
                     $total_point += $product->earn_point * $cartItem['quantity'];
                 @endphp
             @endforeach
@@ -43,7 +43,7 @@
                 @endphp
                 @foreach ($carts as $key => $cartItem)
                     @php
-                        $product = \App\Product::find($cartItem['product_id']);
+                        $product = \App\Models\Product::find($cartItem['product_id']);
                         $subtotal += $cartItem['price'] * $cartItem['quantity'];
                         $tax += $cartItem['tax'] * $cartItem['quantity'];
                         $product_shipping_cost = $cartItem['shipping_cost'];

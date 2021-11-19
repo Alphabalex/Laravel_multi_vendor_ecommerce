@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api\V2;
 
-use App\CustomerPackage;
+use App\Models\CustomerPackage;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CustomerPackageController;
 use App\Http\Controllers\WalletController;
-use App\Order;
+use App\Models\CombinedOrder;
 use Illuminate\Http\Request;
 use PayPalCheckoutSdk\Core\PayPalHttpClient;
 use PayPalCheckoutSdk\Core\ProductionEnvironment;
@@ -32,8 +32,8 @@ class PaypalController extends Controller
         $client = new PayPalHttpClient($environment);
 
         if ($request->payment_type == 'cart_payment') {
-            $order = Order::find($request->order_id);
-            $amount = $order->grand_total;
+            $combined_order = CombinedOrder::find($request->combined_order_id);
+            $amount = $combined_order->grand_total;
         } elseif ($request->payment_type == 'wallet_payment') {
             $amount = $request->amount;
         }
@@ -46,12 +46,12 @@ class PaypalController extends Controller
                 "reference_id" => rand(000000, 999999),
                 "amount" => [
                     "value" => number_format($amount, 2, '.', ''),
-                    "currency_code" => \App\Currency::find(get_setting('system_default_currency'))->code
+                    "currency_code" => \App\Models\Currency::find(get_setting('system_default_currency'))->code
                 ]
             ]],
             "application_context" => [
                 "cancel_url" => route('api.paypal.cancel'),
-                "return_url" => route('api.paypal.done', ["payment_type" => $request->payment_type, "order_id" => $request->order_id, "amount" => $request->amount, "user_id" => $request->user_id]),
+                "return_url" => route('api.paypal.done', ["payment_type" => $request->payment_type, "combined_order_id" => $request->combined_order_id, "amount" => $request->amount, "user_id" => $request->user_id]),
             ]
         ];
 
@@ -69,7 +69,7 @@ class PaypalController extends Controller
 
     public function getCancel(Request $request)
     {
-        return response()->json(['result' => true, 'message' => "Payment failed or got cancelled"]);
+        return response()->json(['result' => true, 'message' => translate("Payment failed or got cancelled")]);
     }
 
     public function getDone(Request $request)
@@ -98,7 +98,7 @@ class PaypalController extends Controller
 
             if ($request->payment_type == 'cart_payment') {
 
-                checkout_done($request->order_id, json_encode($response));
+                checkout_done($request->combined_order_id, json_encode($response));
             }
 
             if ($request->payment_type == 'wallet_payment') {
@@ -106,9 +106,9 @@ class PaypalController extends Controller
                 wallet_payment_done($request->user_id, $request->amount, 'Paypal', json_encode($response));
             }
 
-            return response()->json(['result' => true, 'message' => "Payment is successful"]);
+            return response()->json(['result' => true, 'message' => translate("Payment is successful")]);
         } catch (HttpException $ex) {
-            return response()->json(['result' => false, 'message' => "Payment failed"]);
+            return response()->json(['result' => false, 'message' => translate("Payment failed")]);
         }
     }
 

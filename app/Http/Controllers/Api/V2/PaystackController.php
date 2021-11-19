@@ -6,8 +6,8 @@ namespace App\Http\Controllers\Api\V2;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CustomerPackageController;
 use App\Http\Controllers\WalletController;
-use App\Order;
-use App\User;
+use App\Models\CombinedOrder;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Paystack;
 class PaystackController extends Controller
@@ -16,16 +16,16 @@ class PaystackController extends Controller
     public function init(Request $request)
     {
         $payment_type = $request->payment_type;
-        $order_id = $request->order_id;
+        $combined_order_id = $request->combined_order_id;
         $amount = $request->amount;
         $user_id = $request->user_id;
 
 
         if ($payment_type == 'cart_payment') {
-            $order = Order::find($order_id);
+            $combined_order = CombinedOrder::find($combined_order_id);
             $user = User::find($user_id);
             $request->email = $user->email;
-            $request->amount = round($order->grand_total * 100);
+            $request->amount = round($combined_order->grand_total * 100);
             $request->currency = env('PAYSTACK_CURRENCY_CODE', 'NGN');
             $request->reference = Paystack::genTranxRef();
             return Paystack::getAuthorizationUrl()->redirectNow();
@@ -50,7 +50,7 @@ class PaystackController extends Controller
 
             if ($payment_type == 'cart_payment') {
 
-                checkout_done($request->order_id, $request->payment_details);
+                checkout_done($request->combined_order_id, $request->payment_details);
             }
 
             if ($payment_type == 'wallet_payment') {
@@ -58,7 +58,7 @@ class PaystackController extends Controller
                 wallet_payment_done($request->user_id, $request->amount, 'Paystack', $request->payment_details);
             }
 
-            return response()->json(['result' => true, 'message' => "Payment is successful"]);
+            return response()->json(['result' => true, 'message' => translate("Payment is successful")]);
 
 
         } catch (\Exception $e) {

@@ -2,7 +2,7 @@
 
 @section('content')
 @php
-    $privacy_policy =  \App\Page::where('type', 'privacy_policy_page')->first();
+    $privacy_policy =  \App\Models\Page::where('type', 'privacy_policy_page')->first();
 @endphp
 <section class="pt-4 mb-4">
     <div class="container text-center">

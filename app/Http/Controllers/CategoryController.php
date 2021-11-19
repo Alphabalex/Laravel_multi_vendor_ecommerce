@@ -3,13 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Category;
-use App\HomeCategory;
-use App\Product;
-use App\Language;
-use App\CategoryTranslation;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\CategoryTranslation;
 use App\Utility\CategoryUtility;
 use Illuminate\Support\Str;
+use Cache;
 
 class CategoryController extends Controller
 {
@@ -185,6 +184,7 @@ class CategoryController extends Controller
         $category_translation->name = $request->name;
         $category_translation->save();
 
+        Cache::forget('featured_categories');
         flash(translate('Category has been updated successfully'))->success();
         return back();
     }
@@ -211,6 +211,7 @@ class CategoryController extends Controller
         }
 
         CategoryUtility::delete_category($id);
+        Cache::forget('featured_categories');
 
         flash(translate('Category has been deleted successfully'))->success();
         return redirect()->route('categories.index');
@@ -220,9 +221,8 @@ class CategoryController extends Controller
     {
         $category = Category::findOrFail($request->id);
         $category->featured = $request->status;
-        if($category->save()){
-            return 1;
-        }
-        return 0;
+        $category->save();
+        Cache::forget('featured_categories');
+        return 1;
     }
 }

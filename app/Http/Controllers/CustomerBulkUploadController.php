@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\UsersImport;
-use App\CustomersImport;
-use App\User;
+use App\Models\UsersImport;
+use App\Models\CustomersImport;
+use App\Models\User;
 use Excel;
 use PDF;
 use Carbon\Carbon;

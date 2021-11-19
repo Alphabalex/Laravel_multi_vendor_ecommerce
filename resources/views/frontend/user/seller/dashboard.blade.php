@@ -14,7 +14,7 @@
             <div class="bg-grad-3 text-white rounded-lg mb-4 overflow-hidden">
               <div class="px-3 pt-3">
                 <div class="h3 fw-700">
-                  {{ count(\App\Product::where('user_id', Auth::user()->id)->get()) }}
+                  {{ count(\App\Models\Product::where('user_id', Auth::user()->id)->get()) }}
                 </div>
                 <div class="opacity-50">{{ translate('Products')}}</div>
               </div>
@@ -28,7 +28,7 @@
             <div class="bg-grad-1 text-white rounded-lg mb-4 overflow-hidden">
                 <div class="px-3 pt-3">
                     <div class="h3 fw-700">
-                      {{ count(\App\OrderDetail::where('seller_id', Auth::user()->id)->where('delivery_status', 'delivered')->get()) }}
+                      {{ count(\App\Models\OrderDetail::where('seller_id', Auth::user()->id)->where('delivery_status', 'delivered')->get()) }}
                     </div>
                     <div class="opacity-50">{{ translate('Total sale')}}</div>
                 </div>
@@ -42,7 +42,7 @@
             <div class="bg-grad-2 text-white rounded-lg mb-4 overflow-hidden">
                 <div class="px-3 pt-3">
                     @php
-                        $orderDetails = \App\OrderDetail::where('seller_id', Auth::user()->id)->get();
+                        $orderDetails = \App\Models\OrderDetail::where('seller_id', Auth::user()->id)->get();
                         $total = 0;
                         foreach ($orderDetails as $key => $orderDetail) {
                             if($orderDetail->order != null && $orderDetail->order->payment_status == 'paid'){
@@ -63,14 +63,14 @@
             <div class="bg-grad-3 text-white rounded-lg mb-4 overflow-hidden">
               <div class="px-3 pt-3">
                   @php
-                  $orders = \App\Order::where('user_id', Auth::user()->id)->get();
+                  $orders = \App\Models\Order::where('user_id', Auth::user()->id)->get();
                   $total = 0;
                   foreach ($orders as $key => $order) {
                   $total += count($order->orderDetails);
                   }
                   @endphp
                   <div class="h3 fw-700">
-                      {{ count(\App\OrderDetail::where('seller_id', Auth::user()->id)->where('delivery_status', 'delivered')->get()) }}
+                      {{ count(\App\Models\OrderDetail::where('seller_id', Auth::user()->id)->where('delivery_status', 'delivered')->get()) }}
                   </div>
                   <div class="opacity-50">{{ translate('Successful orders')}}</div>
               </div>
@@ -91,19 +91,19 @@
                   <table class="table aiz-table mb-0">
                       <tr>
                           <td>{{ translate('Total orders')}}:</td>
-                          <td>{{ count(\App\OrderDetail::where('seller_id', Auth::user()->id)->get()) }}</strong></td>
+                          <td>{{ count(\App\Models\OrderDetail::where('seller_id', Auth::user()->id)->get()) }}</strong></td>
                       </tr>
                       <tr>
                           <td>{{ translate('Pending orders')}}:</td>
-                          <td>{{ count(\App\OrderDetail::where('seller_id', Auth::user()->id)->where('delivery_status', 'pending')->get()) }}</strong></td>
+                          <td>{{ count(\App\Models\OrderDetail::where('seller_id', Auth::user()->id)->where('delivery_status', 'pending')->get()) }}</strong></td>
                       </tr>
                       <tr>
                           <td>{{ translate('Cancelled orders')}}:</td>
-                          <td>{{ count(\App\OrderDetail::where('seller_id', Auth::user()->id)->where('delivery_status', 'cancelled')->get()) }}</strong></td>
+                          <td>{{ count(\App\Models\OrderDetail::where('seller_id', Auth::user()->id)->where('delivery_status', 'cancelled')->get()) }}</strong></td>
                       </tr>
                       <tr>
                           <td>{{ translate('Successful orders')}}:</td>
-                          <td>{{ count(\App\OrderDetail::where('seller_id', Auth::user()->id)->where('delivery_status', 'delivered')->get()) }}</strong></td>
+                          <td>{{ count(\App\Models\OrderDetail::where('seller_id', Auth::user()->id)->where('delivery_status', 'delivered')->get()) }}</strong></td>
                       </tr>
                   </table>
               </div>
@@ -140,7 +140,7 @@
                       </tr>
                   </thead>
                   <tbody>
-                    @foreach (\App\Category::all() as $key => $category)
+                    @foreach (\App\Models\Category::all() as $key => $category)
                         @if(count($category->products->where('user_id', Auth::user()->id))>0)
                           <tr>
                               <td>{{ $category->getTranslation('name') }}</td>
@@ -164,13 +164,16 @@
                       <h6 class="mb-0">{{ translate('Purchased Package') }}</h6>
                   </div>
                   @php
-                      $seller_package = \App\SellerPackage::find(Auth::user()->seller->seller_package_id);
+                      $seller_package = \App\Models\SellerPackage::find(Auth::user()->seller->seller_package_id);
                   @endphp
                   <div class="card-body text-center">
                       @if($seller_package != null)
                         <img src="{{ uploaded_asset($seller_package->logo) }}" class="img-fluid mb-4 h-110px">
                         <p class="mb-1 text-muted">{{ translate('Product Upload Remaining') }}: {{ Auth::user()->seller->remaining_uploads }} {{ translate('Times')}}</p>
                         <p class="text-muted mb-1">{{ translate('Digital Product Upload Remaining') }}: {{ Auth::user()->seller->remaining_digital_uploads }} {{ translate('Times')}}</p>
+                        @if(addon_is_activated('auction'))
+                        <p class="text-muted mb-1">{{ translate('Auction Product Upload Remaining') }}: {{ Auth::user()->seller->remaining_auction_uploads }} {{ translate('Times')}}</p>
+                        @endif
                         <p class="text-muted mb-4">{{ translate('Package Expires at') }}: {{ Auth::user()->seller->invalid_at }}</p>
                         <h6 class="fw-600 mb-3 text-primary">{{ translate('Current Package') }}: {{ $seller_package->name }}</h6>
                       @else

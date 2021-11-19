@@ -20,34 +20,36 @@
                 </thead>
                 <tbody>
                 @foreach($affiliate_logs as $key => $affiliate_log)
-                    <tr>
-                        <td>{{ ($key+1) + ($affiliate_logs->currentPage() - 1)*$affiliate_logs->perPage() }}</td>
-                        <td>
-                            {{ \App\User::where('id', $affiliate_log->referred_by_user)->first()->name }}
-                        </td>
-                        <td>
-                            @if($affiliate_log->user_id !== null)
-                                {{ $affiliate_log->user->name }}
-                            @else
-                                {{ translate('Guest').' ('. $affiliate_log->guest_id.')' }}
-                            @endif
-                        </td>
-                        <td>{{ single_price($affiliate_log->amount) }}</td>
-                        <td>
-                            @if($affiliate_log->order_id != null)
-                                {{ $affiliate_log->order->code }}
-                            @else
-                                {{ $affiliate_log->order_detail->order->code }}
-                            @endif
-                        </td>
-                        <td> {{ ucwords(str_replace('_',' ', $affiliate_log->affiliate_type)) }}</td>
-                        <td>
-                            @if($affiliate_log->order_detail_id != null)
-                                {{ $affiliate_log->order_detail->product->name }}
-                            @endif
-                        </td>
-                        <td>{{ $affiliate_log->created_at->format('d, F Y') }} </td>
-                    </tr>
+                    @if ($affiliate_log->user != null)
+                        <tr>
+                            <td>{{ ($key+1) + ($affiliate_logs->currentPage() - 1)*$affiliate_logs->perPage() }}</td>
+                            <td>
+                                {{ optional(\App\Models\User::where('id', $affiliate_log->referred_by_user)->first())->name }}
+                            </td>
+                            <td>
+                                @if($affiliate_log->user_id !== null)
+                                    {{ optional($affiliate_log->user)->name }}
+                                @else
+                                    {{ translate('Guest').' ('. $affiliate_log->guest_id.')' }}
+                                @endif
+                            </td>
+                            <td>{{ single_price($affiliate_log->amount) }}</td>
+                            <td>
+                                @if($affiliate_log->order_id != null)
+                                    {{ optional($affiliate_log->order)->code }}
+                                @else
+                                    {{ optional($affiliate_log->order_detail->order)->code }}
+                                @endif
+                            </td>
+                            <td> {{ ucwords(str_replace('_',' ', $affiliate_log->affiliate_type)) }}</td>
+                            <td>
+                                @if($affiliate_log->order_detail_id != null && $affiliate_log->order_detail)
+                                    {{ optional($affiliate_log->order_detail->product)->name }}
+                                @endif
+                            </td>
+                            <td>{{ $affiliate_log->created_at->format('d, F Y') }} </td>
+                        </tr>
+                    @endif
                 @endforeach
                 </tbody>
             </table>

@@ -11,7 +11,7 @@
         <div class="card">
             <div class="card-body p-0">
                 <ul class="nav nav-tabs nav-fill border-light">
-      				@foreach (\App\Language::all() as $key => $language)
+      				@foreach (\App\Models\Language::all() as $key => $language)
       					<li class="nav-item">
       						<a class="nav-link text-reset @if ($language->code == $lang) active @else bg-soft-dark border-light border-left-0 @endif py-3" href="{{ route('pick_up_points.edit', ['id'=>$pickup_point->id, 'lang'=> $language->code] ) }}">
       							<img src="{{ static_asset('assets/img/flags/'.$language->code.'.png') }}" height="11" class="mr-1">
@@ -57,7 +57,7 @@
                         <label class="col-sm-3 col-from-label" for="name">{{translate('Pick-up Point Manager')}}</label>
                         <div class="col-sm-9">
                             <select name="staff_id" required class="form-control aiz-selectpicker">
-                                @foreach(\App\Staff::all() as $staff)
+                                @foreach(\App\Models\Staff::all() as $staff)
                                     @if ($staff->user!=null )
                                         <option value="{{$staff->id}}" @if ($pickup_point->staff_id == $staff->id) selected @endif>{{$staff->user->name}}</option>
                                     @endif

@@ -3,9 +3,19 @@
 @section('content')
 
     <div class="card">
-        <div class="card-header">
-            <h3 class="mb-0 h6">{{translate('Countries')}}</h3>
-        </div>
+        <form class="" id="" action="" method="GET">
+            <div class="card-header row gutters-5">
+                <div class="col text-center text-md-left">
+                    <h5 class="mb-md-0 h6">{{ translate('Countries') }}</h5>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" id="sort_country" name="sort_country" @isset($sort_country) value="{{ $sort_country }}" @endisset placeholder="{{ translate('Type country name') }}">
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-primary" type="submit">{{ translate('Filter') }}</button>
+                </div>
+            </div>
+        </form>
         <div class="card-body">
             <table class="table aiz-table table-striped table-bordered" cellspacing="0" width="100%">
                 <thead>

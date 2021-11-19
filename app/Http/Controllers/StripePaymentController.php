@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\CombinedOrder;
-use App\BusinessSetting;
-use App\Seller;
+use App\Models\CombinedOrder;
+use App\Models\BusinessSetting;
+use App\Models\Seller;
 use Session;
-use App\CustomerPackage;
-use App\SellerPackage;
+use App\Models\CustomerPackage;
+use App\Models\SellerPackage;
 use Stripe\Stripe;
 
 class StripePaymentController extends Controller
@@ -50,7 +50,7 @@ class StripePaymentController extends Controller
             'line_items' => [
                 [
                     'price_data' => [
-                    'currency' => \App\Currency::findOrFail(get_setting('system_default_currency'))->code,
+                    'currency' => \App\Models\Currency::findOrFail(get_setting('system_default_currency'))->code,
                     'product_data' => [
                         'name' => "Payment"
                     ],

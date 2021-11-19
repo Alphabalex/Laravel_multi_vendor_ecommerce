@@ -20,16 +20,16 @@
                 </thead>
                 <tbody>
                     @foreach($seller_withdraw_requests as $key => $seller_withdraw_request)
-                        @if (\App\Seller::find($seller_withdraw_request->user_id) != null && \App\Seller::find($seller_withdraw_request->user_id)->user != null)
+                        @if (\App\Models\Seller::find($seller_withdraw_request->user_id) != null && \App\Models\Seller::find($seller_withdraw_request->user_id)->user != null)
                             <tr>
                                 <td>{{ ($key+1) + ($seller_withdraw_requests->currentPage() - 1)*$seller_withdraw_requests->perPage() }}</td>
                                 <td>{{ $seller_withdraw_request->created_at }}</td>
                                 <td>
-                                    @if (\App\Seller::find($seller_withdraw_request->user_id) != null)
-                                        {{ \App\Seller::find($seller_withdraw_request->user_id)->user->name }} ({{ \App\Seller::find($seller_withdraw_request->user_id)->user->shop->name }})
+                                    @if (\App\Models\Seller::find($seller_withdraw_request->user_id) != null)
+                                        {{ \App\Models\Seller::find($seller_withdraw_request->user_id)->user->name }} ({{ \App\Models\Seller::find($seller_withdraw_request->user_id)->user->shop->name }})
                                     @endif
                                 </td>
-                                <td>{{ single_price(\App\Seller::find($seller_withdraw_request->user_id)->admin_to_pay) }}</td>
+                                <td>{{ single_price(\App\Models\Seller::find($seller_withdraw_request->user_id)->admin_to_pay) }}</td>
                                 <td>{{ single_price($seller_withdraw_request->amount) }}</td>
                                 <td>
                                     {{ $seller_withdraw_request->message }}

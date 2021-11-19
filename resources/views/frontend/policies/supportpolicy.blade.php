@@ -2,7 +2,7 @@
 
 @section('content')
 @php
-    $support_policy =  \App\Page::where('type', 'support_policy_page')->first();
+    $support_policy =  \App\Models\Page::where('type', 'support_policy_page')->first();
 @endphp
 <section class="pt-4 mb-4">
     <div class="container text-center">

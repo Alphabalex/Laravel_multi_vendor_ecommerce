@@ -20,8 +20,6 @@ Route::prefix('lnmo')->group(function ()
 //Mpesa End
 
 // RaveController start
-
-Route::post('/rave_pay', 'FlutterwaveController@initialize')->name('flutterwave.pay');
 Route::get('/rave/callback', 'FlutterwaveController@callback')->name('flutterwave.callback');
 
 // RaveController end

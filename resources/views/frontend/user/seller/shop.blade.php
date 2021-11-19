@@ -65,23 +65,6 @@
                         </div>
                     </div>
                 @endif 
-                @if (get_setting('pickup_point') == 1)
-                <div class="row mb-3">
-                    <label class="col-md-2 col-form-label">{{ translate('Pickup Points') }}</label>
-                    <div class="col-md-10">
-                        <select class="form-control aiz-selectpicker" data-placeholder="{{ translate('Select Pickup Point') }}" id="pick_up_point" name="pick_up_point_id[]" multiple>
-                            @foreach (\App\PickupPoint::all() as $pick_up_point)
-                                @if (Auth::user()->shop->pick_up_point_id != null)
-                                    <option value="{{ $pick_up_point->id }}" @if (in_array($pick_up_point->id, json_decode(Auth::user()->shop->pick_up_point_id))) selected @endif>{{ $pick_up_point->getTranslation('name') }}</option>
-                                @else
-                                    <option value="{{ $pick_up_point->id }}">{{ $pick_up_point->getTranslation('name') }}</option>
-                                @endif
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-                @endif
-
                 <div class="row">
                     <label class="col-md-2 col-form-label">{{ translate('Meta Title') }}<span class="text-danger text-danger">*</span></label>
                     <div class="col-md-10">
@@ -100,6 +83,71 @@
             </form>
         </div>
     </div>
+
+    @if (addon_is_activated('delivery_boy'))
+        {{-- <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0 h6">{{ translate('Delivery Boy Pickup Point') }}</h5>
+            </div>
+            <div class="card-body">
+                <form class="" action="{{ route('shops.update', $shop->id) }}" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="_method" value="PATCH">
+                    @csrf
+
+                    @if (get_setting('google_map') == 1)
+                        <div class="row mb-3">
+                            <input id="searchInput" class="controls" type="text" placeholder="{{translate('Enter a location')}}">
+                            <div id="map"></div>
+                            <ul id="geoData">
+                                <li style="display: none;">Full Address: <span id="location"></span></li>
+                                <li style="display: none;">Postal Code: <span id="postal_code"></span></li>
+                                <li style="display: none;">Country: <span id="country"></span></li>
+                                <li style="display: none;">Latitude: <span id="lat"></span></li>
+                                <li style="display: none;">Longitude: <span id="lon"></span></li>
+                            </ul>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2" id="">
+                                <label for="exampleInputuname">Longitude</label>
+                            </div>
+                            <div class="col-md-10" id="">
+                                <input type="text" class="form-control mb-3" id="longitude" name="delivery_pickup_longitude" readonly="" value="{{ $shop->delivery_pickup_longitude }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2" id="">
+                                <label for="exampleInputuname">Latitude</label>
+                            </div>
+                            <div class="col-md-10" id="">
+                                <input type="text" class="form-control mb-3" id="latitude" name="delivery_pickup_latitude" readonly="" value="{{ $shop->delivery_pickup_latitude }}">
+                            </div>
+                        </div>
+                    @else
+                        <div class="row">
+                            <div class="col-md-2" id="">
+                                <label for="exampleInputuname">Longitude</label>
+                            </div>
+                            <div class="col-md-10" id="">
+                                <input type="text" class="form-control mb-3" id="longitude" name="delivery_pickup_longitude" value="{{ $shop->delivery_pickup_longitude }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2" id="">
+                                <label for="exampleInputuname">Latitude</label>
+                            </div>
+                            <div class="col-md-10" id="">
+                                <input type="text" class="form-control mb-3" id="latitude" name="delivery_pickup_latitude" value="{{ $shop->delivery_pickup_latitude }}">
+                            </div>
+                        </div>
+                    @endif
+
+                    <div class="form-group mb-0 text-right">
+                        <button type="submit" class="btn btn-sm btn-primary">{{translate('Save')}}</button>
+                    </div>
+                </form>
+            </div>
+        </div> --}}
+    @endif
 
     {{-- Banner Settings --}}
     <div class="card">

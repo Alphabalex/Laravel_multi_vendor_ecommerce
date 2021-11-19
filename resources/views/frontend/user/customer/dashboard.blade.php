@@ -14,7 +14,7 @@
             <div class="px-3 pt-3">
                 @php
                     $user_id = Auth::user()->id;
-                    $cart = \App\Cart::where('user_id', $user_id)->get();
+                    $cart = \App\Models\Cart::where('user_id', $user_id)->get();
                 @endphp
                 @if(count($cart) > 0)
                 <div class="h3 fw-700">
@@ -36,7 +36,7 @@
         <div class="bg-grad-2 text-white rounded-lg mb-4 overflow-hidden">
             <div class="px-3 pt-3">
                 @php
-                    $orders = \App\Order::where('user_id', Auth::user()->id)->get();
+                    $orders = \App\Models\Order::where('user_id', Auth::user()->id)->get();
                     $total = 0;
                     foreach ($orders as $key => $order) {
                         $total += count($order->orderDetails);
@@ -54,7 +54,7 @@
         <div class="bg-grad-3 text-white rounded-lg mb-4 overflow-hidden">
             <div class="px-3 pt-3">
                 @php
-                    $orders = \App\Order::where('user_id', Auth::user()->id)->get();
+                    $orders = \App\Models\Order::where('user_id', Auth::user()->id)->get();
                     $total = 0;
                     foreach ($orders as $key => $order) {
                         $total += count($order->orderDetails);
@@ -83,8 +83,9 @@
                     @if($address != null)
                         <ul class="list-unstyled mb-0">
                             <li class=" py-2"><span>{{ translate('Address') }} : {{ $address->address }}</span></li>
-                            <li class=" py-2"><span>{{ translate('Country') }} : {{ $address->country }}</span></li>
-                            <li class=" py-2"><span>{{ translate('City') }} : {{ $address->city }}</span></li>
+                            <li class=" py-2"><span>{{ translate('Country') }} : {{ $address->country->name }}</span></li>
+                            <li class=" py-2"><span>{{ translate('State') }} : {{ $address->state->name }}</span></li>
+                            <li class=" py-2"><span>{{ translate('City') }} : {{ $address->city->name }}</span></li>
                             <li class=" py-2"><span>{{ translate('Postal Code') }} : {{ $address->postal_code }}</span></li>
                             <li class=" py-2"><span>{{ translate('Phone') }} : {{ $address->phone }}</span></li>
                         </ul>
@@ -101,7 +102,7 @@
             </div>
             <div class="card-body text-center">
                 @php
-                    $customer_package = \App\CustomerPackage::find(Auth::user()->customer_package_id);
+                    $customer_package = \App\Models\CustomerPackage::find(Auth::user()->customer_package_id);
                 @endphp
                 @if($customer_package != null)
                     <img src="{{ uploaded_asset($customer_package->logo) }}" class="img-fluid mb-4 h-110px">

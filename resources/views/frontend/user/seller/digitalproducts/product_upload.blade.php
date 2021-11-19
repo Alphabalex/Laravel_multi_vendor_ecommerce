@@ -29,7 +29,7 @@
                     <label class="col-lg-3 col-from-label">{{translate('Category')}} <span class="text-danger">*</span></label>
                     <div class="col-lg-9">
                         <select class="form-control aiz-selectpicker" name="category_id" id="category_id" required>
-                            @foreach(\App\Category::where('parent_id', 0)->where('digital', 1)->with('childrenCategories')->get(); as $category)
+                            @foreach(\App\Models\Category::where('parent_id', 0)->where('digital', 1)->with('childrenCategories')->get(); as $category)
                                 <option value="{{ $category->id }}">{{ $category->getTranslation('name') }}</option>
                                 @foreach ($category->childrenCategories as $childCategory)
                                     @include('categories.child_category', ['child_category' => $childCategory])

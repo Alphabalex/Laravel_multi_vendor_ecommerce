@@ -11,7 +11,7 @@
         <div class="card">
             <div class="card-body p-0">
                 <ul class="nav nav-tabs nav-fill border-light">
-                    @foreach (\App\Language::all() as $key => $language)
+                    @foreach (\App\Models\Language::all() as $key => $language)
                     <li class="nav-item">
                         <a class="nav-link text-reset @if ($language->code == $lang) active @else bg-soft-dark border-light border-left-0 @endif py-3" href="{{ route('categories.edit', ['id'=>$category->id, 'lang'=> $language->code] ) }}">
                             <img src="{{ static_asset('assets/img/flags/'.$language->code.'.png') }}" height="11" class="mr-1">
@@ -123,7 +123,7 @@
                         <label class="col-md-3 col-form-label">{{translate('Filtering Attributes')}}</label>
                         <div class="col-md-9">
                             <select class="select2 form-control aiz-selectpicker" name="filtering_attributes[]" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true" data-selected="{{ $category->attributes->pluck('id') }}" multiple>
-                                @foreach (\App\Attribute::all() as $attribute)
+                                @foreach (\App\Models\Attribute::all() as $attribute)
                                     <option value="{{ $attribute->id }}">{{ $attribute->getTranslation('name') }}</option>
                                 @endforeach
                             </select>

@@ -16,11 +16,10 @@
             @endphp
 
             <!--Assign Delivery Boy-->
-            @if (\App\Addon::where('unique_identifier', 'delivery_boy')->first() != null &&
-                \App\Addon::where('unique_identifier', 'delivery_boy')->first()->activated)
+            @if (addon_is_activated('delivery_boy'))
                 <div class="col-md-3 ml-auto">
                     <label for="assign_deliver_boy">{{translate('Assign Deliver Boy')}}</label>
-                    @if($delivery_status == 'pending' || $delivery_status == 'picked_up')
+                    @if($delivery_status == 'pending' || $delivery_status == 'confirmed' || $delivery_status == 'picked_up')
                     <select class="form-control aiz-selectpicker" data-live-search="true" data-minimum-results-for-search="Infinity" id="assign_deliver_boy">
                         <option value="">{{translate('Select Delivery Boy')}}</option>
                         @foreach($delivery_boys as $delivery_boy)
@@ -240,21 +239,33 @@
 @endsection
 
 @section('script')
-<script type="text/javascript">
-    $('#update_delivery_status').on('change', function(){
-        var order_id = {{ $order->id }};
-        var status = $('#update_delivery_status').val();
-        $.post('{{ route('orders.update_delivery_status') }}', {_token:'{{ @csrf_token() }}', order_id:order_id, status:status}, function(data){
-            AIZ.plugins.notify('success', '{{ translate('Delivery status has been updated') }}');
+    <script type="text/javascript">
+        $('#assign_deliver_boy').on('change', function(){
+            var order_id = {{ $order->id }};
+            var delivery_boy = $('#assign_deliver_boy').val();
+            $.post('{{ route('orders.delivery-boy-assign') }}', {
+                _token          :'{{ @csrf_token() }}',
+                order_id        :order_id,
+                delivery_boy    :delivery_boy
+            }, function(data){
+                AIZ.plugins.notify('success', '{{ translate('Delivery boy has been assigned') }}');
+            });
         });
-    });
 
-    $('#update_payment_status').on('change', function(){
-        var order_id = {{ $order->id }};
-        var status = $('#update_payment_status').val();
-        $.post('{{ route('orders.update_payment_status') }}', {_token:'{{ @csrf_token() }}', order_id:order_id, status:status}, function(data){
-            AIZ.plugins.notify('success', '{{ translate('Payment status has been updated') }}');
+        $('#update_delivery_status').on('change', function(){
+            var order_id = {{ $order->id }};
+            var status = $('#update_delivery_status').val();
+            $.post('{{ route('orders.update_delivery_status') }}', {_token:'{{ @csrf_token() }}', order_id:order_id, status:status}, function(data){
+                AIZ.plugins.notify('success', '{{ translate('Delivery status has been updated') }}');
+            });
         });
-    });
-</script>
+
+        $('#update_payment_status').on('change', function(){
+            var order_id = {{ $order->id }};
+            var status = $('#update_payment_status').val();
+            $.post('{{ route('orders.update_payment_status') }}', {_token:'{{ @csrf_token() }}', order_id:order_id, status:status}, function(data){
+                AIZ.plugins.notify('success', '{{ translate('Payment status has been updated') }}');
+            });
+        });
+    </script>
 @endsection

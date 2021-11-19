@@ -38,7 +38,7 @@
                     }
                     else {
                         if($colors_active == 1) {
-                            $color_name = \App\Color::where('code', $item)->first()->name;
+                            $color_name = \App\Models\Color::where('code', $item)->first()->name;
                             $str .= $color_name;
                             $sku .='-'.$color_name;
                         }

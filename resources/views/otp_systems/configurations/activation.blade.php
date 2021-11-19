@@ -85,6 +85,22 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0 h6">{{translate('MSEGAT SMS')}}</h3>
+                </div>
+                <div class="card-body text-center">
+                    <label class="aiz-switch aiz-switch-success mb-0">
+                        <input type="checkbox" onchange="updateSettings(this, 'msegat')" @if(App\OtpConfiguration::where('type', 'msegat')->first() != null && \App\OtpConfiguration::where('type', 'msegat')->first()->value == 1) checked @endif>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('script')

@@ -121,7 +121,7 @@ class PayfastController extends Controller
 
     public static function checkout_incomplete()
     {
-        Session::forget('order_id');
+        Session::forget('combined_order_id');
         flash(translate("Incomplete"))->error();
         //flash(translate('Payment failed'))->error();
         //dd($response_text);

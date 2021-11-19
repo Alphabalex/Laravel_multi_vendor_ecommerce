@@ -44,14 +44,28 @@ class ProductDetailCollection extends ResourceCollection
                     }
                 }
 
+                $brand = [
+                    'id'=> 0,
+                    'name'=> "",
+                    'logo'=> "",
+                ];
+
+                if($data->brand != null) {
+                    $brand = [
+                        'id'=> $data->brand->id,
+                        'name'=> $data->brand->getTranslation('name'),
+                        'logo'=> api_asset($data->brand->logo),
+                    ];
+                }
+
 
                 return [
                     'id' => (integer)$data->id,
-                    'name' => $data->name,
+                    'name' => $data->getTranslation('name'),
                     'added_by' => $data->added_by,
                     'seller_id' => $data->user->id,
                     'shop_id' => $data->added_by == 'admin' ? 0 : $data->user->shop->id,
-                    'shop_name' => $data->added_by == 'admin' ? 'In House Product' : $data->user->shop->name,
+                    'shop_name' => $data->added_by == 'admin' ? translate('In House Product') : $data->user->shop->name,
                     'shop_logo' => $data->added_by == 'admin' ? api_asset(get_setting('header_logo')) : api_asset($data->user->shop->logo),
                     'photos' => $photos,
                     'thumbnail_image' => api_asset($data->thumbnail_img),
@@ -69,7 +83,9 @@ class ProductDetailCollection extends ResourceCollection
                     'rating' => (double)$data->rating,
                     'rating_count' => (integer)Review::where(['product_id' => $data->id])->count(),
                     'earn_point' => (double)$data->earn_point,
-                    'description' => $data->description,
+                    'description' => $data->getTranslation('description'),
+                    'video_link' => $data->video_link != null ?  $data->video_link : "",
+                    'brand' => $brand,
                     'link' => route('product', $data->slug)
                 ];
             })
@@ -90,7 +106,7 @@ class ProductDetailCollection extends ResourceCollection
 //        if($data) {
         foreach ($data as $key => $choice) {
             $item['name'] = $choice->attribute_id;
-            $item['title'] = Attribute::find($choice->attribute_id)->name;
+            $item['title'] = Attribute::find($choice->attribute_id)->getTranslation('name');
             $item['options'] = $choice->values;
             array_push($result, $item);
         }

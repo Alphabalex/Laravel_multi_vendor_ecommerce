@@ -34,7 +34,7 @@
         </div>
 
         @php
-            $customer_package = \App\CustomerPackage::find(Auth::user()->customer_package_id);
+            $customer_package = \App\Models\CustomerPackage::find(Auth::user()->customer_package_id);
         @endphp
         <div class="col-md-4">
             <a href="{{ route('customer_packages_list_show') }}" class="text-center bg-white shadow-sm hov-shadow-lg text-center d-block p-3 rounded">

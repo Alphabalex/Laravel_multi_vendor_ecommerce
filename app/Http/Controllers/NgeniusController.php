@@ -4,8 +4,8 @@
 namespace App\Http\Controllers;
 
 
-use App\CustomerPackage;
-use App\CombinedOrder;
+use App\Models\CustomerPackage;
+use App\Models\CombinedOrder;
 use App\Utility\NgeniusUtility;
 use Session;
 
@@ -28,7 +28,7 @@ class NgeniusController extends Controller
             //will be redirected
             NgeniusUtility::make_payment(route('ngenius.customer_package_payment_callback'),"customer_package_payment",$amount);
         } elseif (Session::get('payment_type') == 'seller_package_payment') {
-            $seller_package = \App\SellerPackage::findOrFail(Session::get('payment_data')['seller_package_id']);
+            $seller_package = \App\Models\SellerPackage::findOrFail(Session::get('payment_data')['seller_package_id']);
             $amount = round($seller_package->amount * 100);
             //will be redirected
             NgeniusUtility::make_payment(route('ngenius.seller_package_payment_callback'),"seller_package_payment",$amount);
@@ -36,7 +36,7 @@ class NgeniusController extends Controller
 
 
         $seller_package_id = Session::get('payment_data')['seller_package_id'];
-        $seller_package  = \App\SellerPackage::findOrFail($seller_package_id);
+        $seller_package  = \App\Models\SellerPackage::findOrFail($seller_package_id);
 
     }
 

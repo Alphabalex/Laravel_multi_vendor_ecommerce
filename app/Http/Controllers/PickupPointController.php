@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\PickupPoint;
-use App\PickupPointTranslation;
+use App\Models\PickupPoint;
+use App\Models\PickupPointTranslation;
 
 class PickupPointController extends Controller
 {

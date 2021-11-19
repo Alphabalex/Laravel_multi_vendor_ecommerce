@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Auth;
-use App\Wishlist;
-use App\Category;
+use App\Models\Wishlist;
+use App\Models\Category;
 
 class WishlistController extends Controller
 {

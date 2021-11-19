@@ -25,8 +25,8 @@
                             <td>{{$refferal_user->phone}}</td>
                             <td>{{$refferal_user->email}}</td>
                             <td>
-                                @if (\App\User::find($refferal_user->referred_by) != null)
-                                    {{ \App\User::find($refferal_user->referred_by)->name }} ({{ \App\User::find($refferal_user->referred_by)->email }})
+                                @if (\App\Models\User::find($refferal_user->referred_by) != null)
+                                    {{ \App\Models\User::find($refferal_user->referred_by)->name }} ({{ \App\Models\User::find($refferal_user->referred_by)->email }})
                                 @endif
                             </td>
                         </tr>

@@ -6,9 +6,8 @@
 </div>
 
 @php
-    $status = $order->orderDetails->where('seller_id', Auth::user()->id)->first()->delivery_status;
+    $status = $order->delivery_status;
     $payment_status = $order->orderDetails->where('seller_id', Auth::user()->id)->first()->payment_status;
-    $refund_request_addon = \App\Addon::where('unique_identifier', 'refund_request')->first();
 @endphp
 
 <div class="modal-body gry-bg px-3 pt-0">
@@ -56,10 +55,12 @@
         <div class="col-lg-4 col-sm-6">
             <div class="form-group">
                 <select class="form-control aiz-selectpicker form-control-sm"  data-minimum-results-for-search="Infinity" id="update_delivery_status">
-                    <option value="pending" @if ($status == 'pending') selected @endif>{{ translate('Pending')}}</option>
-                    <option value="confirmed" @if ($status == 'confirmed') selected @endif>{{ translate('Confirmed')}}</option>
-                    <option value="on_delivery" @if ($status == 'on_delivery') selected @endif>{{ translate('On delivery')}}</option>
-                    <option value="delivered" @if ($status == 'delivered') selected @endif>{{ translate('Delivered')}}</option>
+                    <option value="pending"     @if ($status == 'pending') selected @endif>{{translate('Pending')}}</option>
+                    <option value="confirmed"   @if ($status == 'confirmed') selected @endif>{{translate('Confirmed')}}</option>
+                    <option value="picked_up"   @if ($status == 'picked_up') selected @endif>{{translate('Picked Up')}}</option>
+                    <option value="on_the_way"  @if ($status == 'on_the_way') selected @endif>{{translate('On The Way')}}</option>
+                    <option value="delivered"   @if ($status == 'delivered') selected @endif>{{translate('Delivered')}}</option>
+                    <option value="cancelled"   @if ($status == 'cancelled') selected @endif>{{translate('Cancel')}}</option>
                 </select>
                 <label>{{ translate('Delivery Status')}}</label>
             </div>
@@ -139,7 +140,7 @@
                                 <th>{{ translate('Quantity')}}</th>
                                 <th>{{ translate('Delivery Type')}}</th>
                                 <th>{{ translate('Price')}}</th>
-                                @if ($refund_request_addon != null && $refund_request_addon->activated == 1)
+                                @if (addon_is_activated('refund_request'))
                                     <th>{{ translate('Refund')}}</th>
                                 @endif
                             </tr>
@@ -171,7 +172,7 @@
                                         @endif
                                     </td>
                                     <td>{{ $orderDetail->price }}</td>
-                                    @if ($refund_request_addon != null && $refund_request_addon->activated == 1)
+                                    @if (addon_is_activated('refund_request'))
                                         <td>
                                             @if ($orderDetail->refund_request != null && $orderDetail->refund_request->refund_status == 0)
                                                 <b class="text-info">{{  translate('Pending') }}</b>

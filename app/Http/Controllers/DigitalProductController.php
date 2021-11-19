@@ -3,13 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Product;
-use App\ProductStock;
-use App\Category;
-use App\ProductTranslation;
+use App\Models\Product;
+use App\Models\ProductStock;
+use App\Models\Category;
+use App\Models\ProductTranslation;
 use Storage;
-use App\Language;
-use App\Upload;
+use App\Models\Upload;
 use Auth;
 
 class DigitalProductController extends Controller

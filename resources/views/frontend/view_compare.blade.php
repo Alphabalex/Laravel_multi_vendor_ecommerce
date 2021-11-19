@@ -40,7 +40,7 @@
                                     </th>
                                     @foreach (Session::get('compare') as $key => $item)
                                         <th scope="col" style="width:28%" class="font-weight-bold">
-                                            <a class="text-reset fs-15" href="{{ route('product', \App\Product::find($item)->slug) }}">{{ \App\Product::find($item)->getTranslation('name') }}</a>
+                                            <a class="text-reset fs-15" href="{{ route('product', \App\Models\Product::find($item)->slug) }}">{{ \App\Models\Product::find($item)->getTranslation('name') }}</a>
                                         </th>
                                     @endforeach
                                 </tr>
@@ -50,7 +50,7 @@
                                     <th scope="row">{{ translate('Image')}}</th>
                                     @foreach (Session::get('compare') as $key => $item)
                                         <td>
-                                            <img loading="lazy" src="{{ uploaded_asset(\App\Product::find($item)->thumbnail_img) }}" alt="{{ translate('Product Image') }}" class="img-fluid py-4">
+                                            <img loading="lazy" src="{{ uploaded_asset(\App\Models\Product::find($item)->thumbnail_img) }}" alt="{{ translate('Product Image') }}" class="img-fluid py-4">
                                         </td>
                                     @endforeach
                                 </tr>
@@ -58,7 +58,7 @@
                                     <th scope="row">{{ translate('Price')}}</th>
                                     @foreach (Session::get('compare') as $key => $item)
                                         @php
-                                            $product = \App\Product::find($item);
+                                            $product = \App\Models\Product::find($item);
                                         @endphp
                                         <td>
                                             @if(home_base_price($product) != home_discounted_base_price($product))
@@ -72,8 +72,8 @@
                                     <th scope="row">{{ translate('Brand')}}</th>
                                     @foreach (Session::get('compare') as $key => $item)
                                         <td>
-                                            @if (\App\Product::find($item)->brand != null)
-                                                {{ \App\Product::find($item)->brand->getTranslation('name') }}
+                                            @if (\App\Models\Product::find($item)->brand != null)
+                                                {{ \App\Models\Product::find($item)->brand->getTranslation('name') }}
                                             @endif
                                         </td>
                                     @endforeach
@@ -82,8 +82,8 @@
                                     <th scope="row">{{ translate('Sub Sub Category')}}</th>
                                     @foreach (Session::get('compare') as $key => $item)
                                         <td>
-                                            @if (\App\Product::find($item)->subsubcategory != null)
-                                                {{ \App\Product::find($item)->subsubcategory->getTranslation('name') }}
+                                            @if (\App\Models\Product::find($item)->subsubcategory != null)
+                                                {{ \App\Models\Product::find($item)->subsubcategory->getTranslation('name') }}
                                             @endif
                                         </td>
                                     @endforeach

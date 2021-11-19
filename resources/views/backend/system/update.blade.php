@@ -15,8 +15,9 @@
 								{{ translate('Make sure your server has matched with all requirements.') }}
 								<a href="{{route('system_server')}}">{{ translate('Check Here') }}</a>
 							</li>
-							<li class="">{{ translate('Upload Update zip file here and click update now.') }}</li>
-							<li class="">{{ translate('Please turn off maintenance mode before updating.') }}</li>
+                            <li class="">{{ translate('Please turn off maintenance mode before updating.') }}</li>
+							<li class="">{{ translate('Upload updates.zip file here and click update now.') }}</li>
+							<li class="">{{ translate('update all addons after updating system.') }}</li>
 						</ul>
 					</div>
 					<form action="{{ route('update') }}" method="post" enctype="multipart/form-data">

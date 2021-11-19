@@ -19,13 +19,13 @@
             </thead>
             <tbody>
                 @foreach($payments as $key => $payment)
-                    @if (\App\Seller::find($payment->seller_id) != null && \App\Seller::find($payment->seller_id)->user != null)
+                    @if (\App\Models\Seller::find($payment->seller_id) != null && \App\Models\Seller::find($payment->seller_id)->user != null)
                         <tr>
                             <td>{{ $key+1 }}</td>
                             <td>{{ $payment->created_at }}</td>
                             <td>
-                                @if (\App\Seller::find($payment->seller_id) != null)
-                                    {{ \App\Seller::find($payment->seller_id)->user->name }} ({{ \App\Seller::find($payment->seller_id)->user->shop->name }})
+                                @if (\App\Models\Seller::find($payment->seller_id) != null)
+                                    {{ \App\Models\Seller::find($payment->seller_id)->user->name }} ({{ \App\Models\Seller::find($payment->seller_id)->user->shop->name }})
                                 @endif
                             </td>
                             <td>

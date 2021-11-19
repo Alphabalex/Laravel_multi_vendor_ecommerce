@@ -11,7 +11,7 @@
       <div class="card">
           <div class="card-body p-0">
               <ul class="nav nav-tabs nav-fill border-light">
-    				@foreach (\App\Language::all() as $key => $language)
+    				@foreach (\App\Models\Language::all() as $key => $language)
     					<li class="nav-item">
     						<a class="nav-link text-reset @if ($language->code == $lang) active @else bg-soft-dark border-light border-left-0 @endif py-3" href="{{ route('cities.edit', ['id'=>$city->id, 'lang'=> $language->code] ) }}">
     							<img src="{{ static_asset('assets/img/flags/'.$language->code.'.png') }}" height="11" class="mr-1">
@@ -30,10 +30,10 @@
                   </div>
 
                   <div class="form-group">
-                      <label for="country">{{translate('Country')}}</label>
-                      <select class="select2 form-control aiz-selectpicker" name="country_id" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true">
-                          @foreach ($countries as $country)
-                              <option value="{{ $country->id }}" @if($country->id == $city->country_id) selected @endif>{{ $country->name }}</option>
+                      <label for="state_id">{{translate('State')}}</label>
+                      <select class="select2 form-control aiz-selectpicker" name="state_id" data-selected="{{ $city->state_id }}" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true">
+                          @foreach ($states as $state)
+                            <option value="{{ $state->id }}">{{ $state->name }}</option>
                           @endforeach
                       </select>
                   </div>
@@ -45,7 +45,7 @@
 
 
                   <div class="form-group mb-3 text-right">
-                      <button type="submit" class="btn btn-primary">{{translate('Save')}}</button>
+                      <button type="submit" class="btn btn-primary">{{translate('Update')}}</button>
                   </div>
               </form>
           </div>

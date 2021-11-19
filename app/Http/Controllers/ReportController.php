@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Product;
-use App\CommissionHistory;
-use App\Wallet;
-use App\Seller;
-use App\User;
-use App\Search;
+use App\Models\Product;
+use App\Models\CommissionHistory;
+use App\Models\Wallet;
+use App\Models\Seller;
+use App\Models\User;
+use App\Models\Search;
 use Auth;
 
 class ReportController extends Controller

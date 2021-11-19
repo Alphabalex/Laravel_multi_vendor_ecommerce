@@ -2,7 +2,7 @@
 
 namespace App\Utility;
 
-use App\Category;
+use App\Models\Category;
 
 class CategoryUtility
 {
@@ -10,7 +10,7 @@ class CategoryUtility
     public static function get_immediate_children($id, $with_trashed = false, $as_array = false)
     {
         $children = $with_trashed ? Category::where('parent_id', $id)->orderBy('order_level', 'desc')->get() : Category::where('parent_id', $id)->orderBy('order_level', 'desc')->get();
-        $children = $as_array && !is_null($children) ? $children->toArray() : array();
+        $children = $as_array && !is_null($children) ? $children->toArray() : $children;
 
         return $children;
     }

@@ -45,7 +45,8 @@
                         </div>
                     </div>
 
-                    @if (\App\Addon::where('unique_identifier', 'affiliate_system')->first() != null && \App\Addon::where('unique_identifier', 'affiliate_system')->first()->activated && \App\AffiliateOption::where('type', 'user_registration_first_purchase')->first()->status)
+                    @if (addon_is_activated('affiliate_system')
+                        && \App\Models\AffiliateOption::where('type', 'user_registration_first_purchase')->first()->status)
                         <div class="row">
                             @php
                                 if(Auth::user()->referral_code == null){

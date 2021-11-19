@@ -18,9 +18,9 @@
                         </div>
                         <div class="col-lg-6">
                             @php
-                            if(\App\AffiliateOption::where('type', 'user_registration_first_purchase')->first() != null){
-                                $percentage = \App\AffiliateOption::where('type', 'user_registration_first_purchase')->first()->percentage;
-                                $status = \App\AffiliateOption::where('type', 'user_registration_first_purchase')->first()->status;
+                            if(\App\Models\AffiliateOption::where('type', 'user_registration_first_purchase')->first() != null){
+                                $percentage = \App\Models\AffiliateOption::where('type', 'user_registration_first_purchase')->first()->percentage;
+                                $status = \App\Models\AffiliateOption::where('type', 'user_registration_first_purchase')->first()->status;
                             }
                             else {
                                 $percentage = null;
@@ -65,10 +65,10 @@
                         <label class="col-lg-3 col-from-label">{{ translate('Product Sharing and Purchasing')}}</label>
                         <div class="col-lg-6">
                             @php
-                            if(\App\AffiliateOption::where('type', 'product_sharing')->first() != null && \App\AffiliateOption::where('type', 'product_sharing')->first()->details != null){
-                                $commission_product_sharing = json_decode(\App\AffiliateOption::where('type', 'product_sharing')->first()->details)->commission;
-                                $commission_type_product_sharing = json_decode(\App\AffiliateOption::where('type', 'product_sharing')->first()->details)->commission_type;
-                                $status = \App\AffiliateOption::where('type', 'product_sharing')->first()->status;
+                            if(\App\Models\AffiliateOption::where('type', 'product_sharing')->first() != null && \App\Models\AffiliateOption::where('type', 'product_sharing')->first()->details != null){
+                                $commission_product_sharing = json_decode(\App\Models\AffiliateOption::where('type', 'product_sharing')->first()->details)->commission;
+                                $commission_type_product_sharing = json_decode(\Models\App\AffiliateOption::where('type', 'product_sharing')->first()->details)->commission_type;
+                                $status = \App\Models\AffiliateOption::where('type', 'product_sharing')->first()->status;
                             }
                             else {
                                 $commission_product_sharing = null;
@@ -113,8 +113,8 @@
                 <form class="form-horizontal" action="{{ route('affiliate.store') }}" method="POST">
                     @csrf
                     @php
-                    if(\App\AffiliateOption::where('type', 'category_wise_affiliate')->first() != null){
-                        $category_wise_affiliate_status = \App\AffiliateOption::where('type', 'category_wise_affiliate')->first()->status;
+                    if(\App\Models\AffiliateOption::where('type', 'category_wise_affiliate')->first() != null){
+                        $category_wise_affiliate_status = \App\Models\AffiliateOption::where('type', 'category_wise_affiliate')->first()->status;
                     }
                     @endphp
                     <div class="form-group row">
@@ -128,14 +128,14 @@
                             </label>
                         </div>
                     </div>
-                    @if (\App\AffiliateOption::where('type', 'category_wise_affiliate')->first() != null)
+                    @if (\App\Models\AffiliateOption::where('type', 'category_wise_affiliate')->first() != null)
                         <input type="hidden" name="type" value="category_wise_affiliate">
-                        @foreach (\App\Category::all() as $key => $category)
+                        @foreach (\App\Models\Category::all() as $key => $category)
                             @php
                                 $found = false;
                             @endphp
-                            @if(\App\AffiliateOption::where('type', 'category_wise_affiliate')->first()->details != null)
-                                @foreach (json_decode(\App\AffiliateOption::where('type', 'category_wise_affiliate')->first()->details) as $key => $data)
+                            @if(\App\Models\AffiliateOption::where('type', 'category_wise_affiliate')->first()->details != null)
+                                @foreach (json_decode(\App\Models\AffiliateOption::where('type', 'category_wise_affiliate')->first()->details) as $key => $data)
                                     @if($data->category_id == $category->id)
                                         @php
                                             $found = true;
@@ -148,7 +148,7 @@
                                 <div class="form-group row">
                                     <div class="col-lg-5">
                                         <input type="hidden" name="categories_id_{{ $value->category_id }}" value="{{ $value->category_id }}">
-                                        <input type="text" class="form-control" value="{{ \App\Category::find($value->category_id)->name }}" readonly>
+                                        <input type="text" class="form-control" value="{{ \App\Models\Category::find($value->category_id)->name }}" readonly>
                                     </div>
                                     <div class="col-lg-4">
                                         <input type="number" min="0" step="0.01" class="form-control" name="commison_amounts_{{ $value->category_id }}" value="{{ $value->commission }}">
@@ -204,7 +204,7 @@
                 <form class="form-horizontal" action="{{ route('affiliate.configs.store') }}" method="POST">
                     @csrf
                     @php
-                        $validation_time_info = \App\AffiliateConfig::where('type', 'validation_time')->first();
+                        $validation_time_info = \App\Models\AffiliateConfig::where('type', 'validation_time')->first();
                         $validation_time = '';
                         if($validation_time_info) {
                             $validation_time = $validation_time_info->value;

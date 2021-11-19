@@ -3,7 +3,7 @@
 
 namespace App\Utility;
 
-use App\Translation;
+use App\Models\Translation;
 
 class TranslationUtility
 {

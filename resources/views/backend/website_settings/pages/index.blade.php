@@ -25,7 +25,7 @@
             </tr>
         </thead>
         <tbody>
-        	@foreach (\App\Page::all() as $key => $page)
+        	@foreach (\App\Models\Page::all() as $key => $page)
         	<tr>
         		<td>{{ $key+2 }}</td>
         		

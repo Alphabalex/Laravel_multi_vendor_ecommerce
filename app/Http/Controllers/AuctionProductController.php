@@ -3,27 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Product;
 use App\ProductTranslation;
 use App\ProductStock;
 use App\Category;
-use App\FlashDealProduct;
 use App\ProductTax;
-use App\Attribute;
-use App\AttributeValue;
 use App\Cart;
-use App\Language;
 use App\Order;
 use App\User;
 use Auth;
-use App\SubSubCategory;
-use Session;
 use Carbon\Carbon;
-use ImageOptimizer;
 use DB;
-use Combinations;
-use CoreComponentRepository;
-use Illuminate\Support\Str;
 use Artisan;
 
 class AuctionProductController extends Controller
@@ -34,10 +25,18 @@ class AuctionProductController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function index(Request $request)
+    // Auction products list admin panel
+    public function all_auction_product_list(Request $request)
     {
         $sort_search = null;
+        $seller_id = null;
+        $type = 'all';
         $products = Product::orderBy('created_at', 'desc')->where('auction_product',1);
+
+        if ($request->has('user_id') && $request->user_id != null) {
+            $products = $products->where('user_id', $request->user_id);
+            $seller_id = $request->user_id;
+        }
         if ($request->search != null){
             $products = $products
                         ->where('name', 'like', '%'.$request->search.'%');
@@ -46,7 +45,64 @@ class AuctionProductController extends Controller
 
         $products = $products->paginate(15);
 
-        return view('auction.auction_products.index', compact('products', 'sort_search'));
+        return view('auction.auction_products.index', compact('products', 'sort_search','type','seller_id'));
+    }
+
+    public function inhouse_auction_products(Request $request)
+    {
+        $sort_search = null;
+        $seller_id = null;
+        $type = 'in_house';
+        $products = Product::where('added_by','admin')->orderBy('created_at', 'desc')->where('auction_product',1);
+        if ($request->search != null){
+            $products = $products
+                        ->where('name', 'like', '%'.$request->search.'%');
+            $sort_search = $request->search;
+        }
+
+        $products = $products->paginate(15);
+
+        return view('auction.auction_products.index', compact('products', 'sort_search','type','seller_id'));
+    }
+
+    public function seller_auction_products(Request $request)
+    {
+        $sort_search = null;
+        $seller_id = null;
+        $type = 'seller';
+        $products = Product::where('added_by','seller')->orderBy('created_at', 'desc')->where('auction_product',1);
+        
+        if ($request->has('user_id') && $request->user_id != null) {
+            $products = $products->where('user_id', $request->user_id);
+            $seller_id = $request->user_id;
+        }
+
+        if ($request->search != null){
+            $products = $products
+                        ->where('name', 'like', '%'.$request->search.'%');
+            $sort_search = $request->search;
+        }
+
+        $products = $products->paginate(15);
+
+        return view('auction.auction_products.index', compact('products', 'sort_search','type','seller_id'));
+    }
+    // Auction products list admin panel end
+
+    // Auction Products list in Seller panel 
+    public function auction_product_list_seller(Request $request)
+    {
+        $sort_search = null;
+        $products = Product::where('auction_product',1)->where('user_id',Auth::user()->id)->orderBy('created_at', 'desc');
+        if ($request->search != null){
+            $products = $products
+                        ->where('name', 'like', '%'.$request->search.'%');
+            $sort_search = $request->search;
+        }
+
+        $products = $products->paginate(15);
+
+        return view('auction.frontend.seller.auction_product_list', compact('products', 'sort_search'));
     }
 
 
@@ -62,7 +118,21 @@ class AuctionProductController extends Controller
             ->with('childrenCategories')
             ->get();
 
-        return view('auction.auction_products.create', compact('categories'));
+        if(Auth::user()->user_type == 'admin' || Auth::user()->user_type == 'staff'){
+            return view('auction.auction_products.create', compact('categories'));
+        }
+        elseif(Auth::user()->user_type == 'seller'){
+            if(addon_is_activated('seller_subscription')){
+                if(Auth::user()->seller->remaining_auction_uploads > 0){
+                    return view('auction.frontend.seller.auction_product_upload', compact('categories'));
+                }
+                else {
+                    flash(translate('Upload limit has been reached. Please upgrade your package.'))->warning();
+                    return back();
+                }
+            }
+            
+        }  
     }
 
     /**
@@ -78,7 +148,22 @@ class AuctionProductController extends Controller
         $product                  = new Product;
         $product->name            = $request->name;
         $product->added_by        = $request->added_by;
-        $product->user_id         = \App\User::where('user_type', 'admin')->first()->id;
+
+        if(Auth::user()->user_type == 'seller'){
+            if(addon_is_activated('seller_subscription') && Auth::user()->seller->remaining_auction_uploads < 1 ){
+                flash(translate('Upload limit has been reached. Please upgrade your package.'))->warning();
+                return redirect()->route('auction_products.seller.index');
+            }
+
+            $product->user_id = Auth::user()->id;
+            if(get_setting('product_approve_by_admin') == 1) {
+                $product->approved = 0;
+            }
+        }
+        else{
+            $product->user_id = \App\User::where('user_type', 'admin')->first()->id;
+        }
+
         $product->auction_product = 1;
         $product->category_id     = $request->category_id;
         $product->brand_id        = $request->brand_id;
@@ -224,7 +309,17 @@ class AuctionProductController extends Controller
         Artisan::call('view:clear');
         Artisan::call('cache:clear');
 
-        return redirect()->route('auction_products.index');
+        if(Auth::user()->user_type == 'seller'){
+            if(addon_is_activated('seller_subscription')){
+                $seller = Auth::user()->seller;
+                $seller->remaining_auction_uploads -= 1;
+                $seller->save();
+            }
+            return redirect()->route('auction_products.seller.index');
+        }
+        else{
+            return redirect()->route('auction_products.index');
+        }
     }
 
     /**
@@ -238,18 +333,15 @@ class AuctionProductController extends Controller
         //
     }
 
-    public function edit($id){
-
-    }
-
+   
     /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-     public function admin_product_edit(Request $request, $id)
-     {
+    public function edit(Request $request, $id)
+    {
         $product = Product::findOrFail($id);
         $lang = $request->lang;
         $tags = json_decode($product->tags);
@@ -257,8 +349,16 @@ class AuctionProductController extends Controller
             ->where('digital', 0)
             ->with('childrenCategories')
             ->get();
-        return view('auction.auction_products.edit', compact('product', 'categories', 'tags','lang'));
-     }
+        
+        if(Auth::user()->user_type == 'admin' || Auth::user()->user_type == 'staff'){
+            return view('auction.auction_products.edit', compact('product', 'categories', 'tags','lang'));
+
+        }
+        elseif(Auth::user()->user_type == 'seller'){
+            return view('auction.frontend.seller.auction_product_edit', compact('product', 'categories', 'tags','lang'));
+        }
+
+    }
 
 
     /**
@@ -524,6 +624,37 @@ class AuctionProductController extends Controller
         $order->save();
 
         return view('auction.auction_product_order_details', compact('order', 'delivery_boys'));
+    }
+
+    public function seller_auction_product_orders(Request $request){
+        
+        $payment_status = null;
+        $delivery_status = null;
+        $sort_search = null;
+        $orders = DB::table('orders')
+                    ->orderBy('code', 'desc')
+                    ->where('orders.seller_id', Auth::user()->id)
+                    ->join('order_details', 'orders.id', '=', 'order_details.order_id')
+                    ->join('products', 'order_details.product_id', '=', 'products.id')
+                    ->where('products.auction_product', '1')
+                    ->select('orders.id');
+                    
+
+        if ($request->payment_status != null) {
+            $orders = $orders->where('payment_status', $request->payment_status);
+            $payment_status = $request->payment_status;
+        }
+        if ($request->delivery_status != null) {
+            $orders = $orders->where('delivery_status', $request->delivery_status);
+            $delivery_status = $request->delivery_status;
+        }
+        if ($request->has('search')) {
+            $sort_search = $request->search;
+            $orders = $orders->where('code', 'like', '%' . $sort_search . '%');
+        }
+       
+        $orders = $orders->paginate(15);
+        return view('auction.frontend.seller.auction_product_orders', compact('orders', 'payment_status', 'delivery_status', 'sort_search'));
     }
 
 }

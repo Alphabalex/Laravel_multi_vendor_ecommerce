@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Ticket;
-use App\User;
+use App\Models\Ticket;
+use App\Models\User;
 use Auth;
-use App\TicketReply;
+use App\Models\TicketReply;
 use App\Mail\SupportMailManager;
 use Mail;
 

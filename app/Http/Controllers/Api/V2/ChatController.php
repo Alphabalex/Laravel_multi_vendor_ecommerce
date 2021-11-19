@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\V2;
 
-use App\Conversation;
+use App\Models\Conversation;
 use App\Http\Resources\V2\ConversationCollection;
 use App\Http\Resources\V2\MessageCollection;
 use App\Mail\ConversationMailManager;
-use App\Message;
-use App\Product;
-use App\User;
+use App\Models\Message;
+use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Mail;
 
@@ -75,7 +75,7 @@ class ChatController extends Controller
             'shop_name' => $conversation->receiver->user_type == 'admin' ? 'In House Product' : $conversation->receiver->shop->name,
             'shop_logo' => $conversation->receiver->user_type == 'admin' ? api_asset(get_setting('header_logo'))  : api_asset($conversation->receiver->shop->logo),
             'title'=> $conversation->title,
-            'message' => "Conversation created",]);
+            'message' => translate("Conversation created"),]);
     }
 
     public function send_message_to_seller($conversation, $message, $seller_user, $user)

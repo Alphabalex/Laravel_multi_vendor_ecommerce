@@ -2,7 +2,7 @@
 
 @section('content')
 @php
-    $return_policy =  \App\Page::where('type', 'return_policy_page')->first();
+    $return_policy =  \App\Models\Page::where('type', 'return_policy_page')->first();
 @endphp
 
 <section class="pt-4 mb-4">

@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Redirect;
-use App\CombinedOrder;
+use App\Models\CombinedOrder;
 use Session;
-use App\CustomerPackage;
-use App\SellerPackage;
+use App\Models\CustomerPackage;
+use App\Models\SellerPackage;
 use PayPalCheckoutSdk\Core\PayPalHttpClient;
 use PayPalCheckoutSdk\Core\SandboxEnvironment;
 use PayPalCheckoutSdk\Core\ProductionEnvironment;
@@ -57,7 +57,7 @@ class PaypalController extends Controller
                                  "reference_id" => rand(000000,999999),
                                  "amount" => [
                                      "value" => number_format($amount, 2, '.', ''),
-                                     "currency_code" => \App\Currency::findOrFail(get_setting('system_default_currency'))->code
+                                     "currency_code" => \App\Models\Currency::findOrFail(get_setting('system_default_currency'))->code
                                  ]
                              ]],
                              "application_context" => [

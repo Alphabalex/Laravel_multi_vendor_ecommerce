@@ -5,17 +5,15 @@ namespace App\Http\Controllers\Api\V2;
 use App\Http\Resources\V2\ProductCollection;
 use App\Http\Resources\V2\ProductMiniCollection;
 use App\Http\Resources\V2\ProductDetailCollection;
-use App\Http\Resources\V2\SearchProductCollection;
 use App\Http\Resources\V2\FlashDealCollection;
-use App\Models\Brand;
-use App\Models\Category;
 use App\Models\FlashDeal;
-use App\Models\FlashDealProduct;
 use App\Models\Product;
 use App\Models\Shop;
 use App\Models\Color;
 use Illuminate\Http\Request;
 use App\Utility\CategoryUtility;
+use App\Utility\SearchUtility;
+use Cache;
 
 class ProductController extends Controller
 {
@@ -72,40 +70,51 @@ class ProductController extends Controller
 
     public function todaysDeal()
     {
-        $products = Product::where('todays_deal', 1);
-        return new ProductMiniCollection(filter_products($products)->limit(20)->latest()->get());
+        return Cache::remember('app.todays_deal', 86400, function(){
+            $products = Product::where('todays_deal', 1);
+            return new ProductMiniCollection(filter_products($products)->limit(20)->latest()->get());
+        });
     }
 
     public function flashDeal()
     {
-        $flash_deals = FlashDeal::where('status', 1)->where('featured', 1)->where('start_date', '<=', strtotime(date('d-m-Y')))->where('end_date', '>=', strtotime(date('d-m-Y')))->get();
-        return new FlashDealCollection($flash_deals);
+        return Cache::remember('app.flash_deals', 86400, function(){
+            $flash_deals = FlashDeal::where('status', 1)->where('featured', 1)->where('start_date', '<=', strtotime(date('d-m-Y')))->where('end_date', '>=', strtotime(date('d-m-Y')))->get();
+            return new FlashDealCollection($flash_deals);
+        });
     }
 
     public function featured()
     {
         $products = Product::where('featured', 1);
-        return new ProductMiniCollection(filter_products($products)->limit(20)->latest()->get());
+        return new ProductMiniCollection(filter_products($products)->latest()->paginate(10));
     }
 
     public function bestSeller()
     {
-        $products = Product::orderBy('num_of_sale', 'desc');
-        return new ProductMiniCollection(filter_products($products)->limit(20)->get());
+        return Cache::remember('app.best_selling_products', 86400, function(){
+            $products = Product::orderBy('num_of_sale', 'desc');
+            return new ProductMiniCollection(filter_products($products)->limit(20)->get());
+        });
     }
 
     public function related($id)
     {
-        $product = Product::find($id);
-        $products = Product::where('category_id', $product->category_id)->where('id', '!=', $id);
-        return new ProductMiniCollection(filter_products($products)->limit(10)->get());
+        return Cache::remember("app.related_products-$id", 86400, function() use ($id){
+            $product = Product::find($id);
+            $products = Product::where('category_id', $product->category_id)->where('id', '!=', $id);
+            return new ProductMiniCollection(filter_products($products)->limit(10)->get());
+        });
     }
 
     public function topFromSeller($id)
     {
-        $product = Product::find($id);
-        $products = Product::where('user_id', $product->user_id)->orderBy('num_of_sale', 'desc');
-        return new ProductMiniCollection(filter_products($products)->limit(10)->get());
+        return Cache::remember("app.top_from_this_seller_products-$id", 86400, function() use ($id){
+            $product = Product::find($id);
+            $products = Product::where('user_id', $product->user_id)->orderBy('num_of_sale', 'desc');
+
+            return new ProductMiniCollection(filter_products($products)->limit(10)->get());
+        });
     }
 
 
@@ -151,8 +160,13 @@ class ProductController extends Controller
 
         if ($name != null && $name != "") {
             $products->where(function ($query) use ($name) {
-                $query->where('name', 'like', "%{$name}%")->orWhere('tags', 'like', "%{$name}%");
+                foreach (explode(' ', trim($name)) as $word) {
+                    $query->where('name', 'like', '%'.$word.'%')->orWhere('tags', 'like', '%'.$word.'%')->orWhereHas('product_translations', function($query) use ($word){
+                        $query->where('name', 'like', '%'.$word.'%');
+                    });
+                }
             });
+            SearchUtility::store($name);
         }
 
         if ($min != null && $min != "" && is_numeric($min)) {

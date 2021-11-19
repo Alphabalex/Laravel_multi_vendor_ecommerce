@@ -4,7 +4,7 @@
 <div class="aiz-titlebar text-left mt-2 mb-3">
     <div class="row align-items-center">
         <div class="col-md-6">
-            <h1 class="h3">{{translate('All categories')}}</h1>
+            <h1 class="h3">{{translate('All Categories')}}</h1>
         </div>
         <div class="col-md-6 text-md-right">
             <a href="{{ route('categories.create') }}" class="btn btn-primary">
@@ -47,7 +47,7 @@
                         <td>{{ $category->getTranslation('name') }}</td>
                         <td>
                             @php
-                                $parent = \App\Category::where('id', $category->parent_id)->first();
+                                $parent = \App\Models\Category::where('id', $category->parent_id)->first();
                             @endphp
                             @if ($parent != null)
                                 {{ $parent->getTranslation('name') }}
@@ -55,8 +55,8 @@
                                 —
                             @endif
                         </td>
-			<td>{{ $category->order_level }}</td>
-			<td>{{ $category->level }}</td>
+                        <td>{{ $category->order_level }}</td>
+                        <td>{{ $category->level }}</td>
                         <td>
                             @if($category->banner != null)
                                 <img src="{{ uploaded_asset($category->banner) }}" alt="{{translate('Banner')}}" class="h-50px">

@@ -51,7 +51,7 @@
         // created in step 3.
         const data = {
             payment_type: '{{$payment_type}}',
-            order_id: '{{$order_id}}',
+            combined_order_id: '{{$combined_order_id}}',
             amount: '{{$amount}}',
             user_id: '{{$user_id}}'
         };

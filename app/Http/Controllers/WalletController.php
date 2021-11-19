@@ -11,7 +11,7 @@ use App\Http\Controllers\InstamojoController;
 use App\Http\Controllers\PaytmController;
 use Auth;
 use Session;
-use App\Wallet;
+use App\Models\Wallet;
 use App\Utility\PayhereUtility;
 
 class WalletController extends Controller

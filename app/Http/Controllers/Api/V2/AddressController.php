@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers\Api\V2;
 
-use App\City;
-use App\Country;
+use App\Models\City;
+use App\Models\Country;
 use App\Http\Resources\V2\AddressCollection;
-use App\Address;
+use App\Models\Address;
 use App\Http\Resources\V2\CitiesCollection;
+use App\Http\Resources\V2\StatesCollection;
 use App\Http\Resources\V2\CountriesCollection;
 use Illuminate\Http\Request;
 use App\Models\Cart;
+use App\Models\State;
 
 class AddressController extends Controller
 {
@@ -23,15 +25,16 @@ class AddressController extends Controller
         $address = new Address;
         $address->user_id = $request->user_id;
         $address->address = $request->address;
-        $address->country = $request->country;
-        $address->city = $request->city;
+        $address->country_id = $request->country_id;
+        $address->state_id = $request->state_id;
+        $address->city_id = $request->city_id;
         $address->postal_code = $request->postal_code;
         $address->phone = $request->phone;
         $address->save();
 
         return response()->json([
             'result' => true,
-            'message' => 'Shipping information has been added successfully'
+            'message' => translate('Shipping information has been added successfully')
         ]);
     }
 
@@ -39,15 +42,16 @@ class AddressController extends Controller
     {
         $address = Address::find($request->id);
         $address->address = $request->address;
-        $address->country = $request->country;
-        $address->city = $request->city;
+        $address->country_id = $request->country_id;
+        $address->state_id = $request->state_id;
+        $address->city_id = $request->city_id;
         $address->postal_code = $request->postal_code;
         $address->phone = $request->phone;
         $address->save();
 
         return response()->json([
             'result' => true,
-            'message' => 'Shipping information has been updated successfully'
+            'message' => translate('Shipping information has been updated successfully')
         ]);
     }
 
@@ -60,7 +64,7 @@ class AddressController extends Controller
 
         return response()->json([
             'result' => true,
-            'message' => 'Shipping location in map updated successfully'
+            'message' => translate('Shipping location in map updated successfully')
         ]);
     }
 
@@ -71,7 +75,7 @@ class AddressController extends Controller
         $address->delete();
         return response()->json([
             'result' => true,
-            'message' => 'Shipping information has been deleted'
+            'message' => translate('Shipping information has been deleted')
         ]);
     }
 
@@ -84,7 +88,7 @@ class AddressController extends Controller
         $address->save();
         return response()->json([
             'result' => true,
-            'message' => 'Default shipping information has been updated'
+            'message' => translate('Default shipping information has been updated')
         ]);
     }
 
@@ -96,12 +100,12 @@ class AddressController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'result' => false,
-                'message' => 'Could not save the address'
+                'message' => translate('Could not save the address')
             ]);
         }
         return response()->json([
             'result' => true,
-            'message' => 'Address is saved'
+            'message' => translate('Address is saved')
         ]);
 
 
@@ -109,11 +113,42 @@ class AddressController extends Controller
 
     public function getCities()
     {
-        return new CitiesCollection(City::all());
+        return new CitiesCollection(City::where('status', 1)->get());
     }
 
-    public function getCountries()
+    public function getStates()
     {
-        return new CountriesCollection(Country::where('status', 1)->get());
+        return new StatesCollection(State::where('status', 1)->get());
+    }
+
+    public function getCountries(Request $request)
+    {
+        $country_query = Country::where('status', 1);
+        if ($request->name != "" || $request->name != null) {
+             $country_query->where('name', 'like', '%' . $request->name . '%');
+        }
+        $countries = $country_query->get();
+        
+        return new CountriesCollection($countries);
+    }
+
+    public function getCitiesByState($state_id,Request $request)
+    {
+        $city_query = City::where('status', 1)->where('state_id',$state_id);
+        if ($request->name != "" || $request->name != null) {
+             $city_query->where('name', 'like', '%' . $request->name . '%');
+        }
+        $cities = $city_query->get();
+        return new CitiesCollection($cities);
+    }
+
+    public function getStatesByCountry($country_id,Request $request)
+    {
+        $state_query = State::where('status', 1)->where('country_id',$country_id);
+        if ($request->name != "" || $request->name != null) {
+            $state_query->where('name', 'like', '%' . $request->name . '%');
+       }
+        $states = $state_query->get();
+        return new StatesCollection($states);
     }
 }

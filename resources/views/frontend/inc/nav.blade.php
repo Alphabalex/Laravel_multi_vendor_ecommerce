@@ -25,11 +25,11 @@
                             }
                         @endphp
                         <a href="javascript:void(0)" class="dropdown-toggle text-reset py-2" data-toggle="dropdown" data-display="static">
-                            <img src="{{ static_asset('assets/img/placeholder.jpg') }}" data-src="{{ static_asset('assets/img/flags/'.$locale.'.png') }}" class="mr-2 lazyload" alt="{{ \App\Language::where('code', $locale)->first()->name }}" height="11">
-                            <span class="opacity-60">{{ \App\Language::where('code', $locale)->first()->name }}</span>
+                            <img src="{{ static_asset('assets/img/placeholder.jpg') }}" data-src="{{ static_asset('assets/img/flags/'.$locale.'.png') }}" class="mr-2 lazyload" alt="{{ \App\Models\Language::where('code', $locale)->first()->name }}" height="11">
+                            <span class="opacity-60">{{ \App\Models\Language::where('code', $locale)->first()->name }}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-left">
-                            @foreach (\App\Language::all() as $key => $language)
+                            @foreach (\App\Models\Language::all() as $key => $language)
                                 <li>
                                     <a href="javascript:void(0)" data-flag="{{ $language->code }}" class="dropdown-item @if($locale == $language) active @endif">
                                         <img src="{{ static_asset('assets/img/placeholder.jpg') }}" data-src="{{ static_asset('assets/img/flags/'.$language->code.'.png') }}" class="mr-1 lazyload" alt="{{ $language->name }}" height="11">
@@ -48,14 +48,14 @@
                                 $currency_code = Session::get('currency_code');
                             }
                             else{
-                                $currency_code = \App\Currency::findOrFail(get_setting('system_default_currency'))->code;
+                                $currency_code = \App\Models\Currency::findOrFail(get_setting('system_default_currency'))->code;
                             }
                         @endphp
                         <a href="javascript:void(0)" class="dropdown-toggle text-reset py-2 opacity-60" data-toggle="dropdown" data-display="static">
-                            {{ \App\Currency::where('code', $currency_code)->first()->name }} {{ (\App\Currency::where('code', $currency_code)->first()->symbol) }}
+                            {{ \App\Models\Currency::where('code', $currency_code)->first()->name }} {{ (\App\Models\Currency::where('code', $currency_code)->first()->symbol) }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
-                            @foreach (\App\Currency::where('status', 1)->get() as $key => $currency)
+                            @foreach (\App\Models\Currency::where('status', 1)->get() as $key => $currency)
                                 <li>
                                     <a class="dropdown-item @if($currency_code == $currency->code) active @endif" href="javascript:void(0)" data-currency="{{ $currency->code }}">{{ $currency->name }} ({{ $currency->symbol }})</a>
                                 </li>
@@ -71,7 +71,7 @@
                     @auth
                         @if(isAdmin())
                             <li class="list-inline-item mr-3 border-right border-left-0 pr-3 pl-0">
-                                <a href="{{ route('admin.dashboard') }}" class="text-reset d-inline-block opacity-60">{{ translate('My Panel')}}</a>
+                                <a href="{{ route('admin.dashboard') }}" class="text-reset d-inline-block opacity-60 py-2">{{ translate('My Panel')}}</a>
                             </li>
                         @else
 
@@ -136,18 +136,18 @@
                             </li>
 
                             <li class="list-inline-item mr-3 border-right border-left-0 pr-3 pl-0">
-                                <a href="{{ route('dashboard') }}" class="text-reset d-inline-block opacity-60">{{ translate('My Panel')}}</a>
+                                <a href="{{ route('dashboard') }}" class="text-reset d-inline-block opacity-60 py-2">{{ translate('My Panel')}}</a>
                             </li>
                         @endif
                         <li class="list-inline-item">
-                            <a href="{{ route('logout') }}" class="text-reset d-inline-block opacity-60">{{ translate('Logout')}}</a>
+                            <a href="{{ route('logout') }}" class="text-reset d-inline-block opacity-60 py-2">{{ translate('Logout')}}</a>
                         </li>
                     @else
                         <li class="list-inline-item mr-3 border-right border-left-0 pr-3 pl-0">
-                            <a href="{{ route('user.login') }}" class="text-reset d-inline-block opacity-60">{{ translate('Login')}}</a>
+                            <a href="{{ route('user.login') }}" class="text-reset d-inline-block opacity-60 py-2">{{ translate('Login')}}</a>
                         </li>
                         <li class="list-inline-item">
-                            <a href="{{ route('user.registration') }}" class="text-reset d-inline-block opacity-60">{{ translate('Registration')}}</a>
+                            <a href="{{ route('user.registration') }}" class="text-reset d-inline-block opacity-60 py-2">{{ translate('Registration')}}</a>
                         </li>
                     @endauth
                 </ul>

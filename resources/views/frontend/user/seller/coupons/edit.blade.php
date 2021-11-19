@@ -53,7 +53,7 @@
     function coupon_form(){
         var coupon_type = $('#coupon_type').val();
         var id = $('#id').val();
-		$.post('{{ route('seller.coupon.get_coupon_form_edit') }}',{_token:'{{ csrf_token() }}', coupon_type:coupon_type, id:id}, function(data){
+		$.post('{{ route('coupon.get_coupon_form_edit') }}',{_token:'{{ csrf_token() }}', coupon_type:coupon_type, id:id}, function(data){
             $('#coupon_form').html(data);
 
          //    $('#demo-dp-range .input-daterange').datepicker({

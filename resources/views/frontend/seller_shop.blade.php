@@ -28,19 +28,6 @@
 @endsection
 
 @section('content')
-    <!-- <section>
-        <img loading="lazy"  src="https://via.placeholder.com/2000x300.jpg" alt="" class="img-fluid">
-    </section> -->
-
-    @php
-        $total = 0;
-        $rating = 0;
-        foreach ($shop->user->products as $key => $seller_product) {
-            $total += $seller_product->reviews->count();
-            $rating += $seller_product->reviews->sum('rating');
-        }
-    @endphp
-
     <section class="pt-5 mb-4 bg-white">
         <div class="container">
             <div class="row">
@@ -62,11 +49,7 @@
                                 @endif
                             </h1>
                             <div class="rating rating-sm mb-1">
-                                @if ($total > 0)
-                                    {{ renderStarRating($rating/$total) }}
-                                @else
-                                    {{ renderStarRating(0) }}
-                                @endif
+                                {{ renderStarRating($shop->user->seller->rating) }}
                             </div>
                             <div class="location opacity-60">{{ $shop->address }}</div>
                         </div>
@@ -81,10 +64,10 @@
                             <a class="text-reset d-inline-block fw-600 fs-15 p-3 @if(!isset($type)) border-bottom border-primary border-width-2 @endif" href="{{ route('shop.visit', $shop->slug) }}">{{ translate('Store Home')}}</a>
                         </li>
                         <li class="list-inline-item ">
-                            <a class="text-reset d-inline-block fw-600 fs-15 p-3 @if(isset($type) && $type == 'top_selling') border-bottom border-primary border-width-2 @endif" href="{{ route('shop.visit.type', ['slug'=>$shop->slug, 'type'=>'top_selling']) }}">{{ translate('Top Selling')}}</a>
+                            <a class="text-reset d-inline-block fw-600 fs-15 p-3 @if(isset($type) && $type == 'top-selling') border-bottom border-primary border-width-2 @endif" href="{{ route('shop.visit.type', ['slug'=>$shop->slug, 'type'=>'top-selling']) }}">{{ translate('Top Selling')}}</a>
                         </li>
                         <li class="list-inline-item ">
-                            <a class="text-reset d-inline-block fw-600 fs-15 p-3 @if(isset($type) && $type == 'all_products') border-bottom border-primary border-width-2 @endif" href="{{ route('shop.visit.type', ['slug'=>$shop->slug, 'type'=>'all_products']) }}">{{ translate('All Products')}}</a>
+                            <a class="text-reset d-inline-block fw-600 fs-15 p-3 @if(isset($type) && $type == 'all-products') border-bottom border-primary border-width-2 @endif" href="{{ route('shop.visit.type', ['slug'=>$shop->slug, 'type'=>'all-products']) }}">{{ translate('All Products')}}</a>
                         </li>
                     </ul>
                 </div>
@@ -167,9 +150,9 @@
                     <span class="border-bottom border-primary border-width-2 pb-3 d-inline-block">
                         @if (!isset($type))
                             {{ translate('New Arrival Products')}}
-                        @elseif ($type == 'top_selling')
+                        @elseif ($type == 'top-selling')
                             {{ translate('Top Selling')}}
-                        @elseif ($type == 'all_products')
+                        @elseif ($type == 'all-products')
                             {{ translate('All Products')}}
                         @endif
                     </span>
@@ -178,13 +161,13 @@
             <div class="row gutters-5 row-cols-xxl-5 row-cols-lg-4 row-cols-md-3 row-cols-2">
                 @php
                     if (!isset($type)){
-                        $products = \App\Product::where('user_id', $shop->user->id)->where('published', 1)->where('approved', 1)->orderBy('created_at', 'desc')->paginate(24);
+                        $products = \App\Models\Product::where('user_id', $shop->user->id)->where('published', 1)->where('approved', 1)->orderBy('created_at', 'desc')->paginate(24);
                     }
-                    elseif ($type == 'top_selling'){
-                        $products = \App\Product::where('user_id', $shop->user->id)->where('published', 1)->where('approved', 1)->orderBy('num_of_sale', 'desc')->paginate(24);
+                    elseif ($type == 'top-selling'){
+                        $products = \App\Models\Product::where('user_id', $shop->user->id)->where('published', 1)->where('approved', 1)->orderBy('num_of_sale', 'desc')->paginate(24);
                     }
-                    elseif ($type == 'all_products'){
-                        $products = \App\Product::where('user_id', $shop->user->id)->where('published', 1)->where('approved', 1)->paginate(24);
+                    elseif ($type == 'all-products'){
+                        $products = \App\Models\Product::where('user_id', $shop->user->id)->where('published', 1)->where('approved', 1)->paginate(24);
                     }
                 @endphp
                 @foreach ($products as $key => $product)

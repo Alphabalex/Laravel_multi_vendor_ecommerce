@@ -9,6 +9,8 @@ use App\Http\Resources\V2\ShopDetailsCollection;
 use App\Models\Product;
 use App\Models\Shop;
 use Illuminate\Http\Request;
+use App\Utility\SearchUtility;
+use Cache;
 
 class ShopController extends Controller
 {
@@ -18,6 +20,7 @@ class ShopController extends Controller
 
         if ($request->name != null && $request->name != "") {
             $shop_query->where("name", 'like', "%{$request->name}%");
+            SearchUtility::store($request->name);
         }
 
         return new ShopCollection($shop_query->whereIn('user_id', verified_sellers_id())->paginate(10));
@@ -45,19 +48,28 @@ class ShopController extends Controller
     public function topSellingProducts($id)
     {
         $shop = Shop::findOrFail($id);
-        return new ProductMiniCollection(Product::where('user_id', $shop->user_id)->where('published',1)->orderBy('num_of_sale', 'desc')->limit(10)->get());
+        
+        return Cache::remember("app.top_selling_products-$id", 86400, function () use ($shop){
+            return new ProductMiniCollection(Product::where('user_id', $shop->user_id)->where('published',1)->orderBy('num_of_sale', 'desc')->limit(10)->get());
+        });
     }
 
     public function featuredProducts($id)
     {
         $shop = Shop::findOrFail($id);
-        return new ProductMiniCollection(Product::where(['user_id' => $shop->user_id, 'featured' => 1])->where('published',1)->latest()->limit(10)->get());
+
+        return Cache::remember("app.featured_products-$id", 86400, function () use ($shop){
+            return new ProductMiniCollection(Product::where(['user_id' => $shop->user_id, 'featured' => 1])->where('published',1)->latest()->limit(10)->get());
+        });
     }
 
     public function newProducts($id)
     {
         $shop = Shop::findOrFail($id);
-        return new ProductMiniCollection(Product::where('user_id', $shop->user_id)->where('published',1)->orderBy('created_at', 'desc')->limit(10)->get());
+
+        return Cache::remember("app.new_products-$id", 86400, function () use ($shop){
+            return new ProductMiniCollection(Product::where('user_id', $shop->user_id)->where('published',1)->orderBy('created_at', 'desc')->limit(10)->get());
+        });
     }
 
     public function brands($id)

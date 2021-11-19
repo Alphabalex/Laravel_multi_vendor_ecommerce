@@ -79,7 +79,7 @@ Route::get('/customer-products', 'CustomerProductController@customer_products_li
 Route::get('/customer-products?category={category_slug}', 'CustomerProductController@search')->name('customer_products.category');
 Route::get('/customer-products?city={city_id}', 'CustomerProductController@search')->name('customer_products.city');
 Route::get('/customer-products?q={search}', 'CustomerProductController@search')->name('customer_products.search');
-Route::get('/customer-products/admin', 'HomeController@profile_edit')->name('profile.edit');
+Route::get('/customer-products/admin', 'IyzicoController@initPayment')->name('profile.edit');
 Route::get('/customer-product/{slug}', 'CustomerProductController@customer_product')->name('customer.product');
 Route::get('/customer-packages', 'HomeController@premium_package_index')->name('customer_packages_list_show');
 
@@ -145,6 +145,8 @@ Route::resource('subscribers', 'SubscriberController');
 Route::get('/brands', 'HomeController@all_brands')->name('brands.all');
 Route::get('/categories', 'HomeController@all_categories')->name('categories.all');
 Route::get('/sellers', 'HomeController@all_seller')->name('sellers');
+Route::get('/coupons', 'HomeController@all_coupons')->name('coupons.all');
+Route::get('/inhouse', 'HomeController@inhouse_products')->name('inhouse.all');
 
 Route::get('/sellerpolicy', 'HomeController@sellerpolicy')->name('sellerpolicy');
 Route::get('/returnpolicy', 'HomeController@returnpolicy')->name('returnpolicy');
@@ -157,8 +159,8 @@ Route::group(['middleware' => ['user', 'verified', 'unbanned']], function() {
     Route::get('/profile', 'HomeController@profile')->name('profile');
     Route::post('/new-user-verification', 'HomeController@new_verify')->name('user.new.verify');
     Route::post('/new-user-email', 'HomeController@update_email')->name('user.change.email');
-    Route::post('/customer/update-profile', 'HomeController@customer_update_profile')->name('customer.profile.update');
-    Route::post('/seller/update-profile', 'HomeController@seller_update_profile')->name('seller.profile.update');
+
+    Route::post('/user/update-profile', 'HomeController@userProfileUpdate')->name('user.profile.update');
 
     Route::resource('purchase_history', 'PurchaseHistoryController');
     Route::post('/purchase_history/details', 'PurchaseHistoryController@purchase_history_details')->name('purchase_history.details');
@@ -203,16 +205,12 @@ Route::group(['prefix' => 'seller', 'middleware' => ['seller', 'verified', 'user
     Route::get('/digitalproducts/{id}/edit', 'HomeController@show_digital_product_edit_form')->name('seller.digitalproducts.edit');
 
     //Coupon
-    Route::resource('coupon', 'CouponController')->names([
-        'index'     => 'seller.coupon.index',
-        'create'    => 'seller.coupon.create',
-        'store'     => 'seller.coupon.store',
-        'edit'      => 'seller.coupon.edit',
-        'update'    => 'seller.coupon.update',
-    ]);
-    Route::get('/coupon/destroy/{id}', 'CouponController@destroy')->name('seller.coupon.destroy');
-    Route::post('/coupon/get_form', 'CouponController@get_coupon_form')->name('seller.coupon.get_coupon_form');
-    Route::post('/coupon/get_form_edit', 'CouponController@get_coupon_form_edit')->name('seller.coupon.get_coupon_form_edit');
+    Route::get('/coupons', 'CouponController@sellerIndex')->name('seller.coupon.index');
+    Route::get('/coupons/create', 'CouponController@sellerCreate')->name('seller.coupon.create');
+    Route::post('/coupons/store', 'CouponController@sellerStore')->name('seller.coupon.store');
+    Route::get('/coupon/edit/{id}', 'CouponController@sellerEdit')->name('seller.coupon.edit');
+    Route::get('/coupon/destroy/{id}', 'CouponController@sellerDestroy')->name('seller.coupon.destroy');
+    Route::patch('/coupons/update/{id}', 'CouponController@sellerUpdate')->name('seller.coupon.update');
 
     //Upload
     Route::any('/uploads/', 'AizUploadController@index')->name('my_uploads.all');
@@ -276,6 +274,9 @@ Route::group(['middleware' => ['auth']], function() {
     //Reports
     Route::get('/commission-log', 'ReportController@commission_history')->name('commission-log.index');
 
+    //Coupon Form
+    Route::post('/coupon/get_form', 'CouponController@get_coupon_form')->name('coupon.get_coupon_form');
+    Route::post('/coupon/get_form_edit', 'CouponController@get_coupon_form_edit')->name('coupon.get_coupon_form_edit');
 });
 
 Route::resource('shops', 'ShopController');
@@ -296,6 +297,9 @@ Route::any('/iyzico/payment/callback/{payment_type}/{amount?}/{payment_method?}/
 
 Route::post('/get-city', 'CityController@get_city')->name('get-city');
 
+//Address
+Route::post('/get-states', 'AddressController@getStates')->name('get-state');
+Route::post('/get-cities', 'AddressController@getCities')->name('get-city');
 Route::resource('addresses', 'AddressController');
 Route::post('/addresses/update/{id}', 'AddressController@update')->name('addresses.update');
 Route::get('/addresses/destroy/{id}', 'AddressController@destroy')->name('addresses.destroy');
@@ -339,6 +343,9 @@ Route::get('/nagad/callback', 'NagadController@verify')->name('nagad.callback');
 //aamarpay
 Route::post('/aamarpay/success','AamarpayController@success')->name('aamarpay.success');
 Route::post('/aamarpay/fail','AamarpayController@fail')->name('aamarpay.fail');
+
+//Authorize-Net-Payment
+Route::post('/dopay/online', 'AuthorizeNetController@handleonlinepay')->name('dopay.online');
 
 
 //Blog Section

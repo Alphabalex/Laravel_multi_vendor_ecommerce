@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Review;
-use App\Product;
+use App\Models\Review;
+use App\Models\Product;
 use Auth;
 use DB;
-use Artisan;
 
 class ReviewController extends Controller
 {
@@ -34,7 +33,7 @@ class ReviewController extends Controller
                     ->paginate(9);
 
         foreach ($reviews as $key => $value) {
-            $review = \App\Review::find($value->id);
+            $review = \App\Models\Review::find($value->id);
             $review->viewed = 1;
             $review->save();
         }
@@ -66,21 +65,24 @@ class ReviewController extends Controller
         $review->rating = $request->rating;
         $review->comment = $request->comment;
         $review->viewed = '0';
-        if($review->save()){
-            $product = Product::findOrFail($request->product_id);
-            if(count(Review::where('product_id', $product->id)->where('status', 1)->get()) > 0){
-                $product->rating = Review::where('product_id', $product->id)->where('status', 1)->sum('rating')/count(Review::where('product_id', $product->id)->where('status', 1)->get());
-            }
-            else {
-                $product->rating = 0;
-            }
-            $product->save();
-            Artisan::call('view:clear');
-            Artisan::call('cache:clear');
-            flash(translate('Review has been submitted successfully'))->success();
-            return back();
+        $review->save();
+        $product = Product::findOrFail($request->product_id);
+        if(Review::where('product_id', $product->id)->where('status', 1)->count() > 0){
+            $product->rating = Review::where('product_id', $product->id)->where('status', 1)->sum('rating')/Review::where('product_id', $product->id)->where('status', 1)->count();
         }
-        flash(translate('Something went wrong'))->error();
+        else {
+            $product->rating = 0;
+        }
+        $product->save();
+
+        if($product->added_by == 'seller'){
+            $seller = $product->user->seller;
+            $seller->rating = (($seller->rating*$seller->num_of_reviews)+$review->rating)/($seller->num_of_reviews + 1);
+            $seller->num_of_reviews += 1;
+            $seller->save();
+        }
+
+        flash(translate('Review has been submitted successfully'))->success();
         return back();
     }
 
@@ -133,17 +135,31 @@ class ReviewController extends Controller
     {
         $review = Review::findOrFail($request->id);
         $review->status = $request->status;
-        if($review->save()){
-            $product = Product::findOrFail($review->product->id);
-            if(count(Review::where('product_id', $product->id)->where('status', 1)->get()) > 0){
-                $product->rating = Review::where('product_id', $product->id)->where('status', 1)->sum('rating')/count(Review::where('product_id', $product->id)->where('status', 1)->get());
+        $review->save();
+
+        $product = Product::findOrFail($review->product->id);
+        if(Review::where('product_id', $product->id)->where('status', 1)->count() > 0){
+            $product->rating = Review::where('product_id', $product->id)->where('status', 1)->sum('rating')/Review::where('product_id', $product->id)->where('status', 1)->count();
+        }
+        else {
+            $product->rating = 0;
+        }
+        $product->save();
+
+        if($product->added_by == 'seller'){
+            $seller = $product->user->seller;
+            if ($review->status) {
+                $seller->rating = (($seller->rating*$seller->num_of_reviews)+$review->rating)/($seller->num_of_reviews + 1);
+                $seller->num_of_reviews += 1;
             }
             else {
-                $product->rating = 0;
+                $seller->rating = (($seller->rating*$seller->num_of_reviews)-$review->rating)/max(1, $seller->num_of_reviews - 1);
+                $seller->num_of_reviews -= 1;
             }
-            $product->save();
-            return 1;
+
+            $seller->save();
         }
-        return 0;
+
+        return 1;
     }
 }

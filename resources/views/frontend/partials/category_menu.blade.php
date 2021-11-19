@@ -6,7 +6,7 @@
         </a>
     </div>
     <ul class="list-unstyled categories no-scrollbar py-2 mb-0 text-left">
-        @foreach (\App\Category::where('level', 0)->orderBy('order_level', 'desc')->get()->take(11) as $key => $category)
+        @foreach (\App\Models\Category::where('level', 0)->orderBy('order_level', 'desc')->get()->take(11) as $key => $category)
             <li class="category-nav-element" data-id="{{ $category->id }}">
                 <a href="{{ route('products.category', $category->slug) }}" class="text-truncate text-reset py-2 px-3 d-block">
                     <img

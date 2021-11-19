@@ -35,37 +35,53 @@ class RouteServiceProvider extends ServiceProvider
    */
   public function map()
   {
-    $this->mapApiRoutes();
+     $this->mapApiRoutes();
+    
+     $this->mapAdminRoutes();
+    
+     $this->mapAffiliateRoutes();
+    
+     $this->mapRefundRoutes();
+    
+     $this->mapClubPointsRoutes();
+    
+     $this->mapOtpRoutes();
+    
+     $this->mapOfflinePaymentRoutes();
+    
+     $this->mapAfricanPaymentGatewayRoutes();
+    
+     $this->mapPaytmRoutes();
+    
+     $this->mapPosRoutes();
+    
+     $this->mapSellerPackageRoutes();
+    
+     $this->mapDeliveryBoyRoutes();
+    
+     $this->mapAuctionRoutes();
 
-    $this->mapAdminRoutes();
+     $this->mapWholesaleRoutes();
+    
+     $this->mapWebRoutes();
 
-    $this->mapAffiliateRoutes();
-
-    $this->mapRefundRoutes();
-
-    $this->mapClubPointsRoutes();
-
-    $this->mapOtpRoutes();
-
-    $this->mapOfflinePaymentRoutes();
-
-    $this->mapAfricanPaymentGatewayRoutes();
-
-    $this->mapPaytmRoutes();
-
-    $this->mapPosRoutes();
-
-    $this->mapSellerPackageRoutes();
-
-    $this->mapDeliveryBoyRoutes();
-
-    $this->mapAuctionRoutes();
-
-    $this->mapWebRoutes();
-
-    //$this->mapInstallRoutes();
+    // $this->mapInstallRoutes();
 
     //$this->mapUpdateRoutes();
+  }
+
+  /**
+   * Define the "b2b" routes for the application.
+   *
+   * These routes all receive session state, CSRF protection, etc.
+   *
+   * @return void
+   */
+  protected function mapWholesaleRoutes()
+  {
+    Route::middleware('web')
+       ->namespace($this->namespace)
+       ->group(base_path('routes/wholesale.php'));
   }
 
   /**
