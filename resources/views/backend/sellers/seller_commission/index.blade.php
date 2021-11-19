@@ -5,29 +5,40 @@
     <div class="row">
         <div class="col-lg-6">
             <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0 h6 text-center">{{translate('Seller Commission Activatation')}}</h3>
+                </div>
+                <div class="card-body text-center">
+                    <label class="aiz-switch aiz-switch-success mb-0">
+                        <input type="checkbox" onchange="updateSettings(this, 'vendor_commission_activation')" <?php if(get_setting('vendor_commission_activation') == 1) echo "checked";?>>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0 h6 text-center">{{translate('Category Based Commission')}}</h3>
+                </div>
+                <div class="card-body text-center">
+                    <label class="aiz-switch aiz-switch-success mb-0">
+                        <input type="checkbox" onchange="updateSettings(this, 'category_wise_commission')" <?php if(get_setting('category_wise_commission') == 1) echo "checked";?>>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card">
               <div class="card-header">
                   <h5 class="mb-0 h6">{{translate('Seller Commission')}}</h5>
               </div>
               <div class="card-body">
                   <form class="form-horizontal" action="{{ route('business_settings.vendor_commission.update') }}" method="POST" enctype="multipart/form-data">
                   	@csrf
-                    @if (addon_is_activated('seller_subscription'))
-                        <div class="form-group row">
-                            <div class="col-lg-4">
-                                <label class="col-from-label">{{ translate('Seller Commission Activation') }}</label>
-                            </div>
-                            <div class="col-md-8">
-                                <input type="hidden" name="types[]" value="vendor_commission_activation">
-                                <label class="aiz-switch aiz-switch-success mb-0">
-                                    <input value="1" name="vendor_commission_activation" type="checkbox" @if (get_setting('vendor_commission_activation') == 1)
-                                        checked
-                                    @endif>
-                                    <span class="slider round"></span>
-                                </label>
-                            </div>
-                        </div>
-                    @endif
-
                     <div class="form-group row">
                         <label class="col-md-4 col-from-label">{{translate('Seller Commission')}}</label>
                         <div class="col-md-8">
@@ -59,7 +70,7 @@
                             1. {{ get_setting('vendor_commission') }}% {{translate('of seller product price will be deducted from seller earnings') }}.
                         </li>
                         <li class="list-group-item text-muted">
-                            2. {{translate('This commission only works when Category Based Commission is turned off from Business Settings') }}.
+                            2. {{translate('If Category Based Commission is enbaled, Set seller commission percentage 0.') }}.
                         </li>
                     </ul>
                 </div>
@@ -67,4 +78,26 @@
         </div>
     </div>
 
+@endsection
+
+@section('script')
+    <script type="text/javascript">
+        function updateSettings(el, type){
+            if($(el).is(':checked')){
+                var value = 1;
+            }
+            else{
+                var value = 0;
+            }
+            
+            $.post('{{ route('business_settings.update.activation') }}', {_token:'{{ csrf_token() }}', type:type, value:value}, function(data){
+                if(data == '1'){
+                    AIZ.plugins.notify('success', '{{ translate('Settings updated successfully') }}');
+                }
+                else{
+                    AIZ.plugins.notify('danger', 'Something went wrong');
+                }
+            });
+        }
+    </script>
 @endsection

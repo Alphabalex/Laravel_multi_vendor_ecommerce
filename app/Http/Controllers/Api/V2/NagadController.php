@@ -4,11 +4,11 @@
 namespace App\Http\Controllers\Api\V2;
 
 
-use App\BusinessSetting;
+use App\Models\BusinessSetting;
 use App\Utility\NagadUtility;
-use App\Order;
-use App\User;
-use App\Wallet;
+use App\Models\CombinedOrder;
+use App\Models\User;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 
 class NagadController
@@ -39,12 +39,14 @@ class NagadController
         $this->tnx_status = false;
 
         $payment_type = $request->payment_type;
-        $order_id = $request->order_id;
+        $combined_order_id = $request->combined_order_id;
         $amount = $request->amount;
         $user_id = $request->user_id;
 
         if ($request->payment_type == 'cart_payment') {
-            $this->tnx = $request->order_id;
+            $this->tnx = $request->combined_order_id;
+            $combined_order = CombinedOrder::find($combined_order_id);
+            $this->amount = $combined_order->grand_total;
         } else if ($request->payment_type == 'wallet_payment') {
             $this->tnx = rand(10000, 99999);
         }
@@ -123,14 +125,14 @@ class NagadController
                             'data' => $Result_Data_Order,
                             'result' => true,
                             'url' => $Result_Data_Order['callBackUrl'],
-                            'message' => 'Redirect Url is found'
+                            'message' => translate('Redirect Url is found')
                         ]);
                     } else {
                         return response()->json([
                             'data' => $Result_Data_Order,
                             'result' => false,
                             'url' => '',
-                            'message' => 'Could not generate payment link'
+                            'message' => translate('Could not generate payment link')
                         ]);
                     }
                 } else {
@@ -138,7 +140,7 @@ class NagadController
                         'data' => $PlainResponse,
                         'result' => false,
                         'url' => '',
-                        'message' => 'Payment reference id or challenge is missing'
+                        'message' => translate('Payment reference id or challenge is missing')
                     ]);
                 }
             } else {
@@ -146,7 +148,7 @@ class NagadController
                     'data' => null,
                     'result' => false,
                     'url' => '',
-                    'message' => 'Sensitive data or Signature is empty'
+                    'message' => translate('Sensitive data or Signature is empty')
                 ]);
             }
         } else {
@@ -154,7 +156,7 @@ class NagadController
                 'data' => null,
                 'result' => false,
                 'url' => '',
-                'message' => 'Sensitive data or Signature is missing'
+                'message' => translate('Sensitive data or Signature is missing')
             ]);
         }
 
@@ -169,13 +171,13 @@ class NagadController
         if (json_decode($json)->status == 'Success') {
             return response()->json([
                 'result' => true,
-                'message' => 'Payment Processing',
+                'message' => translate('Payment Processing'),
                 'payment_details' => $json
             ]);
         }
         return response()->json([
             'result' => false,
-            'message' => 'Payment failed !',
+            'message' => translate('Payment failed !'),
             'payment_details' => ''
         ]);
 
@@ -190,15 +192,15 @@ class NagadController
 
             if ($payment_type == 'cart_payment') {
 
-                checkout_done($request->order_id, $request->payment_details);
+                checkout_done($request->combined_order_id, $request->payment_details);
             }
 
             if ($payment_type == 'wallet_payment') {
 
-                wallet_payment_done($request->user_id, $request->amount, 'Bkash', $request->payment_details);
+                wallet_payment_done($request->user_id, $request->amount, 'Nagad', $request->payment_details);
             }
 
-            return response()->json(['result' => true, 'message' => "Payment is successful"]);
+            return response()->json(['result' => true, 'message' => translate("Payment is successful")]);
 
 
         } catch (\Exception $e) {

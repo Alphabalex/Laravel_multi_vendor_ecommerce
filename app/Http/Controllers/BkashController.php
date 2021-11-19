@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\CustomerPackage;
-use App\SellerPackage;
-use App\CombinedOrder;
-use App\BusinessSetting;
-use App\Seller;
+use App\Models\CustomerPackage;
+use App\Models\SellerPackage;
+use App\Models\CombinedOrder;
+use App\Models\BusinessSetting;
+use App\Models\Seller;
 use Session;
 
 class BkashController extends Controller
@@ -73,8 +73,6 @@ class BkashController extends Controller
 
     public function checkout(Request $request){
         $auth = Session::get('bkash_token');
-
-        $callbackURL = route('home');
 
         $requestbody = array(
             'amount' => Session::get('payment_amount'),

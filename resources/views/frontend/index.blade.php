@@ -10,8 +10,7 @@
                 </div>
 
                 @php
-                    $num_todays_deal = count(filter_products(\App\Product::where('published', 1)->where('todays_deal', 1 ))->get());
-                    $featured_categories = \App\Category::where('featured', 1)->get();
+                    $num_todays_deal = count($todays_deal_products);
                 @endphp
 
                 <div class="@if($num_todays_deal > 0) col-lg-7 @else col-lg-9 @endif">
@@ -69,7 +68,7 @@
                         </div>
                         <div class="c-scrollbar-light overflow-auto h-lg-400px p-2 bg-primary rounded-bottom">
                             <div class="gutters-5 lg-no-gutters row row-cols-2 row-cols-lg-1">
-                            @foreach (filter_products(\App\Product::where('published', 1)->where('todays_deal', '1'))->get() as $key => $product)
+                            @foreach ($todays_deal_products as $key => $product)
                                 @if ($product != null)
                                 <div class="col mb-2">
                                     <a href="{{ route('product', $product->slug) }}" class="d-block p-2 text-reset bg-white h-100 rounded">
@@ -132,7 +131,7 @@
 
     {{-- Flash Deal --}}
     @php
-        $flash_deal = \App\FlashDeal::where('status', 1)->where('featured', 1)->first();
+        $flash_deal = \App\Models\FlashDeal::where('status', 1)->where('featured', 1)->first();
     @endphp
     @if($flash_deal != null && strtotime(date('Y-m-d H:i:s')) >= $flash_deal->start_date && strtotime(date('Y-m-d H:i:s')) <= $flash_deal->end_date)
     <section class="mb-4">
@@ -148,9 +147,9 @@
                 </div>
 
                 <div class="aiz-carousel gutters-10 half-outside-arrow" data-items="6" data-xl-items="5" data-lg-items="4"  data-md-items="3" data-sm-items="2" data-xs-items="2" data-arrows='true'>
-                    @foreach ($flash_deal->flash_deal_products as $key => $flash_deal_product)
+                    @foreach ($flash_deal->flash_deal_products->take(20) as $key => $flash_deal_product)
                         @php
-                            $product = \App\Product::find($flash_deal_product->product_id);
+                            $product = \App\Models\Product::find($flash_deal_product->product_id);
                         @endphp
                         @if ($product != null && $product->published != 0)
                             <div class="carousel-box">
@@ -212,7 +211,7 @@
     {{-- Classified Product --}}
     @if(get_setting('classified_product') == 1)
         @php
-            $classified_products = \App\CustomerProduct::where('status', '1')->where('published', '1')->take(10)->get();
+            $classified_products = \App\Models\CustomerProduct::where('status', '1')->where('published', '1')->take(10)->get();
         @endphp
            @if (count($classified_products) > 0)
                <section class="mb-4">
@@ -285,11 +284,9 @@
     @endif
 
     {{-- Best Seller --}}
-    @if (get_setting('vendor_system_activation') == 1)
     <div id="section_best_sellers">
 
     </div>
-    @endif
 
     {{-- Top 10 categories and Brands --}}
     @if (get_setting('top10_categories') != null && get_setting('top10_brands') != null)
@@ -307,7 +304,7 @@
                         <div class="row gutters-5">
                             @php $top10_categories = json_decode(get_setting('top10_categories')); @endphp
                             @foreach ($top10_categories as $key => $value)
-                                @php $category = \App\Category::find($value); @endphp
+                                @php $category = \App\Models\Category::find($value); @endphp
                                 @if ($category != null)
                                     <div class="col-sm-6">
                                         <a href="{{ route('products.category', $category->slug) }}" class="bg-white border d-block text-reset rounded p-2 hov-shadow-md mb-2">
@@ -346,7 +343,7 @@
                         <div class="row gutters-5">
                             @php $top10_brands = json_decode(get_setting('top10_brands')); @endphp
                             @foreach ($top10_brands as $key => $value)
-                                @php $brand = \App\Brand::find($value); @endphp
+                                @php $brand = \App\Models\Brand::find($value); @endphp
                                 @if ($brand != null)
                                     <div class="col-sm-6">
                                         <a href="{{ route('products.brand', $brand->slug) }}" class="bg-white border d-block text-reset rounded p-2 hov-shadow-md mb-2">
@@ -400,13 +397,10 @@
                 $('#section_home_categories').html(data);
                 AIZ.plugins.slickCarousel();
             });
-
-            @if (get_setting('vendor_system_activation') == 1)
             $.post('{{ route('home.section.best_sellers') }}', {_token:'{{ csrf_token() }}'}, function(data){
                 $('#section_best_sellers').html(data);
                 AIZ.plugins.slickCarousel();
             });
-            @endif
         });
     </script>
 @endsection

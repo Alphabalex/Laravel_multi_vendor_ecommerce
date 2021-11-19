@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Addon;
+use App\Models\Addon;
 use App\Menu;
 use Illuminate\Http\Request;
 use ZipArchive;
 use DB;
 use Auth;
-use App\BusinessSetting;
+use App\Models\BusinessSetting;
 use CoreComponentRepository;
 use Illuminate\Support\Str;
 use Storage;
@@ -23,7 +23,6 @@ class AddonController extends Controller
      */
     public function index()
     {
-        CoreComponentRepository::instantiateShopRepository();
         return view('backend.addons.index');
     }
 
@@ -45,6 +44,8 @@ class AddonController extends Controller
      */
     public function store(Request $request)
     {
+
+        Cache::forget('addons');
 
         if (env('DEMO_MODE') == 'On') {
             flash(translate('This action is disabled in demo mode'))->error();
@@ -90,6 +91,7 @@ class AddonController extends Controller
                         $addon->version = $json['version'];
                         $addon->activated = 1;
                         $addon->image = $json['addon_banner'];
+                        $addon->purchase_code = "balextek_inc";
                         $addon->save();
 
                         // Create new directories.
@@ -120,7 +122,7 @@ class AddonController extends Controller
                             DB::unprepared(file_get_contents($sql_path));
                         }
 
-                        flash(translate('Addon nstalled successfully'))->success();
+                        flash(translate('Addon installed successfully'))->success();
                         return redirect()->route('addons.index');
                     } else {
                         // Create new directories.
@@ -156,9 +158,8 @@ class AddonController extends Controller
                         }
 
                         $addon->version = $json['version'];
+                        $addon->purchase_code = "balextek_inc";
                         $addon->save();
-
-                        Cache::forget('addons');
 
                         flash(translate('This addon is updated successfully'))->success();
                         return redirect()->route('addons.index');
@@ -177,7 +178,7 @@ class AddonController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Addon $addon
+     * @param \App\Models\Addon $addon
      * @return \Illuminate\Http\Response
      */
     public function show(Addon $addon)
@@ -193,7 +194,7 @@ class AddonController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param \App\Addon $addon
+     * @param \App\Models\Addon $addon
      * @return \Illuminate\Http\Response
      */
     public function edit(Addon $addon)
@@ -205,7 +206,7 @@ class AddonController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Addon $addon
+     * @param \App\Models\Addon $addon
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -216,7 +217,7 @@ class AddonController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Addon $addon
+     * @param \App\Models\Addon $addon
      * @return \Illuminate\Http\Response
      */
     public function activation(Request $request)

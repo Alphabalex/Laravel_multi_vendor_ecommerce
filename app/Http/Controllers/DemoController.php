@@ -2,37 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use App\Order;
-use App\ProductStock;
+use App\Models\Order;
+use App\Models\ProductStock;
 use Illuminate\Http\Request;
 use DB;
 use Schema;
 use ZipArchive;
 use File;
 use Artisan;
-use App\Upload;
-use App\Banner;
-use App\Brand;
-use App\User;
-use App\Category;
-use App\CategoryTranslation;
-use App\SubCategory;
-use App\SubCategoryTranslation;
-use App\SubSubCategory;
-use App\SubSubCategoryTranslation;
-use App\CustomerPackage;
-use App\CustomerProduct;
-use App\FlashDeal;
-use App\Product;
-use App\ProductTax;
-use App\Tax;
-use App\Shop;
-use App\Slider;
+use App\Models\Upload;
+use App\Models\Banner;
+use App\Models\Brand;
+use App\Models\User;
+use App\Models\Category;
+use App\Models\CategoryTranslation;
+use App\Models\SubCategory;
+use App\Models\SubCategoryTranslation;
+use App\Models\SubSubCategory;
+use App\Models\SubSubCategoryTranslation;
+use App\Models\CustomerPackage;
+use App\Models\CustomerProduct;
+use App\Models\FlashDeal;
+use App\Models\Product;
+use App\Models\ProductTax;
+use App\Models\Tax;
+use App\Models\Shop;
+use App\Models\Slider;
 use App\HomeCategory;
-use App\BusinessSetting;
-use App\Translation;
-use App\Attribute;
-use App\AttributeValue;
+use App\Models\BusinessSetting;
+use App\Models\Translation;
+use App\Models\Attribute;
+use App\Models\AttributeValue;
 
 class DemoController extends Controller
 {

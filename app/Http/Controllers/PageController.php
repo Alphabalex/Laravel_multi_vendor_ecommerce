@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Page;
-use App\PageTranslation;
+use App\Models\Page;
+use App\Models\PageTranslation;
 
 
 class PageController extends Controller

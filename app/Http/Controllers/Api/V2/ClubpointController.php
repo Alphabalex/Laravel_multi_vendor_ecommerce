@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api\V2;
 
 use App\ClubPoint;
 use App\Http\Resources\V2\ClubpointCollection;
-use App\User;
-use App\Wallet;
+use App\Models\User;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 
 class ClubpointController extends Controller
@@ -36,7 +36,7 @@ class ClubpointController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Successfully converted'
+            'message' => translate('Successfully converted')
         ]);
     }
 

@@ -6,44 +6,31 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="mar-ver pad-btm text-center">
-                            <h1 class="h3">Active eCommerce CMS Settings</h1>
-                            <p>Fill this form with basic information & admin login credentials</p>
+                            <h1 class="h3">Import SQL</h1>
                         </div>
-                        <p class="text-muted font-13">
-                            <form method="POST" action="{{ route('system_settings') }}">
-                                @csrf
-                                <div class="form-group">
-                                    <label for="admin_name">Admin Name</label>
-                                    <input type="text" class="form-control" id="admin_name" name="admin_name" required>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="admin_email">Admin Email</label>
-                                    <input type="email" class="form-control" id="admin_email" name="admin_email" required>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="admin_password">Admin Password (At least 6 characters)</label>
-                                    <input type="password" class="form-control" id="admin_password" name="admin_password" required>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="admin_name">System Currency</label>
-                                    <select class="form-control aiz-selectpicker" data-live-search="true" name="system_default_currency" required>
-                                        @foreach (\App\Currency::all() as $key => $currency)
-                                            <option value="{{ $currency->id }}">{{ $currency->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-primary">Continue</button>
-                                </div>
-                            </form>
+                        <p class="text-muted font-13 text-center">
+                            <strong>Your database is successfully connected</strong>. All you need to do now is
+                            <strong>hit the 'Install' button</strong>.
+                            The auto installer will run a sql file, will do all the tiresome works and set up your application automatically.
                         </p>
+                        <div class="text-center mar-top pad-top">
+                            <a href="{{ route('import_sql') }}" class="btn btn-primary" onclick="showLoder()">Import SQL</a>
+                            <div id="loader" style="margin-top: 20px; display: none;">
+                                <img loading="lazy"  src="{{ asset('loader.gif') }}" alt="" width="20">
+                                &nbsp; Importing database ....
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+@endsection
+
+@section('scripts')
+    <script type="text/javascript">
+        function showLoder() {
+            $('#loader').fadeIn();
+        }
+    </script>
 @endsection

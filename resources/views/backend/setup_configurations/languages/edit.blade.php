@@ -29,7 +29,7 @@
                         </div>
                         <div class="col-lg-9">
                             @php
-                                $languagesArray = \App\Language::pluck('code')->toarray();
+                                $languagesArray = \App\Models\Language::pluck('code')->toarray();
                                 if (($key = array_search($language->code, $languagesArray)) !== false) {
                                     unset($languagesArray[$key]);
                                 }
@@ -47,7 +47,15 @@
                             </select>
                         </div>
                     </div>
-
+                    <div class="form-group row">
+                        <div class="col-lg-3">
+                            <label class="control-label">{{ translate('Flutter App Lang Code') }}</label>
+                            <code><a target="_blank" href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">{{ translate("Links for ISO 639-1 codes")}}</a></code>
+                        </div>
+                        <div class="col-lg-9">
+                            <input type="text" class="form-control" name="app_lang_code" placeholder="{{ translate('Put ISO 639-1 code for your language') }}" value="{{ $language->app_lang_code }}" required>
+                        </div>
+                    </div>
                     <div class="form-group mb-0 text-right">
                         <button type="submit" class="btn btn-sm btn-primary">{{translate('Save')}}</button>
                     </div>

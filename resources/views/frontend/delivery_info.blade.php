@@ -53,14 +53,14 @@
                         $admin_products = array();
                         $seller_products = array();
                         foreach ($carts as $key => $cartItem){
-                            $product = \App\Product::find($cartItem['product_id']);
+                            $product = \App\Models\Product::find($cartItem['product_id']);
 
                             if($product->added_by == 'admin'){
                                 array_push($admin_products, $cartItem['product_id']);
                             }
                             else{
                                 $product_ids = array();
-                                if(array_key_exists($product->user_id, $seller_products)){
+                                if(isset($seller_products[$product->user_id])){
                                     $product_ids = $seller_products[$product->user_id];
                                 }
                                 array_push($product_ids, $cartItem['product_id']);
@@ -78,7 +78,7 @@
                             <ul class="list-group list-group-flush">
                                 @foreach ($admin_products as $key => $cartItem)
                                 @php
-                                    $product = \App\Product::find($cartItem);
+                                    $product = \App\Models\Product::find($cartItem);
                                 @endphp
                                 <li class="list-group-item">
                                     <div class="d-flex">
@@ -105,7 +105,7 @@
                                             <label class="aiz-megabox d-block bg-white mb-0">
                                                 <input
                                                     type="radio"
-                                                    name="shipping_type_{{ \App\User::where('user_type', 'admin')->first()->id }}"
+                                                    name="shipping_type_{{ \App\Models\User::where('user_type', 'admin')->first()->id }}"
                                                     value="home_delivery"
                                                     onchange="show_pickup_point(this)"
                                                     data-target=".pickup_point_id_admin"
@@ -117,12 +117,12 @@
                                                 </span>
                                             </label>
                                         </div>
-                                        @if (\App\BusinessSetting::where('type', 'pickup_point')->first()->value == 1)
+                                        @if (\App\Models\BusinessSetting::where('type', 'pickup_point')->first()->value == 1)
                                         <div class="col-6">
                                             <label class="aiz-megabox d-block bg-white mb-0">
                                                 <input
                                                     type="radio"
-                                                    name="shipping_type_{{ \App\User::where('user_type', 'admin')->first()->id }}"
+                                                    name="shipping_type_{{ \App\Models\User::where('user_type', 'admin')->first()->id }}"
                                                     value="pickup_point"
                                                     onchange="show_pickup_point(this)"
                                                     data-target=".pickup_point_id_admin"
@@ -138,11 +138,11 @@
                                     <div class="mt-4 pickup_point_id_admin d-none">
                                         <select
                                             class="form-control aiz-selectpicker"
-                                            name="pickup_point_id_{{ \App\User::where('user_type', 'admin')->first()->id }}"
+                                            name="pickup_point_id_{{ \App\Models\User::where('user_type', 'admin')->first()->id }}"
                                             data-live-search="true"
                                         >
                                                 <option>{{ translate('Select your nearest pickup point')}}</option>
-                                            @foreach (\App\PickupPoint::where('pick_up_status',1)->get() as $key => $pick_up_point)
+                                            @foreach (\App\Models\PickupPoint::where('pick_up_status',1)->get() as $key => $pick_up_point)
                                                 <option
                                                     value="{{ $pick_up_point->id }}"
                                                     data-content="<span class='d-block'>
@@ -165,13 +165,13 @@
                         @foreach ($seller_products as $key => $seller_product)
                             <div class="card mb-3 shadow-sm border-0 rounded">
                                 <div class="card-header p-3">
-                                    <h5 class="fs-16 fw-600 mb-0">{{ \App\Shop::where('user_id', $key)->first()->name }} {{ translate('Products') }}</h5>
+                                    <h5 class="fs-16 fw-600 mb-0">{{ \App\Models\Shop::where('user_id', $key)->first()->name }} {{ translate('Products') }}</h5>
                                 </div>
                                 <div class="card-body">
                                     <ul class="list-group list-group-flush">
                                         @foreach ($seller_product as $cartItem)
                                         @php
-                                            $product = \App\Product::find($cartItem);
+                                            $product = \App\Models\Product::find($cartItem);
                                         @endphp
                                         <li class="list-group-item">
                                             <div class="d-flex">
@@ -210,8 +210,8 @@
                                                         </span>
                                                     </label>
                                                 </div>
-                                                @if (\App\BusinessSetting::where('type', 'pickup_point')->first()->value == 1)
-                                                    @if (is_array(json_decode(\App\Shop::where('user_id', $key)->first()->pick_up_point_id)))
+                                                @if (\App\Models\BusinessSetting::where('type', 'pickup_point')->first()->value == 1)
+                                                    @if (is_array(json_decode(\App\Models\Shop::where('user_id', $key)->first()->pick_up_point_id)))
                                                     <div class="col-6">
                                                         <label class="aiz-megabox d-block bg-white mb-0">
                                                             <input
@@ -230,8 +230,8 @@
                                                     @endif
                                                 @endif
                                             </div>
-                                            @if (\App\BusinessSetting::where('type', 'pickup_point')->first()->value == 1)
-                                                @if (is_array(json_decode(\App\Shop::where('user_id', $key)->first()->pick_up_point_id)))
+                                            @if (\App\Models\BusinessSetting::where('type', 'pickup_point')->first()->value == 1)
+                                                @if (is_array(json_decode(\App\Models\Shop::where('user_id', $key)->first()->pick_up_point_id)))
                                                 <div class="mt-4 pickup_point_id_{{ $key }} d-none">
                                                     <select
                                                         class="form-control aiz-selectpicker"
@@ -239,18 +239,16 @@
                                                         data-live-search="true"
                                                     >
                                                             <option>{{ translate('Select your nearest pickup point')}}</option>
-                                                        @foreach (json_decode(\App\Shop::where('user_id', $key)->first()->pick_up_point_id) as $pick_up_point)
-                                                            @if (\App\PickupPoint::find($pick_up_point) != null)
+                                                            @foreach (\App\Models\PickupPoint::where('pick_up_status',1)->get() as $key => $pick_up_point)
                                                             <option
-                                                                value="{{ \App\PickupPoint::find($pick_up_point)->id }}"
+                                                                value="{{ $pick_up_point->id }}"
                                                                 data-content="<span class='d-block'>
-                                                                                <span class='d-block fs-16 fw-600 mb-2'>{{ \App\PickupPoint::find($pick_up_point)->getTranslation('name') }}</span>
-                                                                                <span class='d-block opacity-50 fs-12'><i class='las la-map-marker'></i> {{ \App\PickupPoint::find($pick_up_point)->getTranslation('address') }}</span>
-                                                                                <span class='d-block opacity-50 fs-12'><i class='las la-phone'></i> {{ \App\PickupPoint::find($pick_up_point)->phone }}</span>
+                                                                                <span class='d-block fs-16 fw-600 mb-2'>{{ $pick_up_point->getTranslation('name') }}</span>
+                                                                                <span class='d-block opacity-50 fs-12'><i class='las la-map-marker'></i> {{ $pick_up_point->getTranslation('address') }}</span>
+                                                                                <span class='d-block opacity-50 fs-12'><i class='las la-phone'></i>{{ $pick_up_point->phone }}</span>
                                                                             </span>"
                                                             >
                                                             </option>
-                                                            @endif
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -263,7 +261,6 @@
                             </div>
                         @endforeach
                     @endif
-
 
                     <div class="pt-4 d-flex justify-content-between align-items-center">
                         <a href="{{ route('home') }}" >

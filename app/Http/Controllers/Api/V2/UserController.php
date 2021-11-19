@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Resources\V2\UserCollection;
-use App\User;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Lcobucci\JWT\Parser;
 use DB;
@@ -22,7 +22,7 @@ class UserController extends Controller
             'name' => $request->name
         ]);
         return response()->json([
-            'message' => 'Profile information has been updated successfully'
+            'message' => translate('Profile information has been updated successfully')
         ]);
     }
 

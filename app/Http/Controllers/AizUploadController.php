@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Upload;
+use App\Models\Upload;
 use Response;
 use Auth;
 use Storage;

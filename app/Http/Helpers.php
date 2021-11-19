@@ -2,19 +2,19 @@
 
 use App\Http\Controllers\ClubPointController;
 use App\Http\Controllers\AffiliateController;
-use App\Currency;
-use App\BusinessSetting;
-use App\ProductStock;
-use App\Address;
-use App\CustomerPackage;
-use App\Upload;
-use App\Translation;
-use App\City;
+use App\Models\Currency;
+use App\Models\BusinessSetting;
+use App\Models\ProductStock;
+use App\Models\Address;
+use App\Models\CustomerPackage;
+use App\Models\Upload;
+use App\Models\Translation;
+use App\Models\City;
 use App\Utility\CategoryUtility;
-use App\Wallet;
-use App\Order;
-use App\User;
-use App\Addon;
+use App\Models\Wallet;
+use App\Models\CombinedOrder;
+use App\Models\User;
+use App\Models\Addon;
 use App\Http\Controllers\CommissionController;
 use App\Utility\SendSMSUtility;
 use App\Utility\NotificationUtility;
@@ -34,7 +34,6 @@ if (!function_exists('areActiveRoutes')) {
         foreach ($routes as $route) {
             if (Route::currentRouteName() == $route) return $output;
         }
-
     }
 }
 
@@ -45,7 +44,6 @@ if (!function_exists('areActiveRoutesHome')) {
         foreach ($routes as $route) {
             if (Route::currentRouteName() == $route) return $output;
         }
-
     }
 }
 
@@ -64,22 +62,16 @@ if (!function_exists('default_language')) {
 if (!function_exists('convert_to_usd')) {
     function convert_to_usd($amount)
     {
-        $business_settings = get_setting('system_default_currency');
-        if ($business_settings != null) {
-            $currency = Currency::find($business_settings->value);
-            return (floatval($amount) / floatval($currency->exchange_rate)) * Currency::where('code', 'USD')->first()->exchange_rate;
-        }
+        $currency = Currency::find(get_setting('system_default_currency'));
+        return (floatval($amount) / floatval($currency->exchange_rate)) * Currency::where('code', 'USD')->first()->exchange_rate;
     }
 }
 
 if (!function_exists('convert_to_kes')) {
     function convert_to_kes($amount)
     {
-        $business_settings = get_setting('system_default_currency');
-        if ($business_settings != null) {
-            $currency = Currency::find($business_settings->value);
-            return (floatval($amount) / floatval($currency->exchange_rate)) * Currency::where('code', 'KES')->first()->exchange_rate;
-        }
+        $currency = Currency::find(get_setting('system_default_currency'));
+        return (floatval($amount) / floatval($currency->exchange_rate)) * Currency::where('code', 'KES')->first()->exchange_rate;
     }
 }
 
@@ -104,7 +96,7 @@ if (!function_exists('filter_products')) {
 if (!function_exists('get_cached_products')) {
     function get_cached_products($category_id = null)
     {
-        $products = \App\Product::where('published', 1)->where('approved', '1')->where('auction_product', 0);
+        $products = \App\Models\Product::where('published', 1)->where('approved', '1')->where('auction_product', 0);
         $verified_sellers = verified_sellers_id();
         if (get_setting('vendor_system_activation') == 1) {
             $products = $products->where(function ($p) use ($verified_sellers) {
@@ -124,7 +116,7 @@ if (!function_exists('get_cached_products')) {
             });
         } else {
             return Cache::remember('products', 86400, function () use ($products) {
-                return $products->latest()->get();
+                return $products->latest()->take(12)->get();
             });
         }
     }
@@ -134,7 +126,7 @@ if (!function_exists('verified_sellers_id')) {
     function verified_sellers_id()
     {
         return Cache::rememberForever('verified_sellers_id', function () {
-            return App\Seller::where('verification_status', 1)->pluck('user_id')->toArray();
+            return App\Models\Seller::where('verification_status', 1)->pluck('user_id')->toArray();
         });
     }
 }
@@ -142,7 +134,7 @@ if (!function_exists('verified_sellers_id')) {
 if (!function_exists('get_system_default_currency')) {
     function get_system_default_currency()
     {
-        return Cache::remember('system_default_currency', 86400, function(){
+        return Cache::remember('system_default_currency', 86400, function () {
             return Currency::findOrFail(get_setting('system_default_currency'));
         });
     }
@@ -152,7 +144,7 @@ if (!function_exists('get_system_default_currency')) {
 if (!function_exists('convert_price')) {
     function convert_price($price)
     {
-        if (Session::has('currency_code') && (Session::has('currency_code') != get_system_default_currency()->code)) {
+        if (Session::has('currency_code') && (Session::get('currency_code') != get_system_default_currency()->code)) {
             $price = floatval($price) / floatval(get_system_default_currency()->exchange_rate);
             $price = floatval($price) * floatval(Session::get('currency_exchange_rate'));
         }
@@ -189,7 +181,6 @@ if (!function_exists('format_price')) {
             return $fomated_price . ' ' . currency_symbol();
         }
         return $fomated_price . currency_symbol();
-
     }
 }
 
@@ -229,14 +220,13 @@ if (!function_exists('home_price')) {
             }
         }
 
-        if($formatted){
+        if ($formatted) {
             if ($lowest_price == $highest_price) {
                 return format_price(convert_price($lowest_price));
             } else {
                 return format_price(convert_price($lowest_price)) . ' - ' . format_price(convert_price($highest_price));
             }
-        }
-        else{
+        } else {
             return $lowest_price . ' - ' . $highest_price;
         }
     }
@@ -264,8 +254,10 @@ if (!function_exists('home_discounted_price')) {
 
         if ($product->discount_start_date == null) {
             $discount_applicable = true;
-        } elseif (strtotime(date('d-m-Y H:i:s')) >= $product->discount_start_date &&
-            strtotime(date('d-m-Y H:i:s')) <= $product->discount_end_date) {
+        } elseif (
+            strtotime(date('d-m-Y H:i:s')) >= $product->discount_start_date &&
+            strtotime(date('d-m-Y H:i:s')) <= $product->discount_end_date
+        ) {
             $discount_applicable = true;
         }
 
@@ -289,14 +281,13 @@ if (!function_exists('home_discounted_price')) {
             }
         }
 
-        if($formatted){
+        if ($formatted) {
             if ($lowest_price == $highest_price) {
                 return format_price(convert_price($lowest_price));
             } else {
                 return format_price(convert_price($lowest_price)) . ' - ' . format_price(convert_price($highest_price));
             }
-        }
-        else{
+        } else {
             return $lowest_price . ' - ' . $highest_price;
         }
     }
@@ -352,8 +343,10 @@ if (!function_exists('home_discounted_base_price_by_stock_id')) {
 
         if ($product->discount_start_date == null) {
             $discount_applicable = true;
-        } elseif (strtotime(date('d-m-Y H:i:s')) >= $product->discount_start_date &&
-            strtotime(date('d-m-Y H:i:s')) <= $product->discount_end_date) {
+        } elseif (
+            strtotime(date('d-m-Y H:i:s')) >= $product->discount_start_date &&
+            strtotime(date('d-m-Y H:i:s')) <= $product->discount_end_date
+        ) {
             $discount_applicable = true;
         }
 
@@ -389,8 +382,10 @@ if (!function_exists('home_discounted_base_price')) {
 
         if ($product->discount_start_date == null) {
             $discount_applicable = true;
-        } elseif (strtotime(date('d-m-Y H:i:s')) >= $product->discount_start_date &&
-            strtotime(date('d-m-Y H:i:s')) <= $product->discount_end_date) {
+        } elseif (
+            strtotime(date('d-m-Y H:i:s')) >= $product->discount_start_date &&
+            strtotime(date('d-m-Y H:i:s')) <= $product->discount_end_date
+        ) {
             $discount_applicable = true;
         }
 
@@ -440,14 +435,16 @@ function translate($key, $lang = null)
         $lang = App::getLocale();
     }
 
+    $lang_key = preg_replace('/[^A-Za-z0-9\_]/', '', str_replace(' ', '_', strtolower($key)));
+
     $translations_default = Cache::rememberForever('translations-'.env('DEFAULT_LANGUAGE', 'en'), function () {
         return Translation::where('lang', env('DEFAULT_LANGUAGE', 'en'))->pluck('lang_value', 'lang_key')->toArray();
     });
 
-    if(!isset($translations_default[$key])){
+    if(!isset($translations_default[$lang_key])){
         $translation_def = new Translation;
         $translation_def->lang = env('DEFAULT_LANGUAGE', 'en');
-        $translation_def->lang_key = $key;
+        $translation_def->lang_key = $lang_key;
         $translation_def->lang_value = $key;
         $translation_def->save();
         Cache::forget('translations-'.env('DEFAULT_LANGUAGE', 'en'));
@@ -458,11 +455,11 @@ function translate($key, $lang = null)
     });
 
     //Check for session lang
-    if(isset($translation_locale[$key])){
-        return $translation_locale[$key];
+    if(isset($translation_locale[$lang_key])){
+        return $translation_locale[$lang_key];
     }
-    elseif(isset($translations_default[$key])){
-        return $translations_default[$key];
+    elseif(isset($translations_default[$lang_key])){
+        return $translations_default[$lang_key];
     }
     else{
         return $key;
@@ -482,12 +479,12 @@ function getShippingCost($carts, $index)
     $calculate_shipping = 0;
 
     foreach ($carts as $key => $cartItem) {
-        $product = \App\Product::find($cartItem['product_id']);
+        $product = \App\Models\Product::find($cartItem['product_id']);
         if ($product->added_by == 'admin') {
             array_push($admin_products, $cartItem['product_id']);
         } else {
             $product_ids = array();
-            if (array_key_exists($product->user_id, $seller_products)) {
+            if (isset($seller_products[$product->user_id])) {
                 $product_ids = $seller_products[$product->user_id];
             }
             array_push($product_ids, $cartItem['product_id']);
@@ -504,7 +501,7 @@ function getShippingCost($carts, $index)
         }
         if (!empty($seller_products)) {
             foreach ($seller_products as $key => $seller_product) {
-                $calculate_shipping += \App\Shop::where('user_id', $key)->first()->shipping_cost;
+                $calculate_shipping += \App\Models\Shop::where('user_id', $key)->first()->shipping_cost;
             }
         }
     } elseif (get_setting('shipping_type') == 'area_wise_shipping') {
@@ -516,7 +513,7 @@ function getShippingCost($carts, $index)
     }
 
     $cartItem = $carts[$index];
-    $product = \App\Product::find($cartItem['product_id']);
+    $product = \App\Models\Product::find($cartItem['product_id']);
 
     if ($product->digital == 1) {
         return $calculate_shipping = 0;
@@ -528,7 +525,7 @@ function getShippingCost($carts, $index)
         if ($product->added_by == 'admin') {
             return get_setting('shipping_cost_admin') / count($admin_products);
         } else {
-            return \App\Shop::where('user_id', $product->user_id)->first()->shipping_cost / count($seller_products[$product->user_id]);
+            return \App\Models\Shop::where('user_id', $product->user_id)->first()->shipping_cost / count($seller_products[$product->user_id]);
         }
     } elseif (get_setting('shipping_type') == 'area_wise_shipping') {
         if ($product->added_by == 'admin') {
@@ -537,7 +534,10 @@ function getShippingCost($carts, $index)
             return $calculate_shipping / count($seller_products[$product->user_id]);
         }
     } else {
-        return \App\Product::find($cartItem['product_id'])->shipping_cost;
+        if($product->is_quantity_multiplied && get_setting('shipping_type') == 'product_wise_shipping') {
+            return  $product->shipping_cost * $cartItem['quantity'];
+        }
+        return $product->shipping_cost;
     }
 }
 
@@ -556,7 +556,7 @@ if (!function_exists('app_timezone')) {
 if (!function_exists('api_asset')) {
     function api_asset($id)
     {
-        if (($asset = \App\Upload::find($id)) != null) {
+        if (($asset = \App\Models\Upload::find($id)) != null) {
             return $asset->file_name;
         }
         return "";
@@ -567,7 +567,7 @@ if (!function_exists('api_asset')) {
 if (!function_exists('uploaded_asset')) {
     function uploaded_asset($id)
     {
-        if (($asset = \App\Upload::find($id)) != null) {
+        if (($asset = \App\Models\Upload::find($id)) != null) {
             return my_asset($asset->file_name);
         }
         return null;
@@ -647,7 +647,7 @@ if (!function_exists('isUnique')) {
      */
     function isUnique($email)
     {
-        $user = \App\User::where('email', $email)->first();
+        $user = \App\Models\User::where('email', $email)->first();
 
         if ($user == null) {
             return '1'; // $user = null means we did not get any match with the email provided by the user inside the database
@@ -765,22 +765,27 @@ if (!function_exists('get_images_path')) {
         }
 
         return $paths;
-
     }
 }
 
 //for api
 if (!function_exists('checkout_done')) {
-    function checkout_done($order_id, $payment)
+    function checkout_done($combined_order_id, $payment)
     {
-        $order = Order::findOrFail($order_id);
-        $order->payment_status = 'paid';
-        $order->payment_details = $payment;
-        $order->save();
+        $combined_order = CombinedOrder::find($combined_order_id);
 
-        NotificationUtility::sendOrderPlacedNotification($order);
+        foreach ($combined_order->orders as $key => $order) {
+            $order->payment_status = 'paid';
+            $order->payment_details = $payment;
+            $order->save();
 
-        calculateCommissionAffilationClubPoint($order);
+            try {
+                NotificationUtility::sendOrderPlacedNotification($order);
+                calculateCommissionAffilationClubPoint($order);
+            } catch (\Exception $e) {
+               
+            }
+        }
     }
 }
 
@@ -788,7 +793,7 @@ if (!function_exists('checkout_done')) {
 if (!function_exists('wallet_payment_done')) {
     function wallet_payment_done($user_id, $amount, $payment_method, $payment_details)
     {
-        $user = \App\User::find($user_id);
+        $user = \App\Models\User::find($user_id);
         $user->balance = $user->balance + $amount;
         $user->save();
 
@@ -798,7 +803,6 @@ if (!function_exists('wallet_payment_done')) {
         $wallet->payment_method = $payment_method;
         $wallet->payment_details = $payment_details;
         $wallet->save();
-
     }
 }
 
@@ -812,7 +816,6 @@ if (!function_exists('purchase_payment_done')) {
         $user->save();
 
         return 'success';
-
     }
 }
 
@@ -820,20 +823,20 @@ if (!function_exists('purchase_payment_done')) {
 if (!function_exists('calculateCommissionAffilationClubPoint')) {
     function calculateCommissionAffilationClubPoint($order)
     {
-        $commissionController = new CommissionController();
-        $commissionController->calculateCommission($order);
+        (new CommissionController)->calculateCommission($order);
 
         if (addon_is_activated('affiliate_system')) {
-            $affiliateController = new AffiliateController;
-            $affiliateController->processAffiliatePoints($order);
+            (new AffiliateController)->processAffiliatePoints($order);
         }
 
         if (addon_is_activated('club_point')) {
             if ($order->user != null) {
-                $clubpointController = new ClubPointController;
-                $clubpointController->processClubPoints($order);
+                (new ClubPointController)->processClubPoints($order);
             }
         }
+
+        $order->commission_calculated = 1;
+        $order->save();
     }
 }
 
@@ -841,13 +844,11 @@ if (!function_exists('calculateCommissionAffilationClubPoint')) {
 if (!function_exists('addon_is_activated')) {
     function addon_is_activated($identifier, $default = null)
     {
-        $addons = Cache::remember('addons', 86400, function(){
+        $addons = Cache::remember('addons', 86400, function () {
             return Addon::all();
         });
 
-        $activation = $addons->where('unique_identifier', $identifier)->where('activated',1)->first();
+        $activation = $addons->where('unique_identifier', $identifier)->where('activated', 1)->first();
         return $activation == null ? false : true;
     }
 }
-
-?>

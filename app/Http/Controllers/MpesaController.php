@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Session;
-use App\Order;
+use App\CombinedOrder;
 use Mpesa;
 use App\CustomerPackage;
 use Osen\Mpesa\STK;
@@ -73,8 +73,8 @@ class MpesaController extends Controller
     {
         if(Session::has('payment_type')){
             if(Session::get('payment_type') == 'cart_payment'){
-                $order = Order::findOrFail(Session::get('order_id'));
-                return view('frontend.mpesa.order_payment_mpesa', compact('order'));
+                $combined_order = CombinedOrder::findOrFail(Session::get('combined_order_id'));
+                return view('frontend.mpesa.order_payment_mpesa', compact('combined_order'));
             }
             elseif (Session::get('payment_type') == 'wallet_payment') {
                 return view('frontend.mpesa.wallet_payment_mpesa');
@@ -96,7 +96,7 @@ class MpesaController extends Controller
     {
 
         if(Session::has('order_id')) {
-            $order = Order::find(Session::get('order_id'));
+            $combined_order = CombinedOrder::find(Session::get('combined_order_id'));
 
             $request->Msisdn   = (substr($request->Msisdn, 0, 1) == '+') ? str_replace('+', '', $request->Msisdn) : $request->Msisdn;
             $request->Msisdn   = (substr($request->Msisdn, 0, 1) == '0') ? preg_replace('/^0/', '254', $request->Msisdn) : $request->Msisdn;
@@ -110,8 +110,8 @@ class MpesaController extends Controller
 
             // dd($c2bTransaction);
 
-            $order->request    = $c2bTransaction['MerchantRequestID'];
-            $order->save();
+            $combined_order->request    = $c2bTransaction['MerchantRequestID'];
+            $combined_order->save();
             //$c2bTransaction = $mpesa->c2b(env('MPESA_SHORT_CODE'), $request->CommandID, $order->grand_total, $request->Msisdn, $request->BillRefNumber);
         } else if(Session::has('payment_type') && Session::get('payment_type') == 'wallet_payment') {
             $request->Msisdn   = (substr($request->Msisdn, 0, 1) == '+') ? str_replace('+', '', $request->Msisdn) : $request->Msisdn;
@@ -151,7 +151,7 @@ class MpesaController extends Controller
             else {
                 if ($payment_type == 'cart_payment') {
                     $checkoutController = new CheckoutController;
-                    return $checkoutController->checkout_done(session()->get('order_id'), json_encode($payment));
+                    return $checkoutController->checkout_done(session()->get('combined_order_id'), json_encode($payment));
                 }
 
                 if ($payment_type == 'wallet_payment') {

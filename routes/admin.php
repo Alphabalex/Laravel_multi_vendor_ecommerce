@@ -32,7 +32,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function(
     Route::get('/products/seller', 'ProductController@seller_products')->name('products.seller');
     Route::get('/products/all', 'ProductController@all_products')->name('products.all');
     Route::get('/products/create', 'ProductController@create')->name('products.create');
-    Route::post('/products/store/', 'ProductController@store')->name('products.store');
     Route::get('/products/admin/{id}/edit', 'ProductController@admin_product_edit')->name('products.admin.edit');
     Route::get('/products/seller/{id}/edit', 'ProductController@seller_product_edit')->name('products.seller.edit');
     Route::post('/products/todays_deal', 'ProductController@updateTodaysDeal')->name('products.todays_deal');
@@ -120,6 +119,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function(
     Route::post('/languages/update_rtl_status', 'LanguageController@update_rtl_status')->name('languages.update_rtl_status');
     Route::post('/languages/key_value_store', 'LanguageController@key_value_store')->name('languages.key_value_store');
 
+    //App Trasnlation
+    Route::post('/languages/app-translations/import', 'LanguageController@importEnglishFile')->name('app-translations.import');
+    Route::get('/languages/app-translations/show/{id}', 'LanguageController@showAppTranlsationView')->name('app-translations.show');
+    Route::post('/languages/app-translations/key_value_store', 'LanguageController@storeAppTranlsation')->name('app-translations.store');
+    Route::get('/languages/app-translations/export/{id}', 'LanguageController@exportARBFile')->name('app-translations.export');
+
     // website setting
     Route::group(['prefix' => 'website'], function() {
         Route::get('/footer', 'WebsiteController@footer')->name('website.footer');
@@ -195,8 +200,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function(
 
     //Coupons
     Route::resource('coupon', 'CouponController');
-    Route::post('/coupon/get_form', 'CouponController@get_coupon_form')->name('coupon.get_coupon_form');
-    Route::post('/coupon/get_form_edit', 'CouponController@get_coupon_form_edit')->name('coupon.get_coupon_form_edit');
     Route::get('/coupon/destroy/{id}', 'CouponController@destroy')->name('coupon.destroy');
 
     //Reviews
@@ -264,9 +267,13 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function(
     Route::resource('countries', 'CountryController');
     Route::post('/countries/status', 'CountryController@updateStatus')->name('countries.status');
 
+    Route::resource('states','StateController');
+	Route::post('/states/status', 'StateController@updateStatus')->name('states.status');
+
     Route::resource('cities', 'CityController');
     Route::get('/cities/edit/{id}', 'CityController@edit')->name('cities.edit');
     Route::get('/cities/destroy/{id}', 'CityController@destroy')->name('cities.destroy');
+    Route::post('/cities/status', 'CityController@updateStatus')->name('cities.status');
 
     Route::view('/system/update', 'backend.system.update')->name('system_update');
     Route::view('/system/server-status', 'backend.system.server_status')->name('system_server');
@@ -277,4 +284,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function(
     Route::get('/uploaded-files/destroy/{id}', 'AizUploadController@destroy')->name('uploaded-files.destroy');
 
     Route::get('/all-notification', 'NotificationController@index')->name('admin.all-notification');
+
+    Route::get('/cache-cache', 'AdminController@clearCache')->name('cache.clear');
 });

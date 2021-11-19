@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Resources\V2\WishlistCollection;
 use App\Models\Wishlist;
-use App\Product;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class WishlistController extends Controller
@@ -26,14 +26,14 @@ class WishlistController extends Controller
         Wishlist::updateOrCreate(
             ['user_id' => $request->user_id, 'product_id' => $request->product_id]
         );
-        return response()->json(['message' => 'Product is successfully added to your wishlist'], 201);
+        return response()->json(['message' => translate('Product is successfully added to your wishlist')], 201);
     }
 
     public function destroy($id)
     {
         try {
             Wishlist::destroy($id);
-            return response()->json(['result' => true, 'message' => 'Product is successfully removed from your wishlist'], 200);
+            return response()->json(['result' => true, 'message' => translate('Product is successfully removed from your wishlist')], 200);
         } catch (\Exception $e) {
             return response()->json(['result' => false, 'message' => $e->getMessage()], 200);
         }
@@ -45,7 +45,7 @@ class WishlistController extends Controller
         $product = Wishlist::where(['product_id' => $request->product_id, 'user_id' => $request->user_id])->count();
         if ($product > 0) {
             return response()->json([
-                'message' => 'Product present in wishlist',
+                'message' => translate('Product present in wishlist'),
                 'is_in_wishlist' => true,
                 'product_id' => (integer)$request->product_id,
                 'wishlist_id' => (integer)Wishlist::where(['product_id' => $request->product_id, 'user_id' => $request->user_id])->first()->id
@@ -56,7 +56,7 @@ class WishlistController extends Controller
             );
 
             return response()->json([
-                'message' => 'Product added to wishlist',
+                'message' => translate('Product added to wishlist'),
                 'is_in_wishlist' => true,
                 'product_id' => (integer)$request->product_id,
                 'wishlist_id' => (integer)Wishlist::where(['product_id' => $request->product_id, 'user_id' => $request->user_id])->first()->id
@@ -70,7 +70,7 @@ class WishlistController extends Controller
         $product = Wishlist::where(['product_id' => $request->product_id, 'user_id' => $request->user_id])->count();
         if ($product == 0) {
             return response()->json([
-                'message' => 'Product in not in wishlist',
+                'message' => translate('Product in not in wishlist'),
                 'is_in_wishlist' => false,
                 'product_id' => (integer)$request->product_id,
                 'wishlist_id' => 0
@@ -79,7 +79,7 @@ class WishlistController extends Controller
             Wishlist::where(['product_id' => $request->product_id, 'user_id' => $request->user_id])->delete();
 
             return response()->json([
-                'message' => 'Product is removed from wishlist',
+                'message' => translate('Product is removed from wishlist'),
                 'is_in_wishlist' => false,
                 'product_id' => (integer)$request->product_id,
                 'wishlist_id' => 0
@@ -92,14 +92,14 @@ class WishlistController extends Controller
         $product = Wishlist::where(['product_id' => $request->product_id, 'user_id' => $request->user_id])->count();
         if ($product > 0)
             return response()->json([
-                'message' => 'Product present in wishlist',
+                'message' => translate('Product present in wishlist'),
                 'is_in_wishlist' => true,
                 'product_id' => (integer)$request->product_id,
                 'wishlist_id' => (integer)Wishlist::where(['product_id' => $request->product_id, 'user_id' => $request->user_id])->first()->id
             ], 200);
 
         return response()->json([
-            'message' => 'Product is not present in wishlist',
+            'message' => translate('Product is not present in wishlist'),
             'is_in_wishlist' => false,
             'product_id' => (integer)$request->product_id,
             'wishlist_id' => 0

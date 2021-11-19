@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpUndefinedClassInspection */
+<?php
+
+/** @noinspection PhpUndefinedClassInspection */
 
 namespace App\Http\Controllers\Api\V2;
 
@@ -7,7 +9,7 @@ use App\Models\BusinessSetting;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\User;
+use App\Models\User;
 use App\Notifications\AppEmailVerificationNotification;
 use Hash;
 
@@ -19,7 +21,7 @@ class AuthController extends Controller
         if (User::where('email', $request->email_or_phone)->orWhere('phone', $request->email_or_phone)->first() != null) {
             return response()->json([
                 'result' => false,
-                'message' => 'User already exists.',
+                'message' => translate('User already exists.'),
                 'user_id' => 0
             ], 201);
         }
@@ -43,7 +45,10 @@ class AuthController extends Controller
         if (BusinessSetting::where('type', 'email_verification')->first()->value != 1) {
             $user->email_verified_at = date('Y-m-d H:m:s');
         } elseif ($request->register_by == 'email') {
-            $user->notify(new AppEmailVerificationNotification());
+            try {
+                $user->notify(new AppEmailVerificationNotification());
+            } catch (\Exception $e) {
+            }
         } else {
             $otpController = new OTPVerificationController();
             $otpController->send_code($user);
@@ -56,7 +61,7 @@ class AuthController extends Controller
         $customer->save();
         return response()->json([
             'result' => true,
-            'message' => 'Registration Successful. Please verify and log in to your account.',
+            'message' => translate('Registration Successful. Please verify and log in to your account.'),
             'user_id' => $user->id
         ], 201);
     }
@@ -77,7 +82,7 @@ class AuthController extends Controller
 
         return response()->json([
             'result' => true,
-            'message' => 'Verification code is sent again',
+            'message' => translate('Verification code is sent again'),
         ], 200);
     }
 
@@ -91,12 +96,12 @@ class AuthController extends Controller
             $user->save();
             return response()->json([
                 'result' => true,
-                'message' => 'Your account is now verified.Please login',
+                'message' => translate('Your account is now verified.Please login'),
             ], 200);
         } else {
             return response()->json([
                 'result' => false,
-                'message' => 'Code does not match, you can request for resending the code',
+                'message' => translate('Code does not match, you can request for resending the code'),
             ], 200);
         }
     }
@@ -128,19 +133,16 @@ class AuthController extends Controller
             if (Hash::check($request->password, $user->password)) {
 
                 if ($user->email_verified_at == null) {
-                    return response()->json(['message' => 'Please verify your account', 'user' => null], 401);
+                    return response()->json(['message' => translate('Please verify your account'), 'user' => null], 401);
                 }
                 $tokenResult = $user->createToken('Personal Access Token');
                 return $this->loginSuccess($tokenResult, $user);
-
-
             } else {
-                return response()->json(['result' => false, 'message' => 'Unauthorized', 'user' => null], 401);
+                return response()->json(['result' => false, 'message' => translate('Unauthorized'), 'user' => null], 401);
             }
         } else {
-            return response()->json(['result' => false, 'message' => 'User not found', 'user' => null], 401);
+            return response()->json(['result' => false, 'message' => translate('User not found'), 'user' => null], 401);
         }
-
     }
 
     public function user(Request $request)
@@ -153,7 +155,7 @@ class AuthController extends Controller
         $request->user()->token()->revoke();
         return response()->json([
             'result' => true,
-            'message' => 'Successfully logged out'
+            'message' => translate('Successfully logged out')
         ]);
     }
 
@@ -184,7 +186,7 @@ class AuthController extends Controller
         $token->save();
         return response()->json([
             'result' => true,
-            'message' => 'Successfully logged in',
+            'message' => translate('Successfully logged in'),
             'access_token' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
             'expires_at' => Carbon::parse(

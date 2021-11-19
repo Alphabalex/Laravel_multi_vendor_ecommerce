@@ -39,7 +39,7 @@ class DeliveryBoyPurchaseHistoryMiniCollection extends ResourceCollection
                     'lat' => $lat,
                     'lang' => $lang,
                     'links' => [
-                        'details' => route('purchaseHistory.details', $data->id)
+                        'details' => ""
                     ]
                 ];
             })

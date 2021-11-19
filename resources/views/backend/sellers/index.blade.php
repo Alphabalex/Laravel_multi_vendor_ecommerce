@@ -7,11 +7,6 @@
         <div class="col-md-6">
             <h1 class="h3">{{translate('All Sellers')}}</h1>
         </div>
-        <div class="col-md-6 text-md-right">
-            <a href="{{ route('sellers.create') }}" class="btn btn-circle btn-info">
-                <span>{{translate('Add New Seller')}}</span>
-            </a>
-        </div>
     </div>
 </div>
 
@@ -101,7 +96,7 @@
                                     <span class="slider round"></span>
                                 </label>
                             </td>
-                            <td>{{ \App\Product::where('user_id', $seller->user->id)->count() }}</td>
+                            <td>{{ \App\Models\Product::where('user_id', $seller->user->id)->count() }}</td>
                             <td>
                                 @if ($seller->admin_to_pay >= 0)
                                     {{ single_price($seller->admin_to_pay) }}

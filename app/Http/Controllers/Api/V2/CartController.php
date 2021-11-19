@@ -2,21 +2,17 @@
 
 namespace App\Http\Controllers\Api\V2;
 
-use App\Http\Resources\V2\CartCollection;
 use App\Models\Cart;
-use App\Models\Color;
-use App\Models\FlashDeal;
-use App\Models\FlashDealProduct;
 use App\Models\Product;
-use App\Shop;
+use App\Models\Shop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CartController extends Controller
 {
-    public function summary($user_id, $owner_id)
+    public function summary($user_id)
     {
-        $items = Cart::where('user_id', $user_id)->where('owner_id', $owner_id)->get();
+        $items = Cart::where('user_id', $user_id)->get();
 
         if ($items->isEmpty()) {
             return response()->json([
@@ -32,18 +28,23 @@ class CartController extends Controller
         }
 
         $sum = 0.00;
+        $subtotal = 0.00;
+        $tax = 0.00;       
         foreach ($items as $cartItem) {
-            $item_sum = 0;
+            $item_sum = 0.00;
             $item_sum += ($cartItem->price + $cartItem->tax) * $cartItem->quantity;
             $item_sum += $cartItem->shipping_cost - $cartItem->discount;
             $sum +=  $item_sum  ;   //// 'grand_total' => $request->g
+
+            $subtotal += $cartItem->price * $cartItem->quantity;
+            $tax += $cartItem->tax * $cartItem->quantity;
         }
 
 
 
         return response()->json([
-            'sub_total' => format_price($items->sum('price')),
-            'tax' => format_price($items->sum('tax')),
+            'sub_total' => format_price($subtotal),
+            'tax' => format_price($tax),
             'shipping_cost' => format_price($items->sum('shipping_cost')),
             'discount' => format_price($items->sum('discount')),
             'grand_total' => format_price($sum),
@@ -72,7 +73,7 @@ class CartController extends Controller
                         $shop_items_data_item["owner_id"] =intval($shop_items_raw_data_item["owner_id"]) ;
                         $shop_items_data_item["user_id"] =intval($shop_items_raw_data_item["user_id"]) ;
                         $shop_items_data_item["product_id"] =intval($shop_items_raw_data_item["product_id"]) ;
-                        $shop_items_data_item["product_name"] = $product->name;
+                        $shop_items_data_item["product_name"] = $product->getTranslation('name');
                         $shop_items_data_item["product_thumbnail_image"] = api_asset($product->thumbnail_img);
                         $shop_items_data_item["variation"] = $shop_items_raw_data_item["variation"];
                         $shop_items_data_item["price"] =(double) $shop_items_raw_data_item["price"];
@@ -153,17 +154,17 @@ class CartController extends Controller
         }
 
         if ($product->min_qty > $request->quantity) {
-            return response()->json(['result' => false, 'message' => "Minimum {$product->min_qty} item(s) should be ordered"], 200);
+            return response()->json(['result' => false, 'message' => translate("Minimum")." {$product->min_qty} ".translate("item(s) should be ordered")], 200);
         }
 
         $stock = $product->stocks->where('variant', $variant)->first()->qty;
 
-        $variant_string = $variant != null && $variant != "" ? "for ($variant)" : "";
+        $variant_string = $variant != null && $variant != "" ? translate("for")." ($variant)" : "";
         if ($stock < $request->quantity) {
             if ($stock == 0) {
                 return response()->json(['result' => false, 'message' => "Stock out"], 200);
             } else {
-                return response()->json(['result' => false, 'message' => "Only {$stock} item(s) are available {$variant_string}"], 200);
+                return response()->json(['result' => false, 'message' => translate("Only") ." {$stock} ".translate("item(s) are available")." {$variant_string}"], 200);
             }
         }
 
@@ -185,7 +186,7 @@ class CartController extends Controller
 
         return response()->json([
             'result' => true,
-            'message' => 'Product added to cart successfully'
+            'message' => translate('Product added to cart successfully')
         ]);
     }
 
@@ -199,13 +200,13 @@ class CartController extends Controller
                     'quantity' => $request->quantity
                 ]);
 
-                return response()->json(['result' => true, 'message' => 'Cart updated'], 200);
+                return response()->json(['result' => true, 'message' => translate('Cart updated')], 200);
             } else {
-                return response()->json(['result' => false, 'message' => 'Maximum available quantity reached'], 200);
+                return response()->json(['result' => false, 'message' => translate('Maximum available quantity reached')], 200);
             }
         }
 
-        return response()->json(['result' => false, 'message' => 'Something went wrong'], 200);
+        return response()->json(['result' => false, 'message' => translate('Something went wrong')], 200);
     }
 
     public function process(Request $request)
@@ -220,7 +221,7 @@ class CartController extends Controller
                 $product = Product::where('id', $cart_item->product_id)->first();
 
                 if ($product->min_qty > $cart_quantities[$i]) {
-                    return response()->json(['result' => false, 'message' => "Minimum {$product->min_qty} item(s) should be ordered for {$product->name}"], 200);
+                    return response()->json(['result' => false, 'message' => translate("Minimum")." {$product->min_qty} ".translate("item(s) should be ordered for")." {$product->name}"], 200);
                 }
 
                 $stock = $cart_item->product->stocks->where('variant', $cart_item->variation)->first()->qty;
@@ -232,9 +233,9 @@ class CartController extends Controller
 
                 } else {
                     if ($stock == 0) {
-                        return response()->json(['result' => false, 'message' => "No item is available for {$product->name}{$variant_string},remove this from cart"], 200);
+                        return response()->json(['result' => false, 'message' => translate("No item is available for")." {$product->name}{$variant_string},".translate("remove this from cart")], 200);
                     } else {
-                        return response()->json(['result' => false, 'message' => "Only {$stock} item(s) are available for {$product->name}{$variant_string}"], 200);
+                        return response()->json(['result' => false, 'message' => translate("Only")." {$stock} ".translate("item(s) are available for")." {$product->name}{$variant_string}"], 200);
                     }
 
                 }
@@ -242,10 +243,10 @@ class CartController extends Controller
                 $i++;
             }
 
-            return response()->json(['result' => true, 'message' => 'Cart updated'], 200);
+            return response()->json(['result' => true, 'message' => translate('Cart updated')], 200);
 
         } else {
-            return response()->json(['result' => false, 'message' => 'Cart is empty'], 200);
+            return response()->json(['result' => false, 'message' => translate('Cart is empty')], 200);
         }
 
 
@@ -254,6 +255,6 @@ class CartController extends Controller
     public function destroy($id)
     {
         Cart::destroy($id);
-        return response()->json(['result' => true, 'message' => 'Product is successfully removed from your cart'], 200);
+        return response()->json(['result' => true, 'message' => translate('Product is successfully removed from your cart')], 200);
     }
 }

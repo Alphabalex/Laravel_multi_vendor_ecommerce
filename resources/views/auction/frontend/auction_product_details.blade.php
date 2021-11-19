@@ -198,18 +198,21 @@
                                 </div>
                             </div>
                             <hr>
-
                             @php $min_bid_amount = $highest_bid != null ? $highest_bid+1 : $detailedProduct->starting_bid; @endphp
                             @if($detailedProduct->auction_end_date >= strtotime("now"))
                                 <div class="mt-3">
-                                    <button type="button" class="btn btn-primary buy-now fw-600" onclick="bid_modal()">
-                                        <i class="las la-gavel"></i>
-                                        @if(Auth::check() && Auth::user()->product_bids->where('product_id',$detailedProduct->id)->first() != null)
+                                    @if(Auth::check() && $detailedProduct->user_id == Auth::user()->id)
+                                        <span class="badge badge-inline badge-danger">{{ translate('Seller Can Not Place Bid to His Own Product') }}</span>
+                                    @else
+                                        <button type="button" class="btn btn-primary buy-now fw-600" onclick="bid_modal()">
+                                            <i class="las la-gavel"></i>
+                                            @if(Auth::check() && Auth::user()->product_bids->where('product_id',$detailedProduct->id)->first() != null)
                                             {{ translate('Chnage Bid')}}
-                                        @else
-                                            {{ translate('Place Bid')}}
-                                        @endif
-                                    </button>
+                                            @else
+                                                {{ translate('Place Bid')}}
+                                            @endif
+                                        </button>
+                                    @endif
                                 </div>
                             @endif
 

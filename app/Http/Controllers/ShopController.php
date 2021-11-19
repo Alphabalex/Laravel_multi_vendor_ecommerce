@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Shop;
-use App\User;
-use App\Seller;
-use App\BusinessSetting;
+use App\Models\Shop;
+use App\Models\User;
+use App\Models\Seller;
+use App\Models\BusinessSetting;
 use Auth;
 use Hash;
 use App\Notifications\EmailVerificationNotification;
@@ -151,24 +151,25 @@ class ShopController extends Controller
         $shop = Shop::find($id);
 
         if($request->has('name') && $request->has('address')){
-            $shop->name = $request->name;
             if ($request->has('shipping_cost')) {
                 $shop->shipping_cost = $request->shipping_cost;
             }
-            $shop->address = $request->address;
-            $shop->phone = $request->phone;
-            $shop->slug = preg_replace('/\s+/', '-', $request->name).'-'.$shop->id;
-
-            $shop->meta_title = $request->meta_title;
+            
+            $shop->name             = $request->name;
+            $shop->address          = $request->address;
+            $shop->phone            = $request->phone;
+            $shop->slug             = preg_replace('/\s+/', '-', $request->name).'-'.$shop->id;
+            $shop->meta_title       = $request->meta_title;
             $shop->meta_description = $request->meta_description;
-            $shop->logo = $request->logo;
+            $shop->logo             = $request->logo;
+        }
 
-            if ($request->has('pick_up_point_id')) {
-                $shop->pick_up_point_id = json_encode($request->pick_up_point_id);
-            }
-            else {
-                $shop->pick_up_point_id = json_encode(array());
-            }
+        if($request->has('delivery_pickup_longitude') && 
+            $request->has('delivery_pickup_latitude')) {
+
+            $shop->delivery_pickup_longitude    = $request->delivery_pickup_longitude;
+            $shop->delivery_pickup_latitude     = $request->delivery_pickup_latitude;
+
         }
 
         elseif($request->has('facebook') || $request->has('google') || $request->has('twitter') || $request->has('youtube') || $request->has('instagram')){

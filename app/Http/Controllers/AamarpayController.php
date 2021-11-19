@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\CustomerPackage;
-use App\SellerPackage;
-use App\CombinedOrder;
-use App\BusinessSetting;
-use App\Seller;
+use App\Models\CustomerPackage;
+use App\Models\SellerPackage;
+use App\Models\CombinedOrder;
+use App\Models\BusinessSetting;
+use App\Models\Seller;
 use Session;
 use Auth;
 
@@ -17,6 +17,13 @@ class AamarpayController extends Controller
         if (Auth::user()->phone == null) {
             flash('Please add phone number to your profile')->warning();
             return redirect()->route('profile');
+        }
+        
+        if (Auth::user()->email == null) {
+            $email = 'customer@exmaple.com';
+        }
+        else{
+            $email = Auth::user()->email;
         }
 
         if (get_setting('aamarpay_sandbox') == 1) {
@@ -52,7 +59,7 @@ class AamarpayController extends Controller
             'currency' => 'BDT',  //currenct will be USD/BDT
             'tran_id' => rand(1111111,9999999), //transaction id must be unique from your end
             'cus_name' => Auth::user()->name,  //customer name
-            'cus_email' => Auth::user()->email, //customer email address
+            'cus_email' => $email, //customer email address
             'cus_add1' => '',  //customer address
             'cus_add2' => '', //customer address
             'cus_city' => '',  //customer city

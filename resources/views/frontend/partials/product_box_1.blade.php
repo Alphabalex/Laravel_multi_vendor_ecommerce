@@ -9,6 +9,11 @@
                 onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';"
             >
         </a>
+        @if ($product->wholesale_product)
+            <span class="absolute-bottom-left fs-11 text-white fw-600 px-2 lh-1-8" style="background-color: #455a64">
+                {{ translate('Wholesale') }}
+            </span>
+        @endif
         <div class="absolute-top-right aiz-p-hov-icon">
             <a href="javascript:void(0)" onclick="addToWishList({{ $product->id }})" data-toggle="tooltip" data-title="{{ translate('Add to wishlist') }}" data-placement="left">
                 <i class="la la-heart-o"></i>

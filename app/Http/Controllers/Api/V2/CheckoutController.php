@@ -4,8 +4,8 @@
 namespace App\Http\Controllers\Api\V2;
 
 
-use App\Coupon;
-use App\CouponUsage;
+use App\Models\Coupon;
+use App\Models\CouponUsage;
 use Illuminate\Http\Request;
 use App\Models\Cart;
 
@@ -13,20 +13,20 @@ class CheckoutController
 {
     public function apply_coupon_code(Request $request)
     {
-        $cart_items = Cart::where('user_id', $request->user_id)->where('owner_id',$request->owner_id)->get();
+        $cart_items = Cart::where('user_id', $request->user_id)->get();
         $coupon = Coupon::where('code', $request->coupon_code)->first();
 
         if ($cart_items->isEmpty()) {
             return response()->json([
                 'result' => false,
-                'message' => 'Cart is empty'
+                'message' => translate('Cart is empty')
             ]);
         }
 
         if ($coupon == null) {
             return response()->json([
                 'result' => false,
-                'message' => 'Invalid coupon code!'
+                'message' => translate('Invalid coupon code!')
             ]);
         }
 
@@ -35,7 +35,7 @@ class CheckoutController
         if (!$in_range) {
             return response()->json([
                 'result' => false,
-                'message' => 'Coupon expired!'
+                'message' => translate('Coupon expired!')
             ]);
         }
 
@@ -44,7 +44,7 @@ class CheckoutController
         if ($is_used) {
             return response()->json([
                 'result' => false,
-                'message' => 'You already used this coupon!'
+                'message' => translate('You already used this coupon!')
             ]);
         }
 
@@ -72,7 +72,7 @@ class CheckoutController
                     $coupon_discount = $coupon->discount;
                 }
 
-                Cart::where('user_id', $request->user_id)->where('owner_id',$request->owner_id)->update([
+                Cart::where('user_id', $request->user_id)->update([
                     'discount' => $coupon_discount / count($cart_items),
                     'coupon_code' => $request->coupon_code,
                     'coupon_applied' => 1
@@ -80,7 +80,7 @@ class CheckoutController
 
                 return response()->json([
                     'result' => true,
-                    'message' => 'Coupon Applied'
+                    'message' => translate('Coupon Applied')
                 ]);
 
 
@@ -100,7 +100,7 @@ class CheckoutController
             }
 
 
-            Cart::where('user_id', $request->user_id)->where('owner_id',$request->owner_id)->update([
+            Cart::where('user_id', $request->user_id)->update([
                 'discount' => $coupon_discount / count($cart_items),
                 'coupon_code' => $request->coupon_code,
                 'coupon_applied' => 1
@@ -108,7 +108,7 @@ class CheckoutController
 
             return response()->json([
                 'result' => true,
-                'message' => 'Coupon Applied'
+                'message' => translate('Coupon Applied')
             ]);
 
         }
@@ -118,7 +118,7 @@ class CheckoutController
 
     public function remove_coupon_code(Request $request)
     {
-        Cart::where('user_id', $request->user_id)->where('owner_id',$request->owner_id)->update([
+        Cart::where('user_id', $request->user_id)->update([
             'discount' => 0.00,
             'coupon_code' => "",
             'coupon_applied' => 0
@@ -126,7 +126,7 @@ class CheckoutController
 
         return response()->json([
             'result' => true,
-            'message' => 'Coupon Removed'
+            'message' => translate('Coupon Removed')
         ]);
     }
 }

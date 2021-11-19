@@ -49,7 +49,7 @@
             <div class="col-xxl-8 col-xl-10 mx-auto">
                 <form class="form-default" data-toggle="validator" action="{{ route('checkout.store_shipping_infostore') }}" role="form" method="POST">
                     @csrf
-                        @if(Auth::check())
+                    @if(Auth::check())
                         <div class="shadow-sm bg-white p-4 rounded mb-4">
                             <div class="row gutters-5">
                                 @foreach (Auth::user()->addresses as $key => $address)
@@ -71,11 +71,15 @@
                                                     </div>
                                                     <div>
                                                         <span class="opacity-60">{{ translate('City') }}:</span>
-                                                        <span class="fw-600 ml-2">{{ $address->city }}</span>
+                                                        <span class="fw-600 ml-2">{{ optional($address->city)->name }}</span>
+                                                    </div>
+                                                    <div>
+                                                        <span class="opacity-60">{{ translate('State') }}:</span>
+                                                        <span class="fw-600 ml-2">{{ optional($address->state)->name }}</span>
                                                     </div>
                                                     <div>
                                                         <span class="opacity-60">{{ translate('Country') }}:</span>
-                                                        <span class="fw-600 ml-2">{{ $address->country }}</span>
+                                                        <span class="fw-600 ml-2">{{ optional($address->country)->name }}</span>
                                                     </div>
                                                     <div>
                                                         <span class="opacity-60">{{ translate('Phone') }}:</span>
@@ -105,65 +109,7 @@
                                 </div>
                             </div>
                         </div>
-                        @else
-                            <div class="shadow-sm bg-white p-4 rounded mb-4">
-                                <div class="form-group">
-                                    <label class="control-label">{{ translate('Name')}}</label>
-                                    <input type="text" class="form-control" name="name" placeholder="{{ translate('Name')}}" required>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="control-label">{{ translate('Email')}}</label>
-                                    <input type="text" class="form-control" name="email" placeholder="{{ translate('Email')}}" required>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="control-label">{{ translate('Address')}}</label>
-                                    <input type="text" class="form-control" name="address" placeholder="{{ translate('Address')}}" required>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label">{{ translate('Select your country')}}</label>
-                                            <select class="form-control aiz-selectpicker" data-live-search="true" name="country">
-                                                @foreach (\App\Country::where('status', 1)->get() as $key => $country)
-                                                    <option value="{{ $country->name }}">{{ $country->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group has-feedback">
-
-                                            <label class="control-label">{{ translate('City')}}</label>
-                                            <select class="form-control aiz-selectpicker" data-live-search="true" name="city" required>
-                                                @foreach (\App\City::get() as $key => $city)
-                                                    <option value="{{ $city->name }}">{{ $city->getTranslation('name') }}</option>
-                                                @endforeach
-                                            </select>
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group has-feedback">
-                                            <label class="control-label">{{ translate('Postal code')}}</label>
-                                            <input type="text" class="form-control" placeholder="{{ translate('Postal code')}}" name="postal_code" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group has-feedback">
-                                            <label class="control-label">{{ translate('Phone')}}</label>
-                                            <input type="number" lang="en" min="0" class="form-control" placeholder="{{ translate('Phone')}}" name="phone" required>
-                                        </div>
-                                    </div>
-                                </div>
-                                <input type="hidden" name="checkout_type" value="guest">
-                            </div>
-                        @endif
+                    @endif
                     <div class="row align-items-center">
                         <div class="col-md-6 text-center text-md-left order-1 order-md-0">
                             <a href="{{ route('home') }}" class="btn btn-link">
@@ -183,194 +129,5 @@
 @endsection
 
 @section('modal')
-<div class="modal fade" id="new-address-modal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-zoom" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title" id="exampleModalLabel">{{ translate('New Address')}}</h6>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form class="form-default" role="form" action="{{ route('addresses.store') }}" method="POST">
-                @csrf
-                <div class="modal-body">
-                    <div class="p-3">
-                        <div class="row">
-                            <div class="col-md-2">
-                                <label>{{ translate('Address')}}</label>
-                            </div>
-                            <div class="col-md-10">
-                                <textarea class="form-control textarea-autogrow mb-3" placeholder="{{ translate('Your Address')}}" rows="1" name="address" required></textarea>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-2">
-                                <label>{{ translate('Country')}}</label>
-                            </div>
-                            <div class="col-md-10">
-                                <select class="form-control mb-3 aiz-selectpicker" data-live-search="true" name="country" required>
-                                    <option value="">Select Country</option>
-                                    @foreach (\App\Country::where('status', 1)->get() as $key => $country)
-                                        <option value="{{ $country->name }}">{{ $country->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-2">
-                                <label>{{ translate('City')}}</label>
-                            </div>
-                            <div class="col-md-10">
-                                <select class="form-control mb-3 aiz-selectpicker" data-live-search="true" name="city" required>
-
-                                </select>
-                            </div>
-                        </div>
-
-                        @if (get_setting('google_map') == 1)
-                            <div class="row">
-                                <input id="searchInput" class="controls" type="text" placeholder="{{translate('Enter a location')}}">
-                                <div id="map"></div>
-                                <ul id="geoData">
-                                    <li style="display: none;">Full Address: <span id="location"></span></li>
-                                    <li style="display: none;">Postal Code: <span id="postal_code"></span></li>
-                                    <li style="display: none;">Country: <span id="country"></span></li>
-                                    <li style="display: none;">Latitude: <span id="lat"></span></li>
-                                    <li style="display: none;">Longitude: <span id="lon"></span></li>
-                                </ul>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-2" id="">
-                                    <label for="exampleInputuname">Longitude</label>
-                                </div>
-                                <div class="col-md-10" id="">
-                                    <input type="text" class="form-control mb-3" id="longitude" name="longitude" readonly="">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2" id="">
-                                    <label for="exampleInputuname">Latitude</label>
-                                </div>
-                                <div class="col-md-10" id="">
-                                    <input type="text" class="form-control mb-3" id="latitude" name="latitude" readonly="">
-                                </div>
-                            </div>
-                        @endif
-
-                        <div class="row">
-                            <div class="col-md-2">
-                                <label>{{ translate('Postal code')}}</label>
-                            </div>
-                            <div class="col-md-10">
-                                <input type="text" class="form-control mb-3" placeholder="{{ translate('Your Postal Code')}}" name="postal_code" value="" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-2">
-                                <label>{{ translate('Phone')}}</label>
-                            </div>
-                            <div class="col-md-10">
-                                <input type="text" class="form-control mb-3" placeholder="{{ translate('+880')}}" name="phone" value="" required>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">{{  translate('Save') }}</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="edit-address-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">{{ translate('Address Edit') }}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-
-            <div class="modal-body" id="edit_modal_body">
-
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
-
-@section('script')
-    <script type="text/javascript">
-        function edit_address(address) {
-            var url = '{{ route("addresses.edit", ":id") }}';
-            url = url.replace(':id', address);
-
-            $.ajax({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                url: url,
-                type: 'GET',
-                success: function (response) {
-                    $('#edit_modal_body').html(response.html);
-                    $('#edit-address-modal').modal('show');
-                    AIZ.plugins.bootstrapSelect('refresh');
-
-                    var country = $("#edit_country").val();
-                    get_city(country);
-
-                    @if (get_setting('google_map') == 1)
-                        var lat     = -33.8688;
-                        var long    = 151.2195;
-
-                        if(response.data.address_data.latitude && response.data.address_data.longitude) {
-                            lat     = parseFloat(response.data.address_data.latitude);
-                            long    = parseFloat(response.data.address_data.longitude);
-                        }
-
-                        initialize(lat, long, 'edit_');
-                    @endif
-                }
-            });
-        }
-
-        $(document).on('change', '[name=country]', function() {
-            var country = $(this).val();
-            get_city(country);
-        });
-
-        function get_city(country) {
-            $.ajax({
-                url: "https://countriesnow.space/api/v0.1/countries/cities",
-                type: 'POST',
-                data: {
-                    country: country
-                },
-                success: function (response) {
-                    var cities = response.data;
-                    $.map(cities, function (city,key) {
-                    $('[name="city"]').append('<option id='+ key +'>' + city + '</option>');
-                    });
-                    AIZ.plugins.bootstrapSelect('refresh');
-                }
-            });
-        }
-
-        function add_new_address(){
-            $('#new-address-modal').modal('show');
-        }
-
-    </script>
-
-    @if (get_setting('google_map') == 1)
-
-        @include('frontend.partials.google_map')
-
-    @endif
-
+    @include('frontend.partials.address_modal')
 @endsection

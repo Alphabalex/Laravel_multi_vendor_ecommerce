@@ -22,7 +22,7 @@
                     <div class="card">
                         <div class="card-body">
                             <ul class="list-group">
-                                @forelse(\App\Addon::all() as $key => $addon)
+                                @forelse(\App\Models\Addon::all() as $key => $addon)
                                     <li class="list-group-item">
                                         <div class="align-items-center d-flex flex-column flex-md-row">
                                             <img class="h-60px mb-3 mb-md-0" src="{{ static_asset($addon->image) }}" alt="Image">

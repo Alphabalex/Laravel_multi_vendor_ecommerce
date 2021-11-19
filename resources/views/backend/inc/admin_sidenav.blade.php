@@ -146,12 +146,22 @@
                                 </a>
                             </li>
                             <li class="aiz-side-nav-item">
-                                <a href="{{route('auction_products.index')}}" class="aiz-side-nav-link {{ areActiveRoutes(['auction_products.admin.edit','product_bids.show']) }}">
+                                <a href="{{route('auction.all_products')}}" class="aiz-side-nav-link {{ areActiveRoutes(['auction_products.edit','product_bids.show']) }}">
                                     <span class="aiz-side-nav-text">{{ translate('All Auction Products') }}</span>
                                 </a>
                             </li>
                             <li class="aiz-side-nav-item">
-                                <a href="{{route('auction_products_orders')}}" class="aiz-side-nav-link {{ areActiveRoutes(['auction_products_orders.index','auction_orders.show']) }}">
+                                <a href="{{route('auction.inhouse_products')}}" class="aiz-side-nav-link">
+                                    <span class="aiz-side-nav-text">{{ translate('Inhouse Auction Products') }}</span>
+                                </a>
+                            </li>
+                            <li class="aiz-side-nav-item">
+                                <a href="{{route('auction.seller_products')}}" class="aiz-side-nav-link">
+                                    <span class="aiz-side-nav-text">{{ translate('Seller Auction Products') }}</span>
+                                </a>
+                            </li>
+                            <li class="aiz-side-nav-item">
+                                <a href="{{route('auction_products_orders')}}" class="aiz-side-nav-link {{ areActiveRoutes(['auction_products_orders.index']) }}">
                                     <span class="aiz-side-nav-text">{{ translate('Auction Products Orders') }}</span>
                                 </a>
                             </li>
@@ -159,7 +169,34 @@
                     </li>
                 @endif
 
-            <!-- Sale -->
+                <!-- Wholesale Product -->
+                @if(addon_is_activated('wholesale'))
+                    <li class="aiz-side-nav-item">
+                        <a href="#" class="aiz-side-nav-link">
+                            <i class="las la-luggage-cart aiz-side-nav-icon"></i>
+                            <span class="aiz-side-nav-text">{{translate('Wholesale Products')}}</span>
+                            @if (env("DEMO_MODE") == "On")
+                                <span class="badge badge-inline badge-danger">Addon</span>
+                            @endif
+                            <span class="aiz-side-nav-arrow"></span>
+                        </a>
+                        <!--Submenu-->
+                        <ul class="aiz-side-nav-list level-2">
+                            <li class="aiz-side-nav-item">
+                                <a class="aiz-side-nav-link" href="{{route('wholesale-products.create')}}">
+                                    <span class="aiz-side-nav-text">{{translate('Add new wholesale product')}}</span>
+                                </a>
+                            </li>
+                            <li class="aiz-side-nav-item">
+                                <a href="{{route('wholesale-products.index')}}" class="aiz-side-nav-link {{ areActiveRoutes(['wholesale-products.edit','wholesale-products.show']) }}">
+                                    <span class="aiz-side-nav-text">{{ translate('All wholesale products') }}</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                @endif
+
+                <!-- Sale -->
                 <li class="aiz-side-nav-item">
                     <a href="#" class="aiz-side-nav-link">
                         <i class="las la-money-bill aiz-side-nav-icon"></i>
@@ -214,17 +251,27 @@
                             </a>
                             <ul class="aiz-side-nav-list level-2">
                                 <li class="aiz-side-nav-item">
-                                    <a href="{{route('delivery-boys.index')}}" class="aiz-side-nav-link {{ areActiveRoutes(['delivery-boys.index'])}}">
+                                    <a href="{{route('delivery-boys.index')}}" class="aiz-side-nav-link">
                                         <span class="aiz-side-nav-text">{{translate('All Delivery Boy')}}</span>
                                     </a>
                                 </li>
                                 <li class="aiz-side-nav-item">
-                                    <a href="{{route('delivery-boys.create')}}" class="aiz-side-nav-link {{ areActiveRoutes(['delivery-boys.create'])}}">
+                                    <a href="{{route('delivery-boys.create')}}" class="aiz-side-nav-link">
                                         <span class="aiz-side-nav-text">{{translate('Add Delivery Boy')}}</span>
                                     </a>
                                 </li>
                                 <li class="aiz-side-nav-item">
-                                    <a href="{{route('delivery-boy.cancel-request')}}" class="aiz-side-nav-link {{ areActiveRoutes(['delivery-boy.cancel-request'])}}">
+                                    <a href="{{route('delivery-boys-payment-histories')}}" class="aiz-side-nav-link">
+                                        <span class="aiz-side-nav-text">{{translate('Payment Histories')}}</span>
+                                    </a>
+                                </li>
+                                <li class="aiz-side-nav-item">
+                                    <a href="{{route('delivery-boys-collection-histories')}}" class="aiz-side-nav-link">
+                                        <span class="aiz-side-nav-text">{{translate('Collected Histories')}}</span>
+                                    </a>
+                                </li>
+                                <li class="aiz-side-nav-item">
+                                    <a href="{{route('delivery-boy.cancel-request')}}" class="aiz-side-nav-link">
                                         <span class="aiz-side-nav-text">{{translate('Cancel Request')}}</span>
                                     </a>
                                 </li>
@@ -318,7 +365,7 @@
                         <ul class="aiz-side-nav-list level-2">
                             <li class="aiz-side-nav-item">
                                 @php
-                                    $sellers = \App\Seller::where('verification_status', 0)->where('verification_info', '!=', null)->count();
+                                    $sellers = \App\Models\Seller::where('verification_status', 0)->where('verification_info', '!=', null)->count();
                                 @endphp
                                 <a href="{{ route('sellers.index') }}" class="aiz-side-nav-link {{ areActiveRoutes(['sellers.index', 'sellers.create', 'sellers.edit', 'sellers.payment_history','sellers.approved','sellers.profile_modal','sellers.show_verification_request'])}}">
                                     <span class="aiz-side-nav-text">{{ translate('All Seller') }}</span>
@@ -509,7 +556,7 @@
                             @endif
 
                             @php
-                                $conversation = \App\Conversation::where('receiver_id', Auth::user()->id)->where('receiver_viewed', '1')->get();
+                                $conversation = \App\Models\Conversation::where('receiver_id', Auth::user()->id)->where('receiver_viewed', '1')->get();
                             @endphp
                             @if(Auth::user()->user_type == 'admin' || in_array('12', json_decode(Auth::user()->staff->role->permissions)))
                                 <li class="aiz-side-nav-item">
@@ -894,6 +941,11 @@
                                     <li class="aiz-side-nav-item">
                                         <a href="{{route('countries.index')}}" class="aiz-side-nav-link {{ areActiveRoutes(['countries.index','countries.edit','countries.update'])}}">
                                             <span class="aiz-side-nav-text">{{translate('Shipping Countries')}}</span>
+                                        </a>
+                                    </li>
+                                    <li class="aiz-side-nav-item">
+                                        <a href="{{route('states.index')}}" class="aiz-side-nav-link {{ areActiveRoutes(['states.index','states.edit','states.update'])}}">
+                                            <span class="aiz-side-nav-text">{{translate('Shipping States')}}</span>
                                         </a>
                                     </li>
                                     <li class="aiz-side-nav-item">

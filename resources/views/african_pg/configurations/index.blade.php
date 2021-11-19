@@ -103,48 +103,30 @@
                         @csrf
                         <input type="hidden" name="payment_method" value="flutterwave">
                         <div class="form-group row">
-                            <input type="hidden" name="types[]" value="RAVE_PUBLIC_KEY">
+                            <input type="hidden" name="types[]" value="FLW_PUBLIC_KEY">
                             <div class="col-lg-4">
-                                <label class="col-from-label">{{translate('RAVE_PUBLIC_KEY')}}</label>
+                                <label class="col-from-label">{{translate('FLW_PUBLIC_KEY')}}</label>
                             </div>
                             <div class="col-lg-8">
-                                <input type="text" class="form-control" name="RAVE_PUBLIC_KEY" value="{{  env('RAVE_PUBLIC_KEY') }}" placeholder="{{ translate('RAVE_PUBLIC_KEY') }}" required>
+                                <input type="text" class="form-control" name="FLW_PUBLIC_KEY" value="{{  env('FLW_PUBLIC_KEY') }}" placeholder="{{ translate('FLW_PUBLIC_KEY') }}" required>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <input type="hidden" name="types[]" value="RAVE_SECRET_KEY">
+                            <input type="hidden" name="types[]" value="FLW_SECRET_KEY">
                             <div class="col-lg-4">
-                                <label class="col-from-label">{{translate('RAVE_SECRET_KEY')}}</label>
+                                <label class="col-from-label">{{translate('FLW_SECRET_KEY')}}</label>
                             </div>
                             <div class="col-lg-8">
-                                <input type="text" class="form-control" name="RAVE_SECRET_KEY" value="{{  env('RAVE_SECRET_KEY') }}" placeholder="{{ translate('RAVE_SECRET_KEY') }}" required>
+                                <input type="text" class="form-control" name="FLW_SECRET_KEY" value="{{  env('FLW_SECRET_KEY') }}" placeholder="{{ translate('FLW_SECRET_KEY') }}" required>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <input type="hidden" name="types[]" value="RAVE_TITLE">
+                            <input type="hidden" name="types[]" value="FLW_SECRET_HASH">
                             <div class="col-lg-4">
-                                <label class="col-from-label">{{translate('RAVE_TITLE')}}</label>
+                                <label class="col-from-label">{{translate('FLW_SECRET_HASH')}}</label>
                             </div>
                             <div class="col-lg-8">
-                                <input type="text" class="form-control" name="RAVE_TITLE" value="{{  env('RAVE_TITLE') }}" placeholder="{{ translate('RAVE_TITLE') }}" required>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <input type="hidden" name="types[]" value="RAVE_ENVIRONMENT">
-                            <div class="col-lg-4">
-                                <label class="col-from-label">{{translate('STAGIN ACTIVATION')}}</label>
-                            </div>
-                            <div class="col-lg-8">
-                                <select name="RAVE_ENVIRONMENT" class="form-control aiz-selectpicker" required>
-                                    @if(env('RAVE_ENVIRONMENT') == 'staging')
-                                        <option value="live">live</option>
-                                        <option value="staging" selected>staging</option>
-                                    @else
-                                        <option value="live" selected>live</option>
-                                        <option value="staging">staging</option>
-                                    @endif
-                                </select>
+                                <input type="text" class="form-control" name="FLW_SECRET_HASH" value="{{  env('FLW_SECRET_HASH') }}" placeholder="{{ translate('FLW_SECRET_HASH') }}" required>
                             </div>
                         </div>
 

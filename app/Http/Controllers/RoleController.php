@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Role;
-use App\RoleTranslation;
+use App\Models\Role;
+use App\Models\RoleTranslation;
 
 class RoleController extends Controller
 {

@@ -1,21 +1,16 @@
 <?php
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redirect;
 use Session;
 use Auth;
-use Illuminate\Routing\UrlGenerator;
-use App\Http\Controllers;
-use App\CombinedOrder;
-use App\BusinessSetting;
-use App\Seller;
+use App\Models\CombinedOrder;
 use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\CommissionController;
 use App\Http\Controllers\WalletController;
-use App\CustomerPackage;
-use App\SellerPackage;
+use App\Models\CustomerPackage;
+use App\Models\SellerPackage;
 use App\Http\Controllers\CustomerPackageController;
+use App\Models\User;
+
 session_start();
 
 class PublicSslCommerzPaymentController extends Controller
@@ -62,8 +57,9 @@ class PublicSslCommerzPaymentController extends Controller
                     $post_data['tran_id'] = substr(md5(Auth::user()->id), 0, 10); // tran_id must be unique
 
                     $post_data['value_a'] = $post_data['tran_id'];
-                    $post_data['value_b'] = json_encode($request->session()->get('payment_data'));
+                    $post_data['value_b'] = $request->session()->get('payment_data')['amount'];
                     $post_data['value_c'] = $request->session()->get('payment_type');
+                    $post_data['value_d'] = Auth::user()->id;
 
                     #Start to save these value  in session to pick in success page.
                     // $_SESSION['payment_values']['tran_id']=$post_data['tran_id'];
@@ -80,8 +76,9 @@ class PublicSslCommerzPaymentController extends Controller
                     $post_data['tran_id'] = substr(md5(Auth::user()->id), 0, 10); // tran_id must be unique
 
                     $post_data['value_a'] = $post_data['tran_id'];
-                    $post_data['value_b'] = json_encode($request->session()->get('payment_data'));
+                    $post_data['value_b'] = $request->session()->get('payment_data')['customer_package_id'];
                     $post_data['value_c'] = $request->session()->get('payment_type');
+                    $post_data['value_d'] = Auth::user()->id;
 
                     #Start to save these value  in session to pick in success page.
                     // $_SESSION['payment_values']['tran_id']=$post_data['tran_id'];
@@ -97,8 +94,9 @@ class PublicSslCommerzPaymentController extends Controller
                     $post_data['tran_id'] = substr(md5(Auth::user()->id), 0, 10); // tran_id must be unique
 
                     $post_data['value_a'] = $post_data['tran_id'];
-                    $post_data['value_b'] = json_encode($request->session()->get('payment_data'));
+                    $post_data['value_b'] = $request->session()->get('payment_data')['seller_package_id'];
                     $post_data['value_c'] = $request->session()->get('payment_type');
+                    $post_data['value_d'] = Auth::user()->id;
 
                     #Start to save these value  in session to pick in success page.
                     // $_SESSION['payment_values']['tran_id']=$post_data['tran_id'];
@@ -166,14 +164,26 @@ class PublicSslCommerzPaymentController extends Controller
                 return $checkoutController->checkout_done($request->value_b, $payment);
             }
             elseif ($request->value_c == 'wallet_payment') {
+                $data['amount'] = $request->value_b;
+                $data['payment_method'] = 'sslcommerz';
+                Auth::login(User::find($request->value_d));
+
                 $walletController = new WalletController;
-                return $walletController->wallet_payment_done(json_decode($request->value_b), $payment);
+                return $walletController->wallet_payment_done($data, $payment);
             }
             elseif ($request->value_c == 'customer_package_payment') {
+                $data['customer_package_id'] = $request->value_b;
+                $data['payment_method'] = 'sslcommerz';
+                Auth::login(User::find($request->value_d));
+
                 $customer_package_controller = new CustomerPackageController;
-                return $customer_package_controller->purchase_payment_done(json_decode($request->value_b), $payment);
+                return $customer_package_controller->purchase_payment_done($data, $payment);
             }
             elseif ($request->value_c == 'seller_package_payment') {
+                $data['seller_package_id'] = $request->value_b;
+                $data['payment_method'] = 'sslcommerz';
+                Auth::login(User::find($request->value_d));
+
                 $seller_package_controller = new SellerPackageController;
                 return $seller_package_controller->purchase_payment_done(json_decode($request->value_b), $payment);
             }
@@ -184,16 +194,16 @@ class PublicSslCommerzPaymentController extends Controller
     {
         $request->session()->forget('order_id');
         $request->session()->forget('payment_data');
-        flash(translate('Payment Failed'))->success();
-        return redirect()->url()->previous();
+        flash(translate('Payment Failed'))->warning();
+        return redirect()->route('home');
     }
 
      public function cancel(Request $request)
     {
         $request->session()->forget('order_id');
         $request->session()->forget('payment_data');
-        flash(translate('Payment cancelled'))->success();
-    	return redirect()->url()->previous();
+        flash(translate('Payment cancelled'))->error();
+    	return redirect()->route('home');
     }
 
      public function ipn(Request $request)

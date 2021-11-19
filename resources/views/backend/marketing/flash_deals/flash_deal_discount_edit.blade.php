@@ -19,8 +19,8 @@
     <tbody>
         @foreach ($product_ids as $key => $id)
             @php
-              $product = \App\Product::findOrFail($id);
-              $flash_deal_product = \App\FlashDealProduct::where('flash_deal_id', $flash_deal_id)->where('product_id', $product->id)->first();
+              $product = \App\Models\Product::findOrFail($id);
+              $flash_deal_product = \App\Models\FlashDealProduct::where('flash_deal_id', $flash_deal_id)->where('product_id', $product->id)->first();
             @endphp
             <tr>
                 <td>

@@ -50,7 +50,7 @@
     function coupon_form(){
 
         var coupon_type = $('#coupon_type').val();
-		$.post('{{ route('seller.coupon.get_coupon_form') }}',{
+		$.post('{{ route('coupon.get_coupon_form') }}',{
             _token:'{{ csrf_token() }}', 
             coupon_type:coupon_type
         }, function(data){

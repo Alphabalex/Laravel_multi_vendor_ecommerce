@@ -11,4 +11,10 @@ class PaymentController extends Controller
         $order = new OrderController;
         return $order->store($request);
     }
+
+    public function manualPayment(Request $request)
+    {
+        $order = new OrderController;
+        return $order->store($request);
+    }
 }

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Country;
+use App\Models\Country;
 
 class CountryController extends Controller
 {
@@ -14,8 +14,14 @@ class CountryController extends Controller
      */
     public function index(Request $request)
     {
-        $countries = Country::paginate(15);
-        return view('backend.setup_configurations.countries.index', compact('countries'));
+        $sort_country = $request->sort_country;
+        $country_queries = Country::query();
+        if($request->sort_country) {
+            $country_queries->where('name', 'like', "%$sort_country%");
+        }
+        $countries = $country_queries->orderBy('status', 'desc')->paginate(15);
+
+        return view('backend.setup_configurations.countries.index', compact('countries', 'sort_country'));
     }
 
     /**

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\SellerWithdrawRequest;
+use App\Models\SellerWithdrawRequest;
 use Auth;
-use App\Seller;
+use App\Models\Seller;
 
 class SellerWithdrawRequestController extends Controller
 {

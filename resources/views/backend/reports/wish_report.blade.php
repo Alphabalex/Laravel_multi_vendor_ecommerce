@@ -17,7 +17,7 @@
                         <label class="col-md-3 col-form-label">{{ translate('Sort by Category') }}:</label>
                         <div class="col-md-5">
                             <select id="demo-ease" class="from-control aiz-selectpicker" name="category_id" required>
-                                @foreach (\App\Category::all() as $key => $category)
+                                @foreach (\App\Models\Category::all() as $key => $category)
                                     <option value="{{ $category->id }}" @if($category->id == $sort_by) selected @endif>{{ $category->getTranslation('name') }}</option>
                                 @endforeach
                             </select>

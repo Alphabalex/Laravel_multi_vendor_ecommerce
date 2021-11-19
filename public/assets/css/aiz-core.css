@@ -19,9 +19,9 @@ use custom-style.css
     --white: #fff;
     --gray: #6c757d;
     --gray-dark: #343a40;
-    --primary: #377dff;
-    --hov-primary: #0069d9;
-    --soft-primary: rgba(55, 125, 255, 0.15);
+    --primary: #F77B0B;
+    --hov-primary: #E56F0E;
+    --soft-primary: rgba(247, 123, 11, 0.15);
     --secondary: #8f97ab;
     --soft-secondary: rgba(143, 151, 171, 0.15);
     --success: #0abb75;
@@ -4208,8 +4208,8 @@ input[type="number"] {
     background-color: transparent !important;
 }
 [dir="rtl"] .aiz-steps.arrow-divider > *:not(:first-of-type):before{
-    left: -5px;
-    right: auto;
+    left: auto;
+    right: -12px;
     content: "\f104";
 }
 

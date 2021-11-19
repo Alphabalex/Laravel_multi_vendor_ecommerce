@@ -7,7 +7,7 @@
         <div class="col-md-3 ml-auto">
             <select id="demo-ease" class="form-control form-control-sm aiz-selectpicker mb-2 mb-md-0" name="seller_id">
                 <option value="">{{ translate('Choose Seller') }}</option>
-                @foreach (\App\Seller::all() as $key => $seller)
+                @foreach (\App\Models\Seller::all() as $key => $seller)
                     @if(isset($seller->user->id))
                     <option value="{{ $seller->user->id }}" @if($seller->user->id == $seller_id) selected @endif >
                         {{ $seller->user->name }}

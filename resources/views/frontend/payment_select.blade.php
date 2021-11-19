@@ -241,6 +241,19 @@
                                                 </label>
                                             </div>
                                         @endif
+                                        @if(get_setting('authorizenet') == 1)
+                                            <div class="col-6 col-md-4">
+                                                <label class="aiz-megabox d-block mb-3">
+                                                    <input value="authorizenet" class="online_payment" type="radio" name="payment_option" checked>
+                                                    <span class="d-block p-3 aiz-megabox-elem">
+                                                        <img src="{{ static_asset('assets/img/cards/authorizenet.png')}}" class="img-fluid mb-2">
+                                                        <span class="d-block text-center">
+                                                            <span class="d-block fw-600 fs-15">{{ translate('Authorize Net')}}</span>
+                                                        </span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        @endif
                                         @if(addon_is_activated('african_pg'))
                                             @if(get_setting('mpesa') == 1)
                                                 <div class="col-6 col-md-4">
@@ -283,7 +296,6 @@
                                             @endif
                                         @endif
                                         @if(addon_is_activated('paytm'))
-                                            @if(get_setting('paytm') == 1)
                                             <div class="col-6 col-md-4">
                                                 <label class="aiz-megabox d-block mb-3">
                                                     <input value="paytm" class="online_payment" type="radio" name="payment_option" checked>
@@ -295,14 +307,13 @@
                                                     </span>
                                                 </label>
                                             </div>
-                                            @endif
                                         @endif
                                         @if(get_setting('cash_payment') == 1)
                                             @php
                                                 $digital = 0;
                                                 $cod_on = 1;
                                                 foreach($carts as $cartItem){
-                                                    $product = \App\Product::find($cartItem['product_id']);
+                                                    $product = \App\Models\Product::find($cartItem['product_id']);
                                                     if($product['digital'] == 1){
                                                         $digital = 1;
                                                     }

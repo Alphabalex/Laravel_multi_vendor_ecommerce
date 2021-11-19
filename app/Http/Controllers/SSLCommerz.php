@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers;
-use App\BusinessSetting;
-use App\Seller;
+use App\Models\BusinessSetting;
+use App\Models\Seller;
 use Session;
 
 # IF BROWSE FROM LOCAL HOST, KEEP true
@@ -23,25 +23,17 @@ class SSLCommerz
     public function __construct()
     {
         if(Session::has('payment_type')){
-            if(Session::get('payment_type') == 'cart_payment' || Session::get('payment_type') == 'wallet_payment'){
-                # IF SANDBOX TRUE, THEN IT WILL CONNECT WITH SSLCOMMERZ SANDBOX (TEST) SYSTEM
-                if(BusinessSetting::where('type', 'sslcommerz_sandbox')->first()->value == 1){
-                    define("SSLCZ_IS_SANDBOX", true);
-                }
-                else{
-                    define("SSLCZ_IS_SANDBOX", false);
-                }
+            # IF SANDBOX TRUE, THEN IT WILL CONNECT WITH SSLCOMMERZ SANDBOX (TEST) SYSTEM
+            if(BusinessSetting::where('type', 'sslcommerz_sandbox')->first()->value == 1){
+                define("SSLCZ_IS_SANDBOX", true);
+            }
+            else{
+                define("SSLCZ_IS_SANDBOX", false);
+            }
 
-                $this->setSSLCommerzMode((SSLCZ_IS_SANDBOX) ? 1 : 0);
-                $this->store_id = env('SSLCZ_STORE_ID');
-                $this->store_pass = env('SSLCZ_STORE_PASSWD');
-            }
-            elseif (Session::get('payment_type') == 'seller_payment') {
-                $seller = Seller::findOrFail(Session::get('payment_data')['seller_id']);
-                $this->setSSLCommerzMode((true) ? 1 : 0);
-                $this->store_id = $seller->ssl_store_id;
-                $this->store_pass = $seller->ssl_password;
-            }
+            $this->setSSLCommerzMode((SSLCZ_IS_SANDBOX) ? 1 : 0);
+            $this->store_id = env('SSLCZ_STORE_ID');
+            $this->store_pass = env('SSLCZ_STORE_PASSWD');
         }
         $this->sslc_submit_url = "https://" . $this->sslc_mode . ".sslcommerz.com/gwprocess/v3/api.php";
         $this->sslc_validation_url = "https://" . $this->sslc_mode . ".sslcommerz.com/validator/api/validationserverAPI.php";

@@ -38,7 +38,7 @@
 
         @if (addon_is_activated('seller_subscription'))
         @php
-            $seller_package = \App\SellerPackage::find(Auth::user()->seller->seller_package_id);
+            $seller_package = \App\Models\SellerPackage::find(Auth::user()->seller->seller_package_id);
         @endphp
             <div class="col-md-4">
                 <a href="{{ route('seller_packages_list') }}" class="text-center bg-white shadow-sm hov-shadow-lg text-center d-block p-3 rounded">

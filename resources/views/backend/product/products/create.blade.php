@@ -39,7 +39,7 @@
                             <div class="col-md-8">
                                 <select class="form-control aiz-selectpicker" name="brand_id" id="brand_id" data-live-search="true">
                                     <option value="">{{ translate('Select Brand') }}</option>
-                                    @foreach (\App\Brand::all() as $brand)
+                                    @foreach (\App\Models\Brand::all() as $brand)
                                     <option value="{{ $brand->id }}">{{ $brand->getTranslation('name') }}</option>
                                     @endforeach
                                 </select>
@@ -66,7 +66,7 @@
                         </div>
 
                         @php
-                        $pos_addon = \App\Addon::where('unique_identifier', 'pos_system')->first();
+                        $pos_addon = \App\Models\Addon::where('unique_identifier', 'pos_system')->first();
                         @endphp
                         @if ($pos_addon != null && $pos_addon->activated == 1)
                         <div class="form-group row">
@@ -78,7 +78,7 @@
                         @endif
 
                         @php
-                        $refund_request_addon = \App\Addon::where('unique_identifier', 'refund_request')->first();
+                        $refund_request_addon = \App\Models\Addon::where('unique_identifier', 'refund_request')->first();
                         @endphp
                         @if ($refund_request_addon != null && $refund_request_addon->activated == 1)
                         <div class="form-group row">
@@ -165,7 +165,7 @@
                             </div>
                             <div class="col-md-8">
                                 <select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" name="colors[]" id="colors" multiple disabled>
-                                    @foreach (\App\Color::orderBy('name', 'asc')->get() as $key => $color)
+                                    @foreach (\App\Models\Color::orderBy('name', 'asc')->get() as $key => $color)
                                     <option  value="{{ $color->code }}" data-content="<span><span class='size-15px d-inline-block mr-2 rounded border' style='background:{{ $color->code }}'></span><span>{{ $color->name }}</span></span>"></option>
                                     @endforeach
                                 </select>
@@ -184,7 +184,7 @@
                             </div>
                             <div class="col-md-8">
                                 <select name="choice_attributes[]" id="choice_attributes" class="form-control aiz-selectpicker" data-selected-text-format="count" data-live-search="true" multiple data-placeholder="{{ translate('Choose Attributes') }}">
-                                    @foreach (\App\Attribute::all() as $key => $attribute)
+                                    @foreach (\App\Models\Attribute::all() as $key => $attribute)
                                     <option value="{{ $attribute->id }}">{{ $attribute->getTranslation('name') }}</option>
                                     @endforeach
                                 </select>
@@ -232,8 +232,8 @@
                             </div>
                         </div>
 
-                        @if(\App\Addon::where('unique_identifier', 'club_point')->first() != null &&
-                            \App\Addon::where('unique_identifier', 'club_point')->first()->activated)
+                        @if(\App\Models\Addon::where('unique_identifier', 'club_point')->first() != null &&
+                            \App\Models\Addon::where('unique_identifier', 'club_point')->first()->activated)
                             <div class="form-group row">
                                 <label class="col-md-3 col-from-label">
                                     {{translate('Set Point')}}
@@ -258,6 +258,15 @@
                                 <div class="col-md-6">
                                     <input type="text" placeholder="{{ translate('SKU') }}" name="sku" class="form-control">
                                 </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 col-from-label">
+                                {{translate('External link')}}
+                            </label>
+                            <div class="col-md-9">
+                                <input type="text" placeholder="{{ translate('External link') }}" name="external_link" class="form-control">
+                                <small class="text-muted">{{translate('Leave it blank if you do not use external site link')}}</small>
                             </div>
                         </div>
                         <br>
@@ -533,7 +542,7 @@
                             </label>
                             <select class="form-control aiz-selectpicker" name="flash_deal_id" id="flash_deal">
                                 <option value="">Choose Flash Title</option>
-                                @foreach(\App\FlashDeal::where("status", 1)->get() as $flash_deal)
+                                @foreach(\App\Models\FlashDeal::where("status", 1)->get() as $flash_deal)
                                     <option value="{{ $flash_deal->id}}">
                                         {{ $flash_deal->title }}
                                     </option>
@@ -584,7 +593,7 @@
                         <h5 class="mb-0 h6">{{translate('VAT & Tax')}}</h5>
                     </div>
                     <div class="card-body">
-                        @foreach(\App\Tax::where('tax_status', 1)->get() as $tax)
+                        @foreach(\App\Models\Tax::where('tax_status', 1)->get() as $tax)
                         <label for="name">
                             {{$tax->name}}
                             <input type="hidden" value="{{$tax->id}}" name="tax_id[]">

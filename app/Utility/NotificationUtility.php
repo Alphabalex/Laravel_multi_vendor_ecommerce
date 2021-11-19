@@ -3,13 +3,13 @@
 namespace App\Utility;
 
 use App\Mail\InvoiceEmailManager;
-use App\User;
+use App\Models\User;
 use App\SmsTemplate;
 use App\Http\Controllers\OTPVerificationController;
 use Mail;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\OrderNotification;
-use App\FirebaseNotification;
+use App\Models\FirebaseNotification;
 
 class NotificationUtility
 {
@@ -26,7 +26,7 @@ class NotificationUtility
 
         //sends Notifications to user
         self::sendNotification($order, 'placed');
-        if (get_setting('google_firebase') == 1 && $order->user->device_token != null) {
+        if ($request !=null && get_setting('google_firebase') == 1 && $order->user->device_token != null) {
             $request->device_token = $order->user->device_token;
             $request->title = "Order placed !";
             $request->text = "An order {$order->code} has been placed";
@@ -55,10 +55,10 @@ class NotificationUtility
 
     public static function sendNotification($order, $order_status)
     {        
-        if ($order->seller_id == \App\User::where('user_type', 'admin')->first()->id) {
+        if ($order->seller_id == \App\Models\User::where('user_type', 'admin')->first()->id) {
             $users = User::findMany([$order->user->id, $order->seller_id]);
         } else {
-            $users = User::findMany([$order->user->id, $order->seller_id, \App\User::where('user_type', 'admin')->first()->id]);
+            $users = User::findMany([$order->user->id, $order->seller_id, \App\Models\User::where('user_type', 'admin')->first()->id]);
         }
 
         $order_notification = array();

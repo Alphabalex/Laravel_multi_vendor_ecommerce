@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\CustomerPackagePayment;
-use App\CustomerPackage;
-use App\user;
+use App\Models\CustomerPackagePayment;
+use App\Models\CustomerPackage;
+use App\Models\User;
 
 class CustomerPackagePaymentController extends Controller
 {

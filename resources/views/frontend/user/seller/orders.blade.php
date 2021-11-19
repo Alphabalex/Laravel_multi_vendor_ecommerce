@@ -51,7 +51,7 @@
                     <tbody>
                         @foreach ($orders as $key => $order_id)
                             @php
-                                $order = \App\Order::find($order_id->id);
+                                $order = \App\Models\Order::find($order_id->id);
                             @endphp
                             @if($order != null)
                                 <tr>
@@ -157,6 +157,7 @@
                 $('#order-details-modal-body').html(data);
                 $('#order_details').modal();
                 $('.c-preloader').hide();
+                AIZ.plugins.bootstrapSelect('refresh');
             });
         }
         function sort_orders(el){

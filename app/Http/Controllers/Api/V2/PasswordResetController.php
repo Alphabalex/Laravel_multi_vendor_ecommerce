@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V2;
 
 use App\Notifications\AppEmailVerificationNotification;
 use Illuminate\Http\Request;
-use App\User;
+use App\Models\User;
 use App\Models\PasswordReset;
 use App\Notifications\PasswordResetRequest;
 use Illuminate\Support\Str;
@@ -26,7 +26,7 @@ class PasswordResetController extends Controller
         if (!$user) {
             return response()->json([
                 'result' => false,
-                'message' => 'User is not found'], 404);
+                'message' => translate('User is not found')], 404);
         }
 
         if ($user) {
@@ -43,7 +43,7 @@ class PasswordResetController extends Controller
 
         return response()->json([
             'result' => true,
-            'message' => 'A code is sent'
+            'message' => translate('A code is sent')
         ], 200);
     }
 
@@ -57,12 +57,12 @@ class PasswordResetController extends Controller
             $user->save();
             return response()->json([
                 'result' => true,
-                'message' => 'Your password is reset.Please login',
+                'message' => translate('Your password is reset.Please login'),
             ], 200);
         } else {
             return response()->json([
                 'result' => false,
-                'message' => 'No user is found',
+                'message' => translate('No user is found'),
             ], 200);
         }
     }
@@ -80,7 +80,7 @@ class PasswordResetController extends Controller
         if (!$user) {
             return response()->json([
                 'result' => false,
-                'message' => 'User is not found'], 404);
+                'message' => translate('User is not found')], 404);
         }
 
         $user->verification_code = rand(100000, 999999);
@@ -97,7 +97,7 @@ class PasswordResetController extends Controller
 
         return response()->json([
             'result' => true,
-            'message' => 'A code is sent again',
+            'message' => translate('A code is sent again'),
         ], 200);
     }
 }

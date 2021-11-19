@@ -16,7 +16,7 @@
               <tbody>
                   @foreach ($orders as $key => $order_id)
                       @php
-                          $order = \App\OrderDetail::find($order_id->id);
+                          $order = \App\Models\OrderDetail::find($order_id->id);
                       @endphp
                       <tr>
                           <td><a href="{{ route('product', $order->product->slug) }}">{{ $order->product->getTranslation('name') }}</a></td>

@@ -3,26 +3,21 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Product;
-use App\ProductTranslation;
-use App\ProductStock;
-use App\Category;
-use App\FlashDealProduct;
-use App\ProductTax;
-use App\Attribute;
-use App\AttributeValue;
-use App\Cart;
-use App\Language;
+use App\Models\Product;
+use App\Models\ProductTranslation;
+use App\Models\ProductStock;
+use App\Models\Category;
+use App\Models\FlashDealProduct;
+use App\Models\ProductTax;
+use App\Models\AttributeValue;
+use App\Models\Cart;
 use Auth;
-use App\SubSubCategory;
-use Session;
 use Carbon\Carbon;
-use ImageOptimizer;
-use DB;
 use Combinations;
 use CoreComponentRepository;
 use Illuminate\Support\Str;
 use Artisan;
+use Cache;
 
 class ProductController extends Controller
 {
@@ -33,7 +28,7 @@ class ProductController extends Controller
      */
     public function admin_products(Request $request)
     {
-        //CoreComponentRepository::instantiateShopRepository();
+        CoreComponentRepository::instantiateShopRepository();
 
         $type = 'In House';
         $col_name = null;
@@ -133,6 +128,8 @@ class ProductController extends Controller
      */
     public function create()
     {
+        CoreComponentRepository::initializeCache();
+
         $categories = Category::where('parent_id', 0)
             ->where('digital', 0)
             ->with('childrenCategories')
@@ -147,26 +144,10 @@ class ProductController extends Controller
         $html = '';
 
         foreach ($all_attribute_values as $row) {
-            //$val = $row->id . ' | ' . $row->name;
             $html .= '<option value="' . $row->value . '">' . $row->value . '</option>';
         }
 
-
         echo json_encode($html);
-        // $html = '';
-
-        // $html .= '<div class="form-group row">
-        //             <div class="col-md-3">
-        //                 <input type="hidden" name="choice_no[]" value="'. $request->id .'">
-        //                 <input type="text" class="form-control" name="choice[]" value="'.$all_attribute_values->attribute->name.'" placeholder="'.translate('Choice Title').'" readonly>
-        //             </div>
-        //             <div class="col-md-8">
-        //                 <input type="text" class="form-control aiz-tag-input" name="choice_options_'. $request->id .'[]" placeholder="'. translate('Enter choice values') .'" data-on-change="update_sku">
-        //                 <select class="form-control aiz-selectpicker" data-live-search="true" name="choice_options_'. $request->id .'[]" multiple>
-        //                     <option value="">'. translate('Enter choice values') .'</option>
-        //                 </select>
-        //             </div>
-        //         </div>';
     }
 
     /**
@@ -177,8 +158,6 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $refund_request_addon = \App\Addon::where('unique_identifier', 'refund_request')->first();
-
         $product = new Product;
         $product->name = $request->name;
         $product->added_by = $request->added_by;
@@ -189,13 +168,13 @@ class ProductController extends Controller
             }
         }
         else{
-            $product->user_id = \App\User::where('user_type', 'admin')->first()->id;
+            $product->user_id = \App\Models\User::where('user_type', 'admin')->first()->id;
         }
         $product->category_id = $request->category_id;
         $product->brand_id = $request->brand_id;
         $product->barcode = $request->barcode;
 
-        if ($refund_request_addon != null && $refund_request_addon->activated == 1) {
+        if (addon_is_activated('refund_request')) {
             if ($request->refundable != null) {
                 $product->refundable = 1;
             }
@@ -209,6 +188,7 @@ class ProductController extends Controller
         $product->min_qty = $request->min_qty;
         $product->low_stock_quantity = $request->low_stock_quantity;
         $product->stock_visibility_state = $request->stock_visibility_state;
+        $product->external_link = $request->external_link;
 
         $tags = array();
         if($request->tags[0] != null){
@@ -234,8 +214,7 @@ class ProductController extends Controller
         $product->shipping_type = $request->shipping_type;
         $product->est_shipping_days  = $request->est_shipping_days;
 
-        if (\App\Addon::where('unique_identifier', 'club_point')->first() != null &&
-                \App\Addon::where('unique_identifier', 'club_point')->first()->activated) {
+        if (addon_is_activated('club_point')) {
             if($request->earn_point) {
                 $product->earn_point = $request->earn_point;
             }
@@ -281,7 +260,12 @@ class ProductController extends Controller
             $product->pdf = $request->pdf->store('uploads/products/pdf');
         }
 
-        $product->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name));
+        $product->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', strtolower($request->name)));
+
+        if(Product::where('slug', $product->slug)->count() > 0){
+            flash(translate('Another product exists with same slug. Please change the slug!'))->warning();
+            return back();
+        }
 
         if($request->has('colors_active') && $request->has('colors') && count($request->colors) > 0){
             $product->colors = json_encode($request->colors);
@@ -391,7 +375,7 @@ class ProductController extends Controller
                     }
                     else{
                         if($request->has('colors_active') && $request->has('colors') && count($request->colors) > 0){
-                            $color_name = \App\Color::where('code', $item)->first()->name;
+                            $color_name = \App\Models\Color::where('code', $item)->first()->name;
                             $str .= $color_name;
                         }
                         else{
@@ -470,6 +454,8 @@ class ProductController extends Controller
      */
      public function admin_product_edit(Request $request, $id)
      {
+        CoreComponentRepository::initializeCache();
+
         $product = Product::findOrFail($id);
         if($product->digital == 1) {
             return redirect('digitalproducts/' . $id . '/edit');
@@ -511,7 +497,6 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $refund_request_addon       = \App\Addon::where('unique_identifier', 'refund_request')->first();
         $product                    = Product::findOrFail($id);
         $product->category_id       = $request->category_id;
         $product->brand_id          = $request->brand_id;
@@ -521,8 +506,7 @@ class ProductController extends Controller
         $product->todays_deal = 0;
         $product->is_quantity_multiplied = 0;
 
-
-        if ($refund_request_addon != null && $refund_request_addon->activated == 1) {
+        if (addon_is_activated('refund_request')) {
             if ($request->refundable != null) {
                 $product->refundable = 1;
             }
@@ -535,7 +519,16 @@ class ProductController extends Controller
             $product->name          = $request->name;
             $product->unit          = $request->unit;
             $product->description   = $request->description;
-            $product->slug          = strtolower($request->slug);
+            $product->slug          = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', strtolower($request->slug)));
+        }
+
+        if($request->slug == null){
+            $product->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', strtolower($request->name)));
+        }
+
+        if(Product::where('id', '!=', $product->id)->where('slug', $product->slug)->count() > 0){
+            flash(translate('Another product exists with same slug. Please change the slug!'))->warning();
+            return back();
         }
 
         $product->photos                 = $request->photos;
@@ -543,6 +536,7 @@ class ProductController extends Controller
         $product->min_qty                = $request->min_qty;
         $product->low_stock_quantity     = $request->low_stock_quantity;
         $product->stock_visibility_state = $request->stock_visibility_state;
+        $product->external_link = $request->external_link;
 
         $tags = array();
         if($request->tags[0] != null){
@@ -567,8 +561,7 @@ class ProductController extends Controller
         $product->shipping_type  = $request->shipping_type;
         $product->est_shipping_days  = $request->est_shipping_days;
 
-        if (\App\Addon::where('unique_identifier', 'club_point')->first() != null &&
-                \App\Addon::where('unique_identifier', 'club_point')->first()->activated) {
+        if (addon_is_activated('club_point')) {
             if($request->earn_point) {
                 $product->earn_point = $request->earn_point;
             }
@@ -688,7 +681,7 @@ class ProductController extends Controller
                     }
                     else{
                         if($request->has('colors_active') && $request->has('colors') && count($request->colors) > 0){
-                            $color_name = \App\Color::where('code', $item)->first()->name;
+                            $color_name = \App\Models\Color::where('code', $item)->first()->name;
                             $str .= $color_name;
                         }
                         else{
@@ -742,7 +735,6 @@ class ProductController extends Controller
             $flash_deal_product->discount = $request->flash_discount;
             $flash_deal_product->discount_type = $request->flash_discount_type;
             $flash_deal_product->save();
-//            dd($flash_deal_product);
         }
 
         //VAT & Tax
@@ -825,10 +817,12 @@ class ProductController extends Controller
     public function duplicate(Request $request, $id)
     {
         $product = Product::find($id);
-        $product_new = $product->replicate();
-        $product_new->slug = $product_new->slug.'-'.Str::random(5);
 
-        if($product_new->save()){
+        if(Auth::user()->id == $product->user_id || Auth::user()->user_type == 'staff'){
+            $product_new = $product->replicate();
+            $product_new->slug = $product_new->slug.'-'.Str::random(5);
+            $product_new->save();
+
             foreach ($product->stocks as $key => $stock) {
                 $product_stock              = new ProductStock;
                 $product_stock->product_id  = $product_new->id;
@@ -850,8 +844,7 @@ class ProductController extends Controller
                 return redirect()->route('products.all');
             }
             else{
-                if (\App\Addon::where('unique_identifier', 'seller_subscription')->first() != null &&
-                        \App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated) {
+                if (addon_is_activated('seller_subscription')) {
                     $seller = Auth::user()->seller;
                     $seller->remaining_uploads -= 1;
                     $seller->save();
@@ -875,12 +868,9 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($request->id);
         $product->todays_deal = $request->status;
-        if($product->save()){
-            Artisan::call('view:clear');
-            Artisan::call('cache:clear');
-            return 1;
-        }
-        return 0;
+        $product->save();
+        Cache::forget('todays_deal_products');
+        return 1;
     }
 
     public function updatePublished(Request $request)

@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Conversation;
-use App\BusinessSetting;
-use App\Message;
+use App\Models\Conversation;
+use App\Models\BusinessSetting;
+use App\Models\Message;
 use Auth;
-use App\Product;
+use App\Models\Product;
 use Mail;
 use App\Mail\ConversationMailManager;
 
@@ -83,7 +83,7 @@ class ConversationController extends Controller
             }
         }
 
-        flash(translate('Message has been send to seller'))->success();
+        flash(translate('Message has been sent to seller'))->success();
         return back();
     }
 

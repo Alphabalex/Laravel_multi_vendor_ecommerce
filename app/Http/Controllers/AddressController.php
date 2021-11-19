@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Address;
+use App\Models\Address;
+use App\Models\City;
+use App\Models\State;
 use Auth;
 
 class AddressController extends Controller
@@ -38,18 +40,19 @@ class AddressController extends Controller
     {
         $address = new Address;
         if($request->has('customer_id')){
-            $address->user_id = $request->customer_id;
+            $address->user_id   = $request->customer_id;
         }
         else{
-            $address->user_id = Auth::user()->id;
+            $address->user_id   = Auth::user()->id;
         }
-        $address->address = $request->address;
-        $address->country = $request->country;
-        $address->city = $request->city;
-        $address->longitude = $request->longitude;
-        $address->latitude = $request->latitude;
-        $address->postal_code = $request->postal_code;
-        $address->phone = $request->phone;
+        $address->address       = $request->address;
+        $address->country_id    = $request->country_id;
+        $address->state_id      = $request->state_id;
+        $address->city_id       = $request->city_id;
+        $address->longitude     = $request->longitude;
+        $address->latitude      = $request->latitude;
+        $address->postal_code   = $request->postal_code;
+        $address->phone         = $request->phone;
         $address->save();
 
         return back();
@@ -75,8 +78,10 @@ class AddressController extends Controller
     public function edit($id)
     {
         $data['address_data'] = Address::findOrFail($id);
+        $data['states'] = State::where('status', 1)->where('country_id', $data['address_data']->country_id)->get();
+        $data['cities'] = City::where('status', 1)->where('state_id', $data['address_data']->state_id)->get();
         
-        $returnHTML = view('frontend.user.address.edit_address_modal', $data)->render();
+        $returnHTML = view('frontend.partials.address_edit_modal', $data)->render();
         return response()->json(array('data' => $data, 'html'=>$returnHTML));
 //        return ;
     }
@@ -92,16 +97,18 @@ class AddressController extends Controller
     {
         $address = Address::findOrFail($id);
         
-        $address->address = $request->address;
-        $address->country = $request->country;
-        $address->city = $request->city;
-        $address->longitude = $request->longitude;
-        $address->latitude = $request->latitude;
-        $address->postal_code = $request->postal_code;
-        $address->phone = $request->phone;
+        $address->address       = $request->address;
+        $address->country_id    = $request->country_id;
+        $address->state_id      = $request->state_id;
+        $address->city_id       = $request->city_id;
+        $address->longitude     = $request->longitude;
+        $address->latitude      = $request->latitude;
+        $address->postal_code   = $request->postal_code;
+        $address->phone         = $request->phone;
+
         $address->save();
 
-        flash(translate('Address info updated successfully'))->warning();
+        flash(translate('Address info updated successfully'))->success();
         return back();
     }
 
@@ -120,6 +127,28 @@ class AddressController extends Controller
         }
         flash(translate('Default address can not be deleted'))->warning();
         return back();
+    }
+
+    public function getStates(Request $request) {
+        $states = State::where('status', 1)->where('country_id', $request->country_id)->get();
+        $html = '<option value="">Select State</option>';
+        
+        foreach ($states as $state) {
+            $html .= '<option value="' . $state->id . '">' . $state->name . '</option>';
+        }
+        
+        echo json_encode($html);
+    }
+    
+    public function getCities(Request $request) {
+        $cities = City::where('status', 1)->where('state_id', $request->state_id)->get();
+        $html = '';
+        
+        foreach ($cities as $row) {
+            $html .= '<option value="' . $row->id . '">' . $row->getTranslation('name') . '</option>';
+        }
+        
+        echo json_encode($html);
     }
 
     public function set_default($id){

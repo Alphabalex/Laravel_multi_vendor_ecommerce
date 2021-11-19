@@ -302,7 +302,7 @@
 										<div class="col">
 											<div class="form-group">
 												<select class="form-control aiz-selectpicker" name="home_categories[]" data-live-search="true" data-selected={{ $value }} required>
-													@foreach (\App\Category::where('parent_id', 0)->with('childrenCategories')->get() as $category)
+													@foreach (\App\Models\Category::where('parent_id', 0)->with('childrenCategories')->get() as $category)
 														<option value="{{ $category->id }}">{{ $category->getTranslation('name') }}</option>
 														@foreach ($category->childrenCategories as $childCategory)
 															@include('categories.child_category', ['child_category' => $childCategory])
@@ -328,7 +328,7 @@
 								<div class="col">
 									<div class="form-group">
 										<select class="form-control aiz-selectpicker" name="home_categories[]" data-live-search="true" required>
-											@foreach (\App\Category::all() as $key => $category)
+											@foreach (\App\Models\Category::all() as $key => $category)
 												<option value="{{ $category->id }}">{{ $category->getTranslation('name') }}</option>
 											@endforeach
 										</select>
@@ -457,7 +457,7 @@
 						<div class="col-md-10">
 							<input type="hidden" name="types[]" value="top10_categories">
 							<select name="top10_categories[]" class="form-control aiz-selectpicker" multiple data-max-options="10" data-live-search="true" data-selected="{{ get_setting('top10_categories') }}">
-								@foreach (\App\Category::where('parent_id', 0)->with('childrenCategories')->get() as $category)
+								@foreach (\App\Models\Category::where('parent_id', 0)->with('childrenCategories')->get() as $category)
 									<option value="{{ $category->id }}">{{ $category->getTranslation('name') }}</option>
 									@foreach ($category->childrenCategories as $childCategory)
 										@include('categories.child_category', ['child_category' => $childCategory])
@@ -471,7 +471,7 @@
 						<div class="col-md-10">
 							<input type="hidden" name="types[]" value="top10_brands">
 							<select name="top10_brands[]" class="form-control aiz-selectpicker" multiple data-max-options="10" data-live-search="true" data-selected="{{ get_setting('top10_brands') }}">
-								@foreach (\App\Brand::all() as $key => $brand)
+								@foreach (\App\Models\Brand::all() as $key => $brand)
 									<option value="{{ $brand->id }}">{{ $brand->getTranslation('name') }}</option>
 								@endforeach
 							</select>

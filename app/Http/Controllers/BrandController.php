@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Brand;
-use App\BrandTranslation;
-use App\Product;
+use App\Models\Brand;
+use App\Models\BrandTranslation;
+use App\Models\Product;
 use Illuminate\Support\Str;
 
 class BrandController extends Controller

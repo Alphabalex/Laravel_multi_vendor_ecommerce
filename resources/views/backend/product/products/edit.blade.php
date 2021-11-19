@@ -14,7 +14,7 @@
                 @csrf
                 <div class="card">
                     <ul class="nav nav-tabs nav-fill border-light">
-                        @foreach (\App\Language::all() as $key => $language)
+                        @foreach (\App\Models\Language::all() as $key => $language)
                         <li class="nav-item">
                             <a class="nav-link text-reset @if ($language->code == $lang) active @else bg-soft-dark border-light border-left-0 @endif py-3" href="{{ route('products.admin.edit', ['id'=>$product->id, 'lang'=> $language->code] ) }}">
                                 <img src="{{ static_asset('assets/img/flags/'.$language->code.'.png') }}" height="11" class="mr-1">
@@ -48,7 +48,7 @@
                             <div class="col-lg-8">
                                 <select class="form-control aiz-selectpicker" name="brand_id" id="brand_id" data-live-search="true">
                                     <option value="">{{ translate('Select Brand') }}</option>
-                                    @foreach (\App\Brand::all() as $brand)
+                                    @foreach (\App\Models\Brand::all() as $brand)
                                     <option value="{{ $brand->id }}" @if($product->brand_id == $brand->id) selected @endif>{{ $brand->getTranslation('name') }}</option>
                                     @endforeach
                                 </select>
@@ -73,7 +73,7 @@
                             </div>
                         </div>
                         @php
-                        $pos_addon = \App\Addon::where('unique_identifier', 'pos_system')->first();
+                        $pos_addon = \App\Models\Addon::where('unique_identifier', 'pos_system')->first();
                         @endphp
                         @if ($pos_addon != null && $pos_addon->activated == 1)
                         <div class="form-group row">
@@ -85,7 +85,7 @@
                         @endif
 
                         @php
-                        $refund_request_addon = \App\Addon::where('unique_identifier', 'refund_request')->first();
+                        $refund_request_addon = \App\Models\Addon::where('unique_identifier', 'refund_request')->first();
                         @endphp
                         @if ($refund_request_addon != null && $refund_request_addon->activated == 1)
                         <div class="form-group row">
@@ -204,7 +204,7 @@
                             </div>
                             <div class="col-lg-8">
                                 <select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" name="colors[]" id="colors" multiple>
-                                    @foreach (\App\Color::orderBy('name', 'asc')->get() as $key => $color)
+                                    @foreach (\App\Models\Color::orderBy('name', 'asc')->get() as $key => $color)
                                     <option
                                         value="{{ $color->code }}"
                                         data-content="<span><span class='size-15px d-inline-block mr-2 rounded border' style='background:{{ $color->code }}'></span><span>{{ $color->name }}</span></span>"
@@ -227,7 +227,7 @@
                             </div>
                             <div class="col-lg-8">
                                 <select name="choice_attributes[]" id="choice_attributes" data-selected-text-format="count" data-live-search="true" class="form-control aiz-selectpicker" multiple data-placeholder="{{ translate('Choose Attributes') }}">
-                                    @foreach (\App\Attribute::all() as $key => $attribute)
+                                    @foreach (\App\Models\Attribute::all() as $key => $attribute)
                                     <option value="{{ $attribute->id }}" @if($product->attributes != null && in_array($attribute->id, json_decode($product->attributes, true))) selected @endif>{{ $attribute->getTranslation('name') }}</option>
                                     @endforeach
                                 </select>
@@ -244,11 +244,11 @@
                             <div class="form-group row">
                                 <div class="col-lg-3">
                                     <input type="hidden" name="choice_no[]" value="{{ $choice_option->attribute_id }}">
-                                    <input type="text" class="form-control" name="choice[]" value="{{ optional(\App\Attribute::find($choice_option->attribute_id))->getTranslation('name') }}" placeholder="{{ translate('Choice Title') }}" disabled>
+                                    <input type="text" class="form-control" name="choice[]" value="{{ optional(\App\Models\Attribute::find($choice_option->attribute_id))->getTranslation('name') }}" placeholder="{{ translate('Choice Title') }}" disabled>
                                 </div>
                                 <div class="col-lg-8">
                                     <select class="form-control aiz-selectpicker attribute_choice" data-live-search="true" name="choice_options_{{ $choice_option->attribute_id }}[]" multiple>
-                                        @foreach (\App\AttributeValue::where('attribute_id', $choice_option->attribute_id)->get() as $row)
+                                        @foreach (\App\Models\AttributeValue::where('attribute_id', $choice_option->attribute_id)->get() as $row)
                                         <option value="{{ $row->value }}" @if( in_array($row->value, $choice_option->values)) selected @endif>
                                             {{ $row->value }}
                                         </option>
@@ -281,7 +281,7 @@
                         <div class="form-group row">
                             <label class="col-sm-3 col-from-label" for="start_date">{{translate('Discount Date Range')}}</label>
                             <div class="col-sm-9">
-                              <input type="text" class="form-control aiz-date-range" value="{{ $start_date.' to '.$end_date }}" name="date_range" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-format="DD-MM-Y HH:mm:ss" data-separator=" to " autocomplete="off">
+                              <input type="text" class="form-control aiz-date-range" @if($product->discount_start_date && $product->discount_end_date) value="{{ $start_date.' to '.$end_date }}" @endif name="date_range" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-format="DD-MM-Y HH:mm:ss" data-separator=" to " autocomplete="off">
                             </div>
                         </div>
 
@@ -298,8 +298,8 @@
                             </div>
                         </div>
 
-                        @if(\App\Addon::where('unique_identifier', 'club_point')->first() != null &&
-                            \App\Addon::where('unique_identifier', 'club_point')->first()->activated)
+                        @if(\App\Models\Addon::where('unique_identifier', 'club_point')->first() != null &&
+                            \App\Models\Addon::where('unique_identifier', 'club_point')->first()->activated)
                             <div class="form-group row">
                                 <label class="col-md-3 col-from-label">
                                     {{translate('Set Point')}}
@@ -324,6 +324,15 @@
                                 <div class="col-md-6">
                                     <input type="text" placeholder="{{ translate('SKU') }}" value="{{ optional($product->stocks->first())->sku }}" name="sku" class="form-control">
                                 </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 col-from-label">
+                                {{translate('External link')}}
+                            </label>
+                            <div class="col-md-9">
+                                <input type="text" placeholder="{{ translate('External link') }}" name="external_link" value="{{ $product->external_link }}" class="form-control">
+                                <small class="text-muted">{{translate('Leave it blank if you do not use external site link')}}</small>
                             </div>
                         </div>
                         <br>
@@ -614,7 +623,7 @@
                             </label>
                             <select class="form-control aiz-selectpicker" name="flash_deal_id" id="video_provider">
                                 <option value="">Choose Flash Title</option>
-                                @foreach(\App\FlashDeal::where("status", 1)->get() as $flash_deal)
+                                @foreach(\App\Models\FlashDeal::where("status", 1)->get() as $flash_deal)
                                     <option value="{{ $flash_deal->id}}" @if($product->flash_deal_product && $product->flash_deal_product->flash_deal_id == $flash_deal->id) selected @endif>
                                         {{ $flash_deal->title }}
                                     </option>
@@ -669,7 +678,7 @@
                         <h5 class="mb-0 h6">{{translate('VAT & Tax')}}</h5>
                     </div>
                     <div class="card-body">
-                        @foreach(\App\Tax::where('tax_status', 1)->get() as $tax)
+                        @foreach(\App\Models\Tax::where('tax_status', 1)->get() as $tax)
                         <label for="name">
                             {{$tax->name}}
                             <input type="hidden" value="{{$tax->id}}" name="tax_id[]">

@@ -18,7 +18,7 @@
                             @endphp
                             @foreach ($carts as $key => $cartItem)
                                 @php
-                                    $product = \App\Product::find($cartItem['product_id']);
+                                    $product = \App\Models\Product::find($cartItem['product_id']);
                                     $product_stock = $product->stocks->where('variant', $cartItem['variation'])->first();
                                     $total = $total + ($cartItem['price'] * $cartItem['quantity']) + $cartItem['tax'];
                                     $product_name_with_choice = $product->getTranslation('name');

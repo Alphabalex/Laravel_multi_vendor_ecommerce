@@ -47,7 +47,7 @@ class SendSMSUtility
 
             $client = new Client($sid, $token);
             try {
-                $message = $client->messages->create(
+                $client->messages->create(
                     $to, // Text this number
                     array(
                         'from' => env('VALID_TWILLO_NUMBER'), // From a valid Twilio number

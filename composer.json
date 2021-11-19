@@ -6,7 +6,7 @@
     "type": "project",
     "require": {
         "php": "^7.1.3",
-        "anandsiddharth/laravel-paytm-wallet": "^1.0",
+        "anandsiddharth/laravel-paytm-wallet": "^2.0.0",
         "barryvdh/laravel-ide-helper": "^2.10",
         "cinetpay/cinetpay-php": "^1.9",
         "fideloper/proxy": "^4.0",
@@ -27,7 +27,7 @@
         "lcobucci/jwt": "^3.4.5",
         "league/flysystem-aws-s3-v3": "^1.0",
         "maatwebsite/excel": "^3.1",
-        "mehedi-iitdu/core-component-repository": "1.3",
+        "mehedi-iitdu/core-component-repository": "1.7",
         "niklasravnsborg/laravel-pdf": "^4.0",
         "osenco/mpesa": "^1.20",
         "paypal/paypal-checkout-sdk": "dev-master",

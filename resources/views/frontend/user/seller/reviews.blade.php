@@ -20,7 +20,7 @@
                 <tbody>
                     @foreach ($reviews as $key => $value)
                         @php
-                            $review = \App\Review::find($value->id);
+                            $review = \App\Models\Review::find($value->id);
                         @endphp
                         @if($review != null && $review->product != null && $review->user != null)
                             <tr>

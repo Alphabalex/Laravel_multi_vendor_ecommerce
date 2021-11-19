@@ -16,11 +16,10 @@
             @endphp
 
             <!--Assign Delivery Boy-->
-            @if (\App\Addon::where('unique_identifier', 'delivery_boy')->first() != null &&
-                \App\Addon::where('unique_identifier', 'delivery_boy')->first()->activated)
+            @if (addon_is_activated('delivery_boy'))
                 <div class="col-md-3 ml-auto">
                     <label for="assign_deliver_boy">{{translate('Assign Deliver Boy')}}</label>
-                    @if($delivery_status == 'pending' || $delivery_status == 'picked_up')
+                    @if($delivery_status == 'pending' || $delivery_status == 'confirmed' || $delivery_status == 'picked_up')
                     <select class="form-control aiz-selectpicker" data-live-search="true" data-minimum-results-for-search="Infinity" id="assign_deliver_boy">
                         <option value="">{{translate('Select Delivery Boy')}}</option>
                         @foreach($delivery_boys as $delivery_boy)

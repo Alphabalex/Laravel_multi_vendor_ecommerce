@@ -2,7 +2,7 @@
 
 @section('content')
 @php
-    $terms =  \App\Page::where('type', 'terms_conditions_page')->first();
+    $terms =  \App\Models\Page::where('type', 'terms_conditions_page')->first();
 @endphp
 <section class="pt-4 mb-4">
     <div class="container text-center">

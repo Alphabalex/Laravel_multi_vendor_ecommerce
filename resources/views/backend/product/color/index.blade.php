@@ -93,6 +93,17 @@
                     </form>
                 </div>
             </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0 h6">{{translate('Color filter activation')}}</h3>
+                </div>
+                <div class="card-body text-center">
+                    <label class="aiz-switch aiz-switch-success mb-0">
+                        <input type="checkbox" onchange="updateSettings(this, 'color_filter_activation')" <?php if(get_setting('color_filter_activation') == 1) echo "checked";?>>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -101,4 +112,26 @@
 
 @section('modal')
     @include('modals.delete_modal')
+@endsection
+
+@section('script')
+    <script type="text/javascript">
+        function updateSettings(el, type){
+            if($(el).is(':checked')){
+                var value = 1;
+            }
+            else{
+                var value = 0;
+            }
+            
+            $.post('{{ route('business_settings.update.activation') }}', {_token:'{{ csrf_token() }}', type:type, value:value}, function(data){
+                if(data == '1'){
+                    AIZ.plugins.notify('success', '{{ translate('Settings updated successfully') }}');
+                }
+                else{
+                    AIZ.plugins.notify('danger', 'Something went wrong');
+                }
+            });
+        }
+    </script>
 @endsection

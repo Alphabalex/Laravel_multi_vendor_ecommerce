@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\CombinedOrder;
-use App\BusinessSetting;
-use App\Seller;
-use App\CustomerPackage;
-use App\SellerPackage;
+use App\Models\CombinedOrder;
+use App\Models\BusinessSetting;
+use App\Models\User;
+use App\Models\CustomerPackage;
+use App\Models\SellerPackage;
 use Session;
 use Redirect;
 
@@ -81,7 +81,7 @@ class IyzicoController extends Controller
                 $firstBasketItem->setName("Cart Payment");
                 $firstBasketItem->setCategory1("Accessories");
                 $firstBasketItem->setItemType(\Iyzipay\Model\BasketItemType::VIRTUAL);
-                $firstBasketItem->setPrice(round($order->grand_total));
+                $firstBasketItem->setPrice(round($combined_order->grand_total));
                 $basketItems[0] = $firstBasketItem;
 
                 $iyzicoRequest->setBasketItems($basketItems);
@@ -183,6 +183,9 @@ class IyzicoController extends Controller
             flash(translate('Opps! Something went wrong.'))->warning();
             return redirect()->route('cart');
         }
+    }
+
+    public function initPayment(Request $request){
     }
 
     public function callback(Request $request, $payment_type, $amount = null, $payment_method = null, $combined_order_id = null, $customer_package_id = null, $seller_package_id = null){

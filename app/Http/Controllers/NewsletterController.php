@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\User;
-use App\Subscriber;
+use App\Models\User;
+use App\Models\Subscriber;
 use Mail;
 use App\Mail\EmailManager;
 

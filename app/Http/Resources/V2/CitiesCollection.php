@@ -12,7 +12,7 @@ class CitiesCollection extends ResourceCollection
             'data' => $this->collection->map(function($data) {
                 return [
                     'id'      =>(int) $data->id,
-                    'country_id' => (int) $data->country_id,
+                    'state_id' => (int) $data->state_id,
                     'name' => $data->name,
                     'cost' => $data->cost,
                 ];

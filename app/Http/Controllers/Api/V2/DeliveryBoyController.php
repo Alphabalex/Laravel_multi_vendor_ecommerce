@@ -9,10 +9,10 @@ use Illuminate\Http\Request;
 use App\Http\Resources\V2\DeliveryBoyCollection;
 use App\Http\Resources\V2\DeliveryHistoryCollection;
 use Auth;
-use App\DeliveryBoy;
-use App\DeliveryHistory;
-use App\Order;
-use App\User;
+use App\Models\DeliveryBoy;
+use App\Models\DeliveryHistory;
+use App\Models\Order;
+use App\Models\User;
 use App\SmsTemplate;
 use App\Utility\SmsUtility;
 
@@ -367,8 +367,8 @@ class DeliveryBoyController extends Controller
         $order->save();
         $delivery_history->save();
 
-        if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null &&
-              \App\Addon::where('unique_identifier', 'otp_system')->first()->activated &&
+        if (\App\Models\Addon::where('unique_identifier', 'otp_system')->first() != null &&
+              \App\Models\Addon::where('unique_identifier', 'otp_system')->first()->activated &&
                 SmsTemplate::where('identifier','delivery_status_change')->first()->status == 1){
             try {
                 SmsUtility::delivery_status_change($order->user->phone, $order);
@@ -379,7 +379,7 @@ class DeliveryBoyController extends Controller
 
         return response()->json([
             'result' => true,
-            'message' => 'Delivery status changed to '.ucwords(str_replace('_',' ',$request->status))
+            'message' => translate('Delivery status changed to ').ucwords(str_replace('_',' ',$request->status))
         ]);
     }
 
@@ -393,7 +393,7 @@ class DeliveryBoyController extends Controller
 
         return response()->json([
             'result' => true,
-            'message' => 'Requested for cancellation'
+            'message' => translate('Requested for cancellation')
         ]);
     }
 }

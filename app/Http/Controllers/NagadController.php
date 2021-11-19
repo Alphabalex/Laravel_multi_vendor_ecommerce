@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use App\Utility\NagadUtility;
-use App\CombinedOrder;
-use App\BusinessSetting;
-use App\Seller;
-use App\CustomerPackage;
-use App\SellerPackage;
+use App\Models\CombinedOrder;
+use App\Models\BusinessSetting;
+use App\Models\Seller;
+use App\Models\CustomerPackage;
+use App\Models\SellerPackage;
 use Session;
 
 class NagadController{

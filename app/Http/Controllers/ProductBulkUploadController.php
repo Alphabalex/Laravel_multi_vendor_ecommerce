@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Product;
-use App\Category;
-use App\SubCategory;
-use App\SubSubCategory;
-use App\Brand;
-use App\User;
+use App\Models\Product;
+use App\Models\Category;
+use App\Models\SubCategory;
+use App\Models\SubSubCategory;
+use App\Models\Brand;
+use App\Models\User;
 use Auth;
-use App\ProductsImport;
-use App\ProductsExport;
+use App\Models\ProductsImport;
+use App\Models\ProductsExport;
 use PDF;
 use Excel;
 use Illuminate\Support\Str;
@@ -66,8 +66,8 @@ class ProductBulkUploadController extends Controller
             $import = new ProductsImport;
             Excel::import($import, request()->file('bulk_file'));
             
-            if(\App\Addon::where('unique_identifier', 'seller_subscription')->first() != null && 
-                    \App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated){
+            if(\App\Models\Addon::where('unique_identifier', 'seller_subscription')->first() != null && 
+                    \App\Models\Addon::where('unique_identifier', 'seller_subscription')->first()->activated){
                 $seller = Auth::user()->seller;
                 $seller->remaining_uploads -= $import->getRowCount();
                 $seller->save();

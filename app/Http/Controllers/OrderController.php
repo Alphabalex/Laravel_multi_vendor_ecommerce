@@ -6,20 +6,20 @@ use App\Http\Controllers\AffiliateController;
 use App\Http\Controllers\OTPVerificationController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ClubPointController;
-use App\Order;
-use App\Cart;
-use App\Address;
-use App\Product;
-use App\ProductStock;
-use App\CommissionHistory;
-use App\Color;
-use App\OrderDetail;
-use App\CouponUsage;
-use App\Coupon;
+use App\Models\Order;
+use App\Models\Cart;
+use App\Models\Address;
+use App\Models\Product;
+use App\Models\ProductStock;
+use App\Models\CommissionHistory;
+use App\Models\Color;
+use App\Models\OrderDetail;
+use App\Models\CouponUsage;
+use App\Models\Coupon;
 use App\OtpConfiguration;
-use App\User;
-use App\BusinessSetting;
-use App\CombinedOrder;
+use App\Models\User;
+use App\Models\BusinessSetting;
+use App\Models\CombinedOrder;
 use App\SmsTemplate;
 use Auth;
 use Session;
@@ -65,7 +65,7 @@ class OrderController extends Controller
         $orders = $orders->paginate(15);
 
         foreach ($orders as $key => $value) {
-            $order = \App\Order::find($value->id);
+            $order = \App\Models\Order::find($value->id);
             $order->viewed = 1;
             $order->save();
         }
@@ -302,23 +302,32 @@ class OrderController extends Controller
             return redirect()->route('home');
         }
 
-        $shipping_info = Address::where('id', $carts[0]['address_id'])->first();
-        $shipping_info->name = Auth::user()->name;
-        $shipping_info->email = Auth::user()->email;
-        if ($shipping_info->latitude || $shipping_info->longitude) {
-            $shipping_info->lat_lang = $shipping_info->latitude . ',' . $shipping_info->longitude;
+        $address = Address::where('id', $carts[0]['address_id'])->first();
+        $shippingAddress = [];
+        if ($address != null) {
+            $shippingAddress['name']        = Auth::user()->name;
+            $shippingAddress['email']       = Auth::user()->email;
+            $shippingAddress['address']     = $address->address;
+            $shippingAddress['country']     = $address->country->name;
+            $shippingAddress['state']       = $address->state->name;
+            $shippingAddress['city']        = $address->city->name;
+            $shippingAddress['postal_code'] = $address->postal_code;
+            $shippingAddress['phone']       = $address->phone;
+            if ($address->latitude || $address->longitude) {
+                $shippingAddress['lat_lang'] = $address->latitude . ',' . $address->longitude;
+            }
         }
 
         $combined_order = new CombinedOrder;
         $combined_order->user_id = Auth::user()->id;
-        $combined_order->shipping_address = json_encode($shipping_info);
+        $combined_order->shipping_address = json_encode($shippingAddress);
         $combined_order->save();
 
         $seller_products = array();
         foreach ($carts as $cartItem){
             $product_ids = array();
             $product = Product::find($cartItem['product_id']);
-            if(array_key_exists($product->user_id, $seller_products)){
+            if(isset($seller_products[$product->user_id])){
                 $product_ids = $seller_products[$product->user_id];
             }
             array_push($product_ids, $cartItem);
@@ -329,7 +338,7 @@ class OrderController extends Controller
             $order = new Order;
             $order->combined_order_id = $combined_order->id;
             $order->user_id = Auth::user()->id;
-            $order->shipping_address = json_encode($shipping_info);
+            $order->shipping_address = $combined_order->shipping_address;
 
             $order->payment_type = $request->payment_option;
             $order->delivery_viewed = '0';
@@ -384,10 +393,16 @@ class OrderController extends Controller
                 $order_detail->quantity = $cartItem['quantity'];
                 $order_detail->save();
 
-                $product->num_of_sale = $product->num_of_sale + $cartItem['quantity'];
+                $product->num_of_sale += $cartItem['quantity'];
                 $product->save();
 
                 $order->seller_id = $product->user_id;
+
+                if ($product->added_by == 'seller' && $product->user->seller != null){
+                    $seller = $product->user->seller;
+                    $seller->num_of_sale += $cartItem['quantity'];
+                    $seller->save();
+                }
 
                 if (addon_is_activated('affiliate_system')) {
                     if ($order_detail->product_referral_code) {
@@ -401,8 +416,6 @@ class OrderController extends Controller
 
             $order->grand_total = $subtotal + $tax + $shipping;
 
-            $combined_order->grand_total += $order->grand_total;
-
             if ($seller_product[0]->coupon_code != null) {
                 // if (Session::has('club_point')) {
                 //     $order->club_point = Session::get('club_point');
@@ -415,6 +428,8 @@ class OrderController extends Controller
                 $coupon_usage->coupon_id = Coupon::where('code', $seller_product[0]->coupon_code)->first()->id;
                 $coupon_usage->save();
             }
+
+            $combined_order->grand_total += $order->grand_total;
 
             $order->save();
         }
@@ -663,9 +678,6 @@ class OrderController extends Controller
 
         if ($order->payment_status == 'paid' && $order->commission_calculated == 0) {
             calculateCommissionAffilationClubPoint($order);
-
-            $order->commission_calculated = 1;
-            $order->save();
         }
 
         //sends Notifications to user
@@ -703,12 +715,12 @@ class OrderController extends Controller
             $order->delivery_history_date = date("Y-m-d H:i:s");
             $order->save();
 
-            $delivery_history = \App\DeliveryHistory::where('order_id', $order->id)
+            $delivery_history = \App\Models\DeliveryHistory::where('order_id', $order->id)
                 ->where('delivery_status', $order->delivery_status)
                 ->first();
 
             if (empty($delivery_history)) {
-                $delivery_history = new \App\DeliveryHistory;
+                $delivery_history = new \App\Models\DeliveryHistory;
 
                 $delivery_history->order_id = $order->id;
                 $delivery_history->delivery_status = $order->delivery_status;

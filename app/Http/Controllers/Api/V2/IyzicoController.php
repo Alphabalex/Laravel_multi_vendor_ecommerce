@@ -4,12 +4,12 @@
 namespace App\Http\Controllers\Api\V2;
 
 
-use App\BusinessSetting;
+use App\Models\BusinessSetting;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CustomerPackageController;
 use App\Http\Controllers\WalletController;
-use App\Order;
-use App\User;
+use App\Models\CombinedOrder;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Redirect;
 
@@ -19,7 +19,7 @@ class IyzicoController extends Controller
     public function init(Request $request)
     {
         $payment_type = $request->payment_type;
-        $order_id = $request->order_id;
+        $combined_order_id = $request->combined_order_id;
         $amount = $request->amount;
         $user_id = $request->user_id;
 
@@ -63,9 +63,9 @@ class IyzicoController extends Controller
 
 
         if ($payment_type == 'cart_payment') {
-            $order = Order::find($order_id);
-            $iyzicoRequest->setPrice(round($order->grand_total));
-            $iyzicoRequest->setPaidPrice(round($order->grand_total));
+            $combined_order = CombinedOrder::find($combined_order_id);
+            $iyzicoRequest->setPrice(round($combined_order->grand_total));
+            $iyzicoRequest->setPaidPrice(round($combined_order->grand_total));
             $iyzicoRequest->setCurrency(\Iyzipay\Model\Currency::TL);
             $iyzicoRequest->setBasketId(rand(000000, 999999));
             $iyzicoRequest->setPaymentGroup(\Iyzipay\Model\PaymentGroup::SUBSCRIPTION);
@@ -77,7 +77,7 @@ class IyzicoController extends Controller
             $firstBasketItem->setName("Cart Payment");
             $firstBasketItem->setCategory1("Accessories");
             $firstBasketItem->setItemType(\Iyzipay\Model\BasketItemType::VIRTUAL);
-            $firstBasketItem->setPrice(round($order->grand_total));
+            $firstBasketItem->setPrice(round($combined_order->grand_total));
             $basketItems[0] = $firstBasketItem;
 
             $iyzicoRequest->setBasketItems($basketItems);
@@ -129,9 +129,9 @@ class IyzicoController extends Controller
         $payment = $payWithIyzico->getRawResult();
 
         if ($payWithIyzico->getStatus() == 'success') {
-            return response()->json(['result' => true, 'message' => "Payment is successful", 'payment_details' => $payment]);
+            return response()->json(['result' => true, 'message' => translate("Payment is successful"), 'payment_details' => $payment]);
         } else {
-            return response()->json(['result' => false, 'message' => "Payment unsuccessful", 'payment_details' => $payment]);
+            return response()->json(['result' => false, 'message' => translate("Payment unsuccessful"), 'payment_details' => $payment]);
         }
     }
 
@@ -146,7 +146,7 @@ class IyzicoController extends Controller
 
             if ($payment_type == 'cart_payment') {
 
-                checkout_done($request->order_id, $request->payment_details);
+                checkout_done($request->combined_order_id, $request->payment_details);
             }
 
             if ($payment_type == 'wallet_payment') {
@@ -154,7 +154,7 @@ class IyzicoController extends Controller
                 wallet_payment_done($request->user_id, $request->amount, 'Paystack', $request->payment_details);
             }
 
-            return response()->json(['result' => true, 'message' => "Payment is successful"]);
+            return response()->json(['result' => true, 'message' => translate("Payment is successful")]);
 
 
         } catch (\Exception $e) {

@@ -23,6 +23,28 @@
                 <h5 class="mb-md-0 h6">{{ translate('All Auction Product') }}</h5>
             </div>
 
+            @if($type == 'seller')
+            <div class="col-md-2 ml-auto">
+                <select class="form-control form-control-sm aiz-selectpicker mb-2 mb-md-0" id="user_id" name="user_id" onchange="sort_products()">
+                    <option value="">{{ translate('All Sellers') }}</option>
+                    @foreach (App\Seller::all() as $key => $seller)
+                        @if ($seller->user != null && $seller->user->shop != null)
+                            <option value="{{ $seller->user->id }}" @if ($seller->user->id == $seller_id) selected @endif>{{ $seller->user->shop->name }} ({{ $seller->user->name }})</option>
+                        @endif
+                    @endforeach
+                </select>
+            </div>
+            @endif
+            @if($type == 'all')
+            <div class="col-md-2 ml-auto">
+                <select class="form-control form-control-sm aiz-selectpicker mb-2 mb-md-0" id="user_id" name="user_id" onchange="sort_products()">
+                    <option value="">{{ translate('All Sellers') }}</option>
+                        @foreach (App\User::where('user_type', '=', 'admin')->orWhere('user_type', '=', 'seller')->get() as $key => $seller)
+                            <option value="{{ $seller->id }}" @if ($seller->id == $seller_id) selected @endif>{{ $seller->name }}</option>
+                        @endforeach
+                </select>
+            </div>
+            @endif
             <div class="col-md-2">
                 <div class="form-group mb-0">
                     <input type="text" class="form-control form-control-sm" id="search" name="search"@isset($sort_search) value="{{ $sort_search }}" @endisset placeholder="{{ translate('Type & Enter') }}">
@@ -36,10 +58,16 @@
                     <tr>
                         <th>#</th>
                         <th>{{translate('Name')}}</th>
+                        @if($type == 'all' || $type == 'seller')
+                        <th data-breakpoints="sm">{{translate('Added By')}}</th>
+                        @endif
                         <th data-breakpoints="sm">{{translate('Bid Starting Amount')}}</th>
                         <th data-breakpoints="sm">{{translate('Auction Start Date')}}</th>
                         <th data-breakpoints="sm">{{translate('Auction End Date')}}</th>
                         <th data-breakpoints="sm">{{translate('Total Bids')}}</th>
+                        @if(get_setting('product_approve_by_admin') == 1 && $type == 'seller')
+                            <th data-breakpoints="lg">{{translate('Approved')}}</th>
+                        @endif
                         <th data-breakpoints="sm" class="text-right">{{translate('Options')}}</th>
                     </tr>
                 </thead>
@@ -57,13 +85,24 @@
                                 </div>
                             </div>
                         </td>
+                        @if($type == 'seller' || $type == 'all')
+                            <td>{{ $product->user->name }}</td>
+                        @endif
                         <td>{{ single_price($product->starting_bid) }}</td>
                         <td>{{ date('Y-m-d H:i:s', $product->auction_start_date) }}</td>
                         <td>{{ date('Y-m-d H:i:s', $product->auction_end_date) }}</td>
                         <td>{{ $product->bids->count() }}</td>
+                        @if(get_setting('product_approve_by_admin') == 1 && $type == 'seller')
+                            <td>
+                                <label class="aiz-switch aiz-switch-success mb-0">
+                                    <input onchange="update_approved(this)" value="{{ $product->id }}" type="checkbox" <?php if ($product->approved == 1) echo "checked"; ?> >
+                                    <span class="slider round"></span>
+                                </label>
+                            </td>
+                        @endif
                         <td class="text-right">
                             @if($product->auction_start_date > strtotime("now"))
-                                <a class="btn btn-soft-primary btn-icon btn-circle btn-sm" href="{{route('auction_products.admin.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')] )}}" title="{{ translate('Edit') }}">
+                                <a class="btn btn-soft-primary btn-icon btn-circle btn-sm" href="{{route('auction_products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')] )}}" title="{{ translate('Edit') }}">
                                     <i class="las la-edit"></i>
                                 </a>
                             @endif
@@ -100,5 +139,27 @@
         function sort_products(el){
             $('#sort_products').submit();
         }
+
+        function update_approved(el){
+            if(el.checked){
+                var approved = 1;
+            }
+            else{
+                var approved = 0;
+            }
+            $.post('{{ route('products.approved') }}', {
+                _token      :   '{{ csrf_token() }}', 
+                id          :   el.value, 
+                approved    :   approved
+            }, function(data){
+                if(data == 1){
+                    AIZ.plugins.notify('success', '{{ translate('Product approval update successfully') }}');
+                }
+                else{
+                    AIZ.plugins.notify('danger', '{{ translate('Something went wrong') }}');
+                }
+            });
+        }
+        
     </script>
 @endsection

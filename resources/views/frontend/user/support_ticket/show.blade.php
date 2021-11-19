@@ -66,7 +66,7 @@
                                 @php echo $ticketreply->reply; @endphp
                                 <br>
                                 @foreach ((explode(",",$ticketreply->files)) as $key => $file)
-                                    @php $file_detail = \App\Upload::where('id', $file)->first(); @endphp
+                                    @php $file_detail = \App\Models\Upload::where('id', $file)->first(); @endphp
                                     @if($file_detail != null)
                                         <a href="{{ uploaded_asset($file) }}" download="" class="badge badge-lg badge-inline badge-light mb-1">
                                             <i class="las la-download text-muted">{{ $file_detail->file_original_name.'.'.$file_detail->extension }}</i>
@@ -101,7 +101,7 @@
                             @php echo $ticket->details; @endphp
                             <br>
                             @foreach ((explode(",",$ticket->files)) as $key => $file)
-                                @php $file_detail = \App\Upload::where('id', $file)->first(); @endphp
+                                @php $file_detail = \App\Models\Upload::where('id', $file)->first(); @endphp
                                 @if($file_detail != null)
                                     <a href="{{ uploaded_asset($file) }}" download="" class="badge badge-lg badge-inline badge-light mb-1">
                                         <i class="las la-download text-muted">{{ $file_detail->file_original_name.'.'.$file_detail->extension }}</i>

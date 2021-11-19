@@ -267,17 +267,21 @@
                             <hr class="mt-2">
 
                             @php
-                                $refund_request_addon = \App\Addon::where('unique_identifier', 'refund_request')->first();
-                                $refund_sticker = \App\BusinessSetting::where('type', 'refund_sticker')->first();
+                                $refund_sticker = get_setting('refund_sticker');
                             @endphp
-                            @if ($refund_request_addon != null && $refund_request_addon->activated == 1)
+                            @if (addon_is_activated('refund_request'))
                                 <div class="row no-gutters mt-3">
                                     <div class="col-2">
                                         <div class="opacity-50 mt-2">{{ translate('Refund')}}:</div>
                                     </div>
                                     <div class="col-10">
-                                        <a href="{{ route('returnpolicy') }}" target="_blank"> @if ($refund_sticker != null && $refund_sticker->value != null) <img src="{{ uploaded_asset($refund_sticker->value) }}" height="36"> @else <img src="{{ static_asset('assets/img/refund-sticker.jpg') }}" height="36"> @endif</a>
-                                        <a href="{{ route('returnpolicy') }}" class="ml-2" target="_blank">View Policy</a>
+                                        <a href="{{ route('returnpolicy') }}" target="_blank"> 
+                                            @if ($refund_sticker != null) 
+                                                <img src="{{ uploaded_asset($refund_sticker) }}" height="36"> 
+                                            @else 
+                                                <img src="{{ static_asset('assets/img/refund-sticker.jpg') }}" height="36"> 
+                                            @endif</a>
+                                        <a href="{{ route('returnpolicy') }}" class="ml-2" target="_blank">{{ translate('View Policy') }}</a>
                                     </div>
                                 </div>
                             @endif
@@ -315,93 +319,79 @@
         <div class="container">
             <div class="row">
                 <div class="col-xl-3">
-                    <div class="bg-white shadow-sm mb-3">
-                        <div class="position-relative p-3 text-left">
-                            @if ($detailedProduct->added_by == 'seller' && get_setting('vendor_system_activation') == 1 && $detailedProduct->user->seller->verification_status == 1)
-                                <div class="absolute-top-right p-2 bg-white z-1">
-                                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" viewBox="0 0 287.5 442.2" width="22" height="34">
-                                        <polygon style="fill:#F8B517;" points="223.4,442.2 143.8,376.7 64.1,442.2 64.1,215.3 223.4,215.3 "/>
-                                        <circle style="fill:#FBD303;" cx="143.8" cy="143.8" r="143.8"/>
-                                        <circle style="fill:#F8B517;" cx="143.8" cy="143.8" r="93.6"/>
-                                        <polygon style="fill:#FCFCFD;" points="143.8,55.9 163.4,116.6 227.5,116.6 175.6,154.3 195.6,215.3 143.8,177.7 91.9,215.3 111.9,154.3
-                                        60,116.6 124.1,116.6 "/>
-                                    </svg>
-                                </div>
-                            @endif
-                            <div class="opacity-50 fs-12 border-bottom">{{ translate('Sold By')}}</div>
-                            @if($detailedProduct->added_by == 'seller' && get_setting('vendor_system_activation') == 1)
-                                <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="text-reset d-block fw-600">{{ $detailedProduct->user->shop->name }}
-                                @if ($detailedProduct->user->seller->verification_status == 1)
-                                    <span class="ml-2"><i class="fa fa-check-circle" style="color:green"></i></span>
-                                @else
-                                    <span class="ml-2"><i class="fa fa-times-circle" style="color:red"></i></span>
+                    @if ($detailedProduct->added_by == 'seller' && $detailedProduct->user->seller != null)
+                        <div class="bg-white shadow-sm mb-3">
+                            <div class="position-relative p-3 text-left">
+                                @if ($detailedProduct->user->seller->verification_status)
+                                    <div class="absolute-top-right p-2 bg-white z-1">
+                                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" viewBox="0 0 287.5 442.2" width="22" height="34">
+                                            <polygon style="fill:#F8B517;" points="223.4,442.2 143.8,376.7 64.1,442.2 64.1,215.3 223.4,215.3 "/>
+                                            <circle style="fill:#FBD303;" cx="143.8" cy="143.8" r="143.8"/>
+                                            <circle style="fill:#F8B517;" cx="143.8" cy="143.8" r="93.6"/>
+                                            <polygon style="fill:#FCFCFD;" points="143.8,55.9 163.4,116.6 227.5,116.6 175.6,154.3 195.6,215.3 143.8,177.7 91.9,215.3 111.9,154.3
+                                            60,116.6 124.1,116.6 "/>
+                                        </svg>
+                                    </div>
                                 @endif
+                                <div class="opacity-50 fs-12 border-bottom">{{ translate('Sold by')}}</div>
+                                <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="text-reset d-block fw-600">
+                                    {{ $detailedProduct->user->shop->name }}
+                                    @if ($detailedProduct->user->seller->verification_status == 1)
+                                        <span class="ml-2"><i class="fa fa-check-circle" style="color:green"></i></span>
+                                    @else
+                                        <span class="ml-2"><i class="fa fa-times-circle" style="color:red"></i></span>
+                                    @endif
                                 </a>
                                 <div class="location opacity-70">{{ $detailedProduct->user->shop->address }}</div>
-                            @else
-                                <div class="fw-600">{{ env('APP_NAME') }}</div>
-                            @endif
-                            @php
-                                $total = 0;
-                                $rating = 0;
-                                foreach ($detailedProduct->user->products as $key => $seller_product) {
-                                    $total += $seller_product->reviews->count();
-                                    $rating += $seller_product->reviews->sum('rating');
-                                }
-                            @endphp
-
-                            <div class="text-center border rounded p-2 mt-3">
-                                <div class="rating">
-                                    @if ($total > 0)
-                                        {{ renderStarRating($rating/$total) }}
-                                    @else
-                                        {{ renderStarRating(0) }}
-                                    @endif
+                                <div class="text-center border rounded p-2 mt-3">
+                                    <div class="rating">
+                                        @if ($total > 0)
+                                            {{ renderStarRating($detailedProduct->user->seller->rating) }}
+                                        @else
+                                            {{ renderStarRating(0) }}
+                                        @endif
+                                    </div>
+                                    <div class="opacity-60 fs-12">({{ $total }} {{ translate('customer reviews')}})</div>
                                 </div>
-                                <span class="opacity-60 fs-12">({{ $total }} {{ translate('customer reviews')}})</span>
+                            </div>
+                            <div class="row no-gutters align-items-center border-top">
+                                <div class="col">
+                                    <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="d-block btn btn-soft-primary rounded-0">{{ translate('Visit Store')}}</a>
+                                </div>
+                                <div class="col">
+                                    <ul class="social list-inline mb-0">
+                                        <li class="list-inline-item mr-0">
+                                            <a href="{{ $detailedProduct->user->shop->facebook }}" class="facebook" target="_blank">
+                                                <i class="lab la-facebook-f opacity-60"></i>
+                                            </a>
+                                        </li>
+                                        <li class="list-inline-item mr-0">
+                                            <a href="{{ $detailedProduct->user->shop->google }}" class="google" target="_blank">
+                                                <i class="lab la-google opacity-60"></i>
+                                            </a>
+                                        </li>
+                                        <li class="list-inline-item mr-0">
+                                            <a href="{{ $detailedProduct->user->shop->twitter }}" class="twitter" target="_blank">
+                                                <i class="lab la-twitter opacity-60"></i>
+                                            </a>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            <a href="{{ $detailedProduct->user->shop->youtube }}" class="youtube" target="_blank">
+                                                <i class="lab la-youtube opacity-60"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
-                        <div class="row no-gutters align-items-center">
-                            @if($detailedProduct->added_by == 'seller')
-                                <div class="row no-gutters align-items-center border-top">
-                                    <div class="col">
-                                        <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="d-block btn btn-soft-primary rounded-0">{{ translate('Visit Store')}}</a>
-                                    </div>
-                                    <div class="col">
-                                        <ul class="social list-inline mb-0">
-                                            <li class="list-inline-item mr-0">
-                                                <a href="{{ $detailedProduct->user->shop->facebook }}" class="facebook" target="_blank">
-                                                    <i class="lab la-facebook-f opacity-60"></i>
-                                                </a>
-                                            </li>
-                                            <li class="list-inline-item mr-0">
-                                                <a href="{{ $detailedProduct->user->shop->google }}" class="google" target="_blank">
-                                                    <i class="lab la-google opacity-60"></i>
-                                                </a>
-                                            </li>
-                                            <li class="list-inline-item mr-0">
-                                                <a href="{{ $detailedProduct->user->shop->twitter }}" class="twitter" target="_blank">
-                                                    <i class="lab la-twitter opacity-60"></i>
-                                                </a>
-                                            </li>
-                                            <li class="list-inline-item">
-                                                <a href="{{ $detailedProduct->user->shop->youtube }}" class="youtube" target="_blank">
-                                                    <i class="lab la-youtube opacity-60"></i>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
+                    @endif
                     <div class="bg-white rounded shadow-sm mb-3">
                         <div class="p-3 border-bottom fs-16 fw-600">
                             {{ translate('Top Selling Products')}}
                         </div>
                         <div class="p-3">
                             <ul class="list-group list-group-flush">
-                                @foreach (filter_products(\App\Product::where('user_id', $detailedProduct->user_id)->orderBy('num_of_sale', 'desc'))->limit(6)->get() as $key => $top_product)
+                                @foreach (filter_products(\App\Models\Product::where('user_id', $detailedProduct->user_id)->orderBy('num_of_sale', 'desc'))->limit(6)->get() as $key => $top_product)
                                 <li class="py-3 px-0 list-group-item border-light">
                                     <div class="row gutters-10 align-items-center">
                                         <div class="col-5">
@@ -526,7 +516,7 @@
                                             $commentable = false;
                                         @endphp
                                         @foreach ($detailedProduct->orderDetails as $key => $orderDetail)
-                                            @if($orderDetail->order != null && $orderDetail->order->user_id == Auth::user()->id && $orderDetail->delivery_status == 'delivered' && \App\Review::where('user_id', Auth::user()->id)->where('product_id', $detailedProduct->id)->first() == null)
+                                            @if($orderDetail->order != null && $orderDetail->order->user_id == Auth::user()->id && $orderDetail->delivery_status == 'delivered' && \App\Models\Review::where('user_id', Auth::user()->id)->where('product_id', $detailedProduct->id)->first() == null)
                                                 @php
                                                     $commentable = true;
                                                 @endphp
@@ -608,7 +598,7 @@
                         </div>
                         <div class="p-3">
                             <div class="aiz-carousel gutters-5 half-outside-arrow" data-items="5" data-xl-items="3" data-lg-items="4"  data-md-items="3" data-sm-items="2" data-xs-items="2" data-arrows='true' data-infinite='true'>
-                                @foreach (filter_products(\App\Product::where('category_id', $detailedProduct->category_id)->where('id', '!=', $detailedProduct->id))->limit(10)->get() as $key => $related_product)
+                                @foreach (filter_products(\App\Models\Product::where('category_id', $detailedProduct->category_id)->where('id', '!=', $detailedProduct->id))->limit(10)->get() as $key => $related_product)
                                 <div class="carousel-box">
                                     <div class="aiz-card-box border border-light rounded hov-shadow-md my-2 has-transition">
                                         <div class="">

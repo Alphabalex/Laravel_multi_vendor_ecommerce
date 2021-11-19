@@ -11,26 +11,37 @@
     <div class="row">
         <div class="col-md-7">
             <div class="card">
-                <div class="card-header row gutters-5">
-                    <div class="col text-center text-md-left">
-                        <h5 class="mb-md-0 h6">{{ translate('Cities') }}</h5>
+                <form class="" id="sort_cities" action="" method="GET">
+                    <div class="card-header row gutters-5">
+                        <div class="col text-center text-md-left">
+                            <h5 class="mb-md-0 h6">{{ translate('Cities') }}</h5>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="sort_city" name="sort_city" @isset($sort_city) value="{{ $sort_city }}" @endisset placeholder="{{ translate('Type city name & Enter') }}">
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-control aiz-selectpicker" data-live-search="true" id="sort_state" name="sort_state">
+                                <option value="">{{ translate('Select State') }}</option>
+                                @foreach ($states as $state)
+                                    <option value="{{ $state->id }}" @if ($sort_state == $state->id) selected @endif {{$sort_state}}>
+                                        {{ $state->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-1">
+                            <button class="btn btn-primary" type="submit">{{ translate('Filter') }}</button>
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <form class="" id="sort_cities" action="" method="GET">
-                            <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" id="search" name="search"@isset($sort_search) value="{{ $sort_search }}" @endisset placeholder="{{ translate('Type name & Enter') }}">
-                            </div>
-                        </form>
-                    </div>
-                </div>
+                </form>
                 <div class="card-body">
                     <table class="table aiz-table mb-0">
                         <thead>
                             <tr>
                                 <th data-breakpoints="lg">#</th>
                                 <th>{{translate('Name')}}</th>
-                                <th>{{translate('Country')}}</th>
-                                <th data-breakpoints="lg">{{translate('Cost')}}</th>
+                                <th>{{translate('State')}}</th>
+                                <th>{{translate('Show/Hide')}}</th>
                                 <th data-breakpoints="lg" class="text-right">{{translate('Options')}}</th>
                             </tr>
                         </thead>
@@ -39,8 +50,13 @@
                                 <tr>
                                     <td>{{ ($key+1) + ($cities->currentPage() - 1)*$cities->perPage() }}</td>
                                     <td>{{ $city->name }}</td>
-                                    <td>{{ $city->country->name }}</td>
-                                    <td>{{ $city->cost }}</td>
+                                    <td>{{ $city->state->name }}</td>
+                                    <td>
+                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                          <input onchange="update_status(this)" value="{{ $city->id }}" type="checkbox" <?php if($city->status == 1) echo "checked";?> >
+                                          <span class="slider round"></span>
+                                        </label>
+                                      </td>
                                     <td class="text-right">
                                         <a class="btn btn-soft-primary btn-icon btn-circle btn-sm" href="{{ route('cities.edit', ['id'=>$city->id, 'lang'=>env('DEFAULT_LANGUAGE')]) }}" title="{{ translate('Edit') }}">
                                             <i class="las la-edit"></i>
@@ -59,7 +75,6 @@
                 </div>
             </div>
         </div>
-
         <div class="col-md-5">
     		<div class="card">
     			<div class="card-header">
@@ -74,10 +89,10 @@
     					</div>
 
                         <div class="form-group">
-                            <label for="country">{{translate('Country')}}</label>
-                            <select class="select2 form-control aiz-selectpicker" name="country_id" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true">
-                                @foreach ($countries as $country)
-                                    <option value="{{ $country->id }}">{{ $country->name }}</option>
+                            <label for="country">{{translate('State')}}</label>
+                            <select class="select2 form-control aiz-selectpicker" name="state_id" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true">
+                                @foreach ($states as $state)
+                                    <option value="{{ $state->id }}">{{ $state->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -86,8 +101,6 @@
     						<label for="name">{{translate('Cost')}}</label>
     						<input type="number" min="0" step="0.01" placeholder="{{translate('Cost')}}" name="cost" class="form-control" required>
     					</div>
-
-
     					<div class="form-group mb-3 text-right">
     						<button type="submit" class="btn btn-primary">{{translate('Save')}}</button>
     					</div>
@@ -102,8 +115,12 @@
     @include('modals.delete_modal')
 @endsection
 
+
 @section('script')
     <script type="text/javascript">
+        function sort_cities(el){
+            $('#sort_cities').submit();
+        }
 
         function update_status(el){
             if(el.checked){
@@ -112,6 +129,14 @@
             else{
                 var status = 0;
             }
+            $.post('{{ route('cities.status') }}', {_token:'{{ csrf_token() }}', id:el.value, status:status}, function(data){
+                if(data == 1){
+                    AIZ.plugins.notify('success', '{{ translate('Country status updated successfully') }}');
+                }
+                else{
+                    AIZ.plugins.notify('danger', '{{ translate('Something went wrong') }}');
+                }
+            });
         }
 
     </script>

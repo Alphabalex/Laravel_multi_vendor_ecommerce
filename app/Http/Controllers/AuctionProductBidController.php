@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-Use App\AuctionProductBid;
-Use App\Product;
+use App\AuctionProductBid;
+use App\Product;
 use Auth;
+use Mail;
 use DB;
+use App\Mail\AuctionBidMailManager;
+
 
 class AuctionProductBidController extends Controller
 {
@@ -20,7 +23,7 @@ class AuctionProductBidController extends Controller
         $bids = DB::table('auction_product_bids')
             ->orderBy('id', 'desc')
             ->join('products', 'auction_product_bids.product_id', '=', 'products.id')
-            ->where('auction_product_bids.user_id',Auth::user()->id)
+            ->where('auction_product_bids.user_id', Auth::user()->id)
             ->select('auction_product_bids.id')
             ->distinct()
             ->paginate(10);
@@ -45,17 +48,33 @@ class AuctionProductBidController extends Controller
      */
     public function store(Request $request)
     {
-        $bid = AuctionProductBid::where('product_id',$request->product_id)->where('user_id',Auth::user()->id)->first();
-        if($bid == null){
+        $bid = AuctionProductBid::where('product_id', $request->product_id)->where('user_id', Auth::user()->id)->first();
+        if ($bid == null) {
             $bid =  new AuctionProductBid;
             $bid->user_id = Auth::user()->id;
         }
         $bid->product_id = $request->product_id;
         $bid->amount = $request->amount;
-        if($bid->save()){
+        if ($bid->save()) {
+            $secound_max_bid = AuctionProductBid::where('product_id', $request->product_id)->orderBy('amount','desc')->skip(1)->first();
+            if($secound_max_bid != null){
+                if($secound_max_bid->user->email != null){
+                    $product = Product::where('id',$request->product_id)->first();
+                    $array['view'] = 'emails.auction_bid';
+                    $array['subject'] = translate('Auction Bid');
+                    $array['from'] = env('MAIL_FROM_ADDRESS');
+                    $array['content'] = 'Hi! A new user bidded more then you for the product, '.$product->name.'. '.'Highest bid amount: '.$bid->amount;
+                    $array['link'] = route('auction-product', $product->slug);
+                    try {
+                        Mail::to($secound_max_bid->user->email)->queue(new AuctionBidMailManager($array));
+                    } catch (\Exception $e) {
+                        //dd($e->getMessage());
+                    }
+                }
+            }
+
             flash(translate('Bid Placed Successfully'))->success();
-        }
-        else{
+        } else {
             flash(translate('Something went wrong!'))->error();
         }
         return back();
@@ -69,9 +88,14 @@ class AuctionProductBidController extends Controller
      */
     public function show($id)
     {
-        $product = Product::where('id',$id)->first();
+        $product = Product::where('id', $id)->first();
         $bids = AuctionProductBid::latest()->where('product_id', $id)->paginate(15);
-        return view('auction.auction_products.bids', compact('bids','product'));
+
+        if (Auth::user()->user_type == 'admin' || Auth::user()->user_type == 'staff') {
+            return view('auction.auction_products.bids', compact('bids', 'product'));
+        } elseif (Auth::user()->user_type == 'seller') {
+            return view('auction.frontend.seller.auction_products_bids', compact('bids', 'product'));
+        }
     }
 
     /**

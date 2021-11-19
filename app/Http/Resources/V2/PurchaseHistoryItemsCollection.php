@@ -11,7 +11,7 @@ class PurchaseHistoryItemsCollection extends ResourceCollection
         return [
             'data' => $this->collection->map(function ($data) {
 
-                $refund_request_addon = \App\Addon::where('unique_identifier', 'refund_request')->first();
+                $refund_request_addon = \App\Models\Addon::where('unique_identifier', 'refund_request')->first();
 
                 $refund_section = false;
                 $refund_button = false;

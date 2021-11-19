@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Seller;
-use App\User;
-use App\Shop;
-use App\Product;
-use App\Order;
-use App\OrderDetail;
+use App\Models\Seller;
+use App\Models\User;
+use App\Models\Shop;
+use App\Models\Product;
+use App\Models\Order;
+use App\Models\OrderDetail;
 use Illuminate\Support\Facades\Hash;
 use App\Notifications\EmailVerificationNotification;
 use Cache;
@@ -164,11 +164,12 @@ class SellerController extends Controller
         Product::where('user_id', $seller->user_id)->delete();
 
         $orders = Order::where('user_id', $seller->user_id)->get();
-        Order::where('user_id', $seller->user_id)->delete();
 
         foreach ($orders as $key => $order) {
             OrderDetail::where('order_id', $order->id)->delete();
         }
+
+        Order::where('user_id', $seller->user_id)->delete();
 
         User::destroy($seller->user->id);
 

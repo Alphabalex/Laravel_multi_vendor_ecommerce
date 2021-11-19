@@ -5,20 +5,19 @@ namespace App\Http\Controllers;
 use App\Utility\PayfastUtility;
 use Illuminate\Http\Request;
 use Auth;
-use App\Category;
-use App\Cart;
+use App\Models\Category;
+use App\Models\Cart;
 use App\Http\Controllers\PaypalController;
 use App\Http\Controllers\InstamojoController;
 use App\Http\Controllers\StripePaymentController;
 use App\Http\Controllers\PublicSslCommerzPaymentController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaytmController;
-use App\Order;
-use App\Coupon;
-use App\CouponUsage;
-use App\Address;
-use App\CombinedOrder;
-use App\CommissionHistory;
+use App\Models\Order;
+use App\Models\Coupon;
+use App\Models\CouponUsage;
+use App\Models\Address;
+use App\Models\CombinedOrder;
 use Session;
 use App\Utility\PayhereUtility;
 use App\Utility\NotificationUtility;
@@ -35,8 +34,7 @@ class CheckoutController extends Controller
     public function checkout(Request $request)
     {
         if ($request->payment_option != null) {
-            $orderController = new OrderController;
-            $orderController->store($request);
+            (new OrderController)->store($request);
 
             $request->session()->put('payment_type', 'cart_payment');
 
@@ -57,20 +55,39 @@ class CheckoutController extends Controller
                     $razorpay = new RazorpayController;
                     return $razorpay->payWithRazorpay($request);
                 } elseif ($request->payment_option == 'proxypay') {
-                    $proxy = new ProxypayController;
-                    return $proxy->create_reference($request);
+                    //$proxy = new ProxypayController;
+                    //return $proxy->create_reference($request);
+                } elseif ($request->payment_option == 'voguepay') {
+                    $voguePay = new VoguePayController;
+                    return $voguePay->customer_showForm();
+                } elseif ($request->payment_option == 'ngenius') {
+                    $ngenius = new NgeniusController();
+                    return $ngenius->pay();
+                } elseif ($request->payment_option == 'iyzico') {
+                    $iyzico = new IyzicoController();
+                    return $iyzico->pay();
+                } elseif ($request->payment_option == 'nagad') {
+                    $nagad = new NagadController;
+                    return $nagad->getSession();
+                } elseif ($request->payment_option == 'bkash') {
+                    $bkash = new BkashController;
+                    return $bkash->pay();
+                } elseif ($request->payment_option == 'aamarpay') {
+                    $aamarpay = new AamarpayController;
+                    return $aamarpay->index();
+                } elseif ($request->payment_option == 'flutterwave') {
+                    $flutterwave = new FlutterwaveController();
+                    return $flutterwave->pay();
+                } elseif ($request->payment_option == 'mpesa') {
+                    $mpesa = new MpesaController();
+                    return $mpesa->pay();
                 } elseif ($request->payment_option == 'paystack') {
-                    if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null &&
-                        \App\Addon::where('unique_identifier', 'otp_system')->first()->activated &&
-                        !Auth::user()->email) {
+                    if (addon_is_activated('otp_system') && !Auth::user()->email) {
                         flash(translate('Your email should be verified before order'))->warning();
                         return redirect()->route('cart')->send();
                     }
                     $paystack = new PaystackController;
                     return $paystack->redirectToGateway($request);
-                } elseif ($request->payment_option == 'voguepay') {
-                    $voguePay = new VoguePayController;
-                    return $voguePay->customer_showForm();
                 } elseif ($request->payment_option == 'payhere') {
                     $combined_order = CombinedOrder::findOrFail($request->session()->get('combined_order_id'));
 
@@ -91,27 +108,6 @@ class CheckoutController extends Controller
                     $amount = $combined_order->grand_total;
 
                     return PayfastUtility::create_checkout_form($combined_order_id, $amount);
-                } else if ($request->payment_option == 'ngenius') {
-                    $ngenius = new NgeniusController();
-                    return $ngenius->pay();
-                } else if ($request->payment_option == 'iyzico') {
-                    $iyzico = new IyzicoController();
-                    return $iyzico->pay();
-                } else if ($request->payment_option == 'nagad') {
-                    $nagad = new NagadController;
-                    return $nagad->getSession();
-                } else if ($request->payment_option == 'bkash') {
-                    $bkash = new BkashController;
-                    return $bkash->pay();
-                } else if ($request->payment_option == 'aamarpay') {
-                    $aamarpay = new AamarpayController;
-                    return $aamarpay->index();
-                } else if ($request->payment_option == 'flutterwave') {
-                    $flutterwave = new FlutterwaveController();
-                    return $flutterwave->pay();
-                } else if ($request->payment_option == 'mpesa') {
-                    $mpesa = new MpesaController();
-                    return $mpesa->pay();
                 } elseif ($request->payment_option == 'paytm') {
                     if (Auth::user()->phone == null) {
                         flash('Please add phone number to your profile')->warning();
@@ -120,6 +116,9 @@ class CheckoutController extends Controller
 
                     $paytm = new PaytmController;
                     return $paytm->index();
+                } else if ($request->payment_option == 'authorizenet') {
+                    $authorize_net = new AuthorizeNetController();
+                    return $authorize_net->pay();
                 } elseif ($request->payment_option == 'cash_on_delivery') {
                     flash(translate("Your order has been placed successfully"))->success();
                     return redirect()->route('order_confirmed');
@@ -158,74 +157,7 @@ class CheckoutController extends Controller
             $order->payment_details = $payment;
             $order->save();
 
-            if (addon_is_activated('affiliate_system')) {
-                $affiliateController = new AffiliateController;
-                $affiliateController->processAffiliatePoints($order);
-            }
-
-            if (addon_is_activated('club_point')) {
-                if (Auth::check()) {
-                    $clubpointController = new ClubPointController;
-                    $clubpointController->processClubPoints($order);
-                }
-            }
-
-            $vendor_commission_activation = true;
-            if(addon_is_activated('seller_subscription')
-                && !get_setting('vendor_commission_activation')){
-                    $vendor_commission_activation = false;
-            }
-
-            if($vendor_commission_activation){
-                foreach ($order->orderDetails as $key => $orderDetail) {
-                    $orderDetail->payment_status = 'paid';
-                    $orderDetail->save();
-                    $commission_percentage = 0;
-
-                    if (get_setting('category_wise_commission') != 1) {
-                        $commission_percentage = get_setting('vendor_commission');
-                    } else if ($orderDetail->product->user->user_type == 'seller') {
-                        $commission_percentage = $orderDetail->product->category->commision_rate;
-                    }
-
-                    if ($orderDetail->product->user->user_type == 'seller') {
-                        $seller = $orderDetail->product->user->seller;
-                        $admin_commission = ($orderDetail->price * $commission_percentage)/100;
-
-                        if (get_setting('product_manage_by_admin') == 1) {
-                            $seller_earning = ($orderDetail->tax + $orderDetail->price) - $admin_commission;
-                            $seller->admin_to_pay += $seller_earning;
-                        } else {
-                            $seller_earning = ($orderDetail->tax + $orderDetail->shipping_cost + $orderDetail->price) - $admin_commission;
-                            $seller->admin_to_pay += $seller_earning;
-                        }
-                        $seller->save();
-
-                        $commission_history = new CommissionHistory;
-                        $commission_history->order_id = $order->id;
-                        $commission_history->order_detail_id = $orderDetail->id;
-                        $commission_history->seller_id = $orderDetail->seller_id;
-                        $commission_history->admin_commission = $admin_commission;
-                        $commission_history->seller_earning = $seller_earning;
-
-                        $commission_history->save();
-                    }
-                }
-            }
-            else{
-                foreach ($order->orderDetails as $key => $orderDetail) {
-                    $orderDetail->payment_status = 'paid';
-                    $orderDetail->save();
-                    if ($orderDetail->product->user->user_type == 'seller') {
-                        $seller = $orderDetail->product->user->seller;
-                        $seller->admin_to_pay = $seller->admin_to_pay + $orderDetail->price + $orderDetail->tax + $orderDetail->shipping_cost;
-                        $seller->save();
-                    }
-                }
-            }
-
-            $order->commission_calculated = 1;
-            $order->save();
+            calculateCommissionAffilationClubPoint($order);
         }
 
         Session::put('combined_order_id', $combined_order_id);
@@ -280,7 +212,7 @@ class CheckoutController extends Controller
 
         if ($carts && count($carts) > 0) {
             foreach ($carts as $key => $cartItem) {
-                $product = \App\Product::find($cartItem['product_id']);
+                $product = \App\Models\Product::find($cartItem['product_id']);
                 $tax += $cartItem['tax'] * $cartItem['quantity'];
                 $subtotal += $cartItem['price'] * $cartItem['quantity'];
 
@@ -312,10 +244,6 @@ class CheckoutController extends Controller
 
                         $cartItem['shipping_cost'] = 0;
                     }
-                }
-
-                if($product->is_quantity_multiplied == 1 && get_setting('shipping_type') == 'product_wise_shipping') {
-                    $cartItem['shipping_cost'] =  $cartItem['shipping_cost'] * $cartItem['quantity'];
                 }
 
                 $shipping += $cartItem['shipping_cost'];
@@ -465,7 +393,7 @@ class CheckoutController extends Controller
 
         //Session::forget('club_point');
         //Session::forget('combined_order_id');
-
+        
         foreach($combined_order->orders as $order){
             NotificationUtility::sendOrderPlacedNotification($order);
         }

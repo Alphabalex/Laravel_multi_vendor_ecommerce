@@ -47,7 +47,7 @@
                             <select class="form-control aiz-selectpicker" name="brand_id" id="brand_id"
                                 data-live-search="true">
                                 <option value="">{{ translate('Select Brand') }}</option>
-                                @foreach (\App\Brand::all() as $brand)
+                                @foreach (\App\Models\Brand::all() as $brand)
                                 <option value="{{ $brand->id }}">{{ $brand->getTranslation('name') }}</option>
                                 @endforeach
                             </select>
@@ -74,11 +74,7 @@
                                 placeholder="{{ translate('Type and hit enter to add a tag') }}">
                         </div>
                     </div>
-
-                    @php
-                    $pos_addon = \App\Addon::where('unique_identifier', 'pos_system')->first();
-                    @endphp
-                    @if ($pos_addon != null && $pos_addon->activated == 1)
+                    @if (addon_is_activated('pos_system'))
                     <div class="form-group row">
                         <label class="col-md-3 col-from-label">{{translate('Barcode')}}</label>
                         <div class="col-md-8">
@@ -87,11 +83,7 @@
                         </div>
                     </div>
                     @endif
-
-                    @php
-                    $refund_request_addon = \App\Addon::where('unique_identifier', 'refund_request')->first();
-                    @endphp
-                    @if ($refund_request_addon != null && $refund_request_addon->activated == 1)
+                    @if (addon_is_activated('refund_request'))
                     <div class="form-group row">
                         <label class="col-md-3 col-from-label">{{translate('Refundable')}}</label>
                         <div class="col-md-8">
@@ -179,7 +171,7 @@
                         <div class="col-md-8">
                             <select class="form-control aiz-selectpicker" data-live-search="true" name="colors[]"
                                 data-selected-text-format="count" id="colors" multiple disabled>
-                                @foreach (\App\Color::orderBy('name', 'asc')->get() as $key => $color)
+                                @foreach (\App\Models\Color::orderBy('name', 'asc')->get() as $key => $color)
                                 <option value="{{ $color->code }}"
                                     data-content="<span><span class='size-15px d-inline-block mr-2 rounded border' style='background:{{ $color->code }}'></span><span>{{ $color->name }}</span></span>">
                                 </option>
@@ -203,7 +195,7 @@
                                 class="form-control aiz-selectpicker" data-live-search="true"
                                 data-selected-text-format="count" multiple
                                 data-placeholder="{{ translate('Choose Attributes') }}">
-                                @foreach (\App\Attribute::all() as $key => $attribute)
+                                @foreach (\App\Models\Attribute::all() as $key => $attribute)
                                 <option value="{{ $attribute->id }}">{{ $attribute->getTranslation('name') }}</option>
                                 @endforeach
                             </select>
@@ -271,6 +263,15 @@
                             <div class="col-md-6">
                                 <input type="text" placeholder="{{ translate('SKU') }}" name="sku" class="form-control">
                             </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-3 col-from-label">
+                            {{translate('External link')}}
+                        </label>
+                        <div class="col-md-9">
+                            <input type="text" placeholder="{{ translate('External link') }}" name="external_link" class="form-control">
+                            <small class="text-muted">{{translate('Leave it blank if you do not use external site link')}}</small>
                         </div>
                     </div>
                     <br>
@@ -506,7 +507,7 @@
                     <h5 class="mb-0 h6">{{translate('VAT & Tax')}}</h5>
                 </div>
                 <div class="card-body">
-                    @foreach(\App\Tax::where('tax_status', 1)->get() as $tax)
+                    @foreach(\App\Models\Tax::where('tax_status', 1)->get() as $tax)
                     <label for="name">
                         {{$tax->name}}
                         <input type="hidden" value="{{$tax->id}}" name="tax_id[]">

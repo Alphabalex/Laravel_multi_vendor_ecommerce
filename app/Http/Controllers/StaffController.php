@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Staff;
-use App\Role;
-use App\User;
+use App\Models\Staff;
+use App\Models\Role;
+use App\Models\User;
 use Hash;
 
 class StaffController extends Controller

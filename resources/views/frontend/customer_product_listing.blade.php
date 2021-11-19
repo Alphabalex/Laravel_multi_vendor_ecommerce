@@ -2,13 +2,13 @@
 
 @if (isset($category_id))
     @php
-        $meta_title = \App\Category::find($category_id)->meta_title;
-        $meta_description = \App\Category::find($category_id)->meta_description;
+        $meta_title = \App\Models\Category::find($category_id)->meta_title;
+        $meta_description = \App\Models\Category::find($category_id)->meta_description;
     @endphp
 @elseif (isset($brand_id))
     @php
-        $meta_title = \App\Brand::find($brand_id)->meta_title;
-        $meta_description = \App\Brand::find($brand_id)->meta_description;
+        $meta_title = \App\Models\Brand::find($brand_id)->meta_title;
+        $meta_description = \App\Models\Brand::find($brand_id)->meta_description;
     @endphp
 @else
     @php
@@ -58,7 +58,7 @@
                                     <div class="p-3">
                                         <ul class="list-unstyled">
                                             @if (!isset($category_id))
-                                                @foreach (\App\Category::where('level', 0)->get() as $category)
+                                                @foreach (\App\Models\Category::where('level', 0)->get() as $category)
                                                     <li class="mb-2 ml-2">
                                                         <a class="text-reset fs-14" href="{{ route('customer_products.category', $category->slug) }}">{{ $category->getTranslation('name') }}</a>
                                                     </li>
@@ -70,23 +70,23 @@
                                                         {{ translate('All Categories')}}
                                                     </a>
                                                 </li>
-                                                @if (\App\Category::find($category_id)->parent_id != 0)
+                                                @if (\App\Models\Category::find($category_id)->parent_id != 0)
                                                     <li class="mb-2">
-                                                        <a class="text-reset fs-14 fw-600" href="{{ route('customer_products.category', \App\Category::find(\App\Category::find($category_id)->parent_id)->slug) }}">
+                                                        <a class="text-reset fs-14 fw-600" href="{{ route('customer_products.category', \App\Models\Category::find(\App\Models\Category::find($category_id)->parent_id)->slug) }}">
                                                             <i class="las la-angle-left"></i>
-                                                            {{ \App\Category::find(\App\Category::find($category_id)->parent_id)->getTranslation('name') }}
+                                                            {{ \App\Models\Category::find(\App\Models\Category::find($category_id)->parent_id)->getTranslation('name') }}
                                                         </a>
                                                     </li>
                                                 @endif
                                                 <li class="mb-2">
-                                                    <a class="text-reset fs-14 fw-600" href="{{ route('customer_products.category', \App\Category::find($category_id)->slug) }}">
+                                                    <a class="text-reset fs-14 fw-600" href="{{ route('customer_products.category', \App\Models\Category::find($category_id)->slug) }}">
                                                         <i class="las la-angle-left"></i>
-                                                        {{ \App\Category::find($category_id)->getTranslation('name') }}
+                                                        {{ \App\Models\Category::find($category_id)->getTranslation('name') }}
                                                     </a>
                                                 </li>
                                                 @foreach (\App\Utility\CategoryUtility::get_immediate_children_ids($category_id) as $key => $id)
                                                     <li class="ml-4 mb-2">
-                                                        <a class="text-reset fs-14" href="{{ route('customer_products.category', \App\Category::find($id)->slug) }}">{{ \App\Category::find($id)->getTranslation('name') }}</a>
+                                                        <a class="text-reset fs-14" href="{{ route('customer_products.category', \App\Models\Category::find($id)->slug) }}">{{ \App\Models\Category::find($id)->getTranslation('name') }}</a>
                                                     </li>
                                                 @endforeach
                                             @endif
@@ -113,13 +113,13 @@
                             @endif
                             @if(isset($category_id))
                                 <li class="text-dark fw-600 breadcrumb-item">
-                                    <a class="text-reset" href="{{ route('customer_products.category', \App\Category::find($category_id)->slug) }}">"{{ \App\Category::find($category_id)->getTranslation('name') }}"</a>
+                                    <a class="text-reset" href="{{ route('customer_products.category', \App\Models\Category::find($category_id)->slug) }}">"{{ \App\Models\Category::find($category_id)->getTranslation('name') }}"</a>
                                 </li>
                             @endif
                         </ul>
 
                         @isset($category_id)
-                            <input type="hidden" name="category" value="{{ \App\Category::find($category_id)->slug }}">
+                            <input type="hidden" name="category" value="{{ \App\Models\Category::find($category_id)->slug }}">
                         @endisset
                         <div class="text-left">
                             <div class="d-flex">
@@ -144,7 +144,7 @@
                                     <label class="mb-0 opacity-50">{{ translate('Brands')}}</label>
                                     <select class="form-control form-control-sm aiz-selectpicker" data-live-search="true" name="brand" onchange="filter()">
                                         <option value="">{{ translate('All Brands')}}</option>
-                                        @foreach (\App\Brand::all() as $brand)
+                                        @foreach (\App\Models\Brand::all() as $brand)
                                             <option value="{{ $brand->slug }}" @isset($brand_id) @if ($brand_id == $brand->id) selected @endif @endisset>{{ $brand->getTranslation('name') }}</option>
                                         @endforeach
                                     </select>

@@ -7,8 +7,8 @@ namespace App\Http\Controllers\Api\V2;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CustomerPackageController;
 use App\Http\Controllers\WalletController;
-use App\Order;
-use App\User;
+use App\Models\CombinedOrder;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Razorpay\Api\Api;
 
@@ -18,15 +18,15 @@ class RazorpayController
     public function payWithRazorpay(Request $request)
     {
         $payment_type = $request->payment_type;
-        $order_id = $request->order_id;
+        $combined_order_id = $request->combined_order_id;
         $amount = $request->amount;
         $user_id = $request->user_id;
         $user = User::find($user_id);
 
         if ($payment_type == 'cart_payment') {
-            $order = Order::find($order_id);
-            $shipping_address = json_decode($order->shipping_address,true);
-            return view('frontend.razorpay.order_payment', compact('user','order', 'shipping_address'));
+            $combined_order = CombinedOrder::find($combined_order_id);
+            $shipping_address = json_decode($combined_order->shipping_address,true);
+            return view('frontend.razorpay.order_payment', compact('user','combined_order', 'shipping_address'));
         } elseif ($payment_type == 'wallet_payment') {
 
             return view('frontend.razorpay.wallet_payment',  compact('user', 'amount'));
@@ -50,12 +50,12 @@ class RazorpayController
                 $response = $api->payment->fetch($input['razorpay_payment_id'])->capture(array('amount' => $payment['amount']));
                 $payment_details = json_encode(array('id' => $response['id'], 'method' => $response['method'], 'amount' => $response['amount'], 'currency' => $response['currency']));
 
-                return response()->json(['result' => true, 'message' => "Payment Successful", 'payment_details' => $payment_details]);
+                return response()->json(['result' => true, 'message' => translate("Payment Successful"), 'payment_details' => $payment_details]);
             } catch (\Exception $e) {
                 return response()->json(['result' => false, 'message' => $e->getMessage(), 'payment_details' => '']);
             }
         } else {
-            return response()->json(['result' => false, 'message' => 'Payment Failed', 'payment_details' => '']);
+            return response()->json(['result' => false, 'message' => translate('Payment Failed'), 'payment_details' => '']);
         }
     }
 
@@ -67,7 +67,7 @@ class RazorpayController
 
             if ($payment_type == 'cart_payment') {
 
-                checkout_done($request->order_id, $request->payment_details);
+                checkout_done($request->combined_order_id, $request->payment_details);
             }
 
             if ($payment_type == 'wallet_payment') {
@@ -75,7 +75,7 @@ class RazorpayController
                 wallet_payment_done($request->user_id, $request->amount, 'Razorpay', $request->payment_details);
             }
 
-            return response()->json(['result' => true, 'message' => "Payment is successful"]);
+            return response()->json(['result' => true, 'message' => translate("Payment is successful")]);
 
 
         } catch (\Exception $e) {

@@ -55,7 +55,7 @@
                                         {{ $num_of_sale }}
                                     </td>
                                     <td>
-                                        {{ single_price(\App\OrderDetail::where('seller_id', $seller->user->id)->sum('price')) }}
+                                        {{ single_price(\App\Models\OrderDetail::where('seller_id', $seller->user->id)->sum('price')) }}
                                     </td>
                                 </tr>
                             @endif

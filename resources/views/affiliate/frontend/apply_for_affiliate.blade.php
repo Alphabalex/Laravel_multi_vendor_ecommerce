@@ -88,7 +88,7 @@
                             </div>
                             <div class="card-body">
                                 @php
-                                    $verification_form = \App\AffiliateConfig::where('type', 'verification_form')->first()->value;
+                                    $verification_form = \App\Models\AffiliateConfig::where('type', 'verification_form')->first()->value;
                                 @endphp
                                     @foreach (json_decode($verification_form) as $key => $element)
                                         @if ($element->type == 'text')

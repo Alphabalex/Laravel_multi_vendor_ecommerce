@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\User;
-use App\Customer;
-use App\Cart;
-use App\BusinessSetting;
+use App\Models\User;
+use App\Models\Customer;
+use App\Models\Cart;
+use App\Models\BusinessSetting;
 use App\OtpConfiguration;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\OTPVerificationController;
@@ -69,7 +69,7 @@ class RegisterController extends Controller
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     protected function create(array $data)
     {
@@ -147,11 +147,11 @@ class RegisterController extends Controller
             if(BusinessSetting::where('type', 'email_verification')->first()->value != 1){
                 $user->email_verified_at = date('Y-m-d H:m:s');
                 $user->save();
-                flash(translate('Registration successfull.'))->success();
+                flash(translate('Registration successful.'))->success();
             }
             else {
                 event(new Registered($user));
-                flash(translate('Registration successfull. Please verify your email.'))->success();
+                flash(translate('Registration successful. Please verify your email.'))->success();
             }
         }
 

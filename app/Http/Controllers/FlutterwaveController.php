@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\CustomerPackage;
+use App\SellerPackage;
 use Session;
-use App\Order;
-use Illuminate\Http\Request;
-
-//use the Rave Facade
-use Rave;
+use App\CombinedOrder;
+use Auth;
+use Exception;
+use Rave as Flutterwave;
 
 class FlutterwaveController extends Controller
 {
@@ -16,30 +16,59 @@ class FlutterwaveController extends Controller
     {
         if(Session::has('payment_type')){
             if(Session::get('payment_type') == 'cart_payment'){
-                $order = Order::findOrFail(Session::get('order_id'));
-                return view('frontend.flutterwave.order_payment_flutterwave', compact('order'));
+                $combined_order = CombinedOrder::findOrFail(Session::get('combined_order_id'));
+                return $this->initialize($combined_order->grand_total);
             }
             elseif (Session::get('payment_type') == 'wallet_payment') {
-                return view('frontend.flutterwave.wallet_payment_flutterwave');
+                return $this->initialize(Session::get('payment_data')['amount']);
             }
             elseif (Session::get('payment_type') == 'customer_package_payment') {
                 $customer_package_id = Session::get('payment_data')['customer_package_id'];
                 $package_details = CustomerPackage::findOrFail($customer_package_id);
-                return view('frontend.flutterwave.customer_package_payment_flutterwave', compact('package_details'));
+                return $this->initialize($package_details->amount);
             }
             elseif (Session::get('payment_type') == 'seller_package_payment') {
                 $seller_package_id = Session::get('payment_data')['seller_package_id'];
-                $package_details = \App\SellerPackage::findOrFail($seller_package_id);
-                return view('frontend.flutterwave.seller_package_payment_flutterwave' , compact('package_details'));
+                $package_details = SellerPackage::findOrFail($seller_package_id);
+                return $this->initialize($package_details->amount);
             }
         }
     }
 
-    public function initialize()
+    public function initialize($amount)
     {
-        //This initializes payment and redirects to the payment gateway
-        //The initialize method takes the parameter of the redirect URL
-        Rave::initialize(route('flutterwave.callback'));
+        //This generates a payment reference
+        $reference = Flutterwave::generateReference();
+
+        // Enter the details of the payment
+        $data = [
+            'payment_options' => 'card,banktransfer',
+            'amount' => $amount,
+            'email' => Auth::user()->email,
+            'tx_ref' => $reference,
+            'currency' => "NGN",
+            'redirect_url' => route('flutterwave.callback'),
+            'customer' => [
+                'email' => Auth::user()->email,
+                "phone_number" => Auth::user()->phone,
+                "name" => Auth::user()->name
+            ],
+
+            "customizations" => [
+                "title" => 'Payment',
+                "description" => ""
+            ]
+        ];
+
+        $payment = Flutterwave::initializePayment($data);
+
+
+        if ($payment['status'] !== 'success') {
+            // notify something went wrong
+            return;
+        }
+
+        return redirect($payment['data']['link']);
     }
 
     /**
@@ -48,55 +77,50 @@ class FlutterwaveController extends Controller
      */
     public function callback()
     {
+        $status = request()->status;
 
-        $data = request()->resp;
+        //if payment is successful
+        if ($status ==  'successful') {
+            $transactionID = Flutterwave::getTransactionIDFromCallback();
+            $data = Flutterwave::verifyTransaction($transactionID);
 
-        $payment_type = Session::get('payment_type');
-        $payment = json_decode($data)->tx;
+            try{
+                $payment = $data['data'];
+                $payment_type = Session::get('payment_type');
 
-        try{
-            if(strcmp($payment->status, 'successful') != 0){
-                // fail or cancel or incomplete
-                Session::forget('payment_data');
-                flash(translate('Payment incomplete'))->error();
-                return redirect()->route('home');
+                if($payment['status'] == "successful"){
+                    if ($payment_type == 'cart_payment') {
+                        $checkoutController = new CheckoutController;
+                        return $checkoutController->checkout_done(session()->get('combined_order_id'), json_encode($payment));
+                    }
 
-            } else {
-                if ($payment_type == 'cart_payment') {
-                    $checkoutController = new CheckoutController;
-                    return $checkoutController->checkout_done(session()->get('order_id'), json_encode($payment));
-                }
+                    if ($payment_type == 'wallet_payment') {
+                        $walletController = new WalletController;
+                        return $walletController->wallet_payment_done(session()->get('payment_data'), json_encode($payment));
+                    }
 
-                if ($payment_type == 'wallet_payment') {
-                    $walletController = new WalletController;
-                    return $walletController->wallet_payment_done(session()->get('payment_data'), json_encode($payment));
-                }
+                    if ($payment_type == 'customer_package_payment') {
+                        $customer_package_controller = new CustomerPackageController;
+                        return $customer_package_controller->purchase_payment_done(session()->get('payment_data'), json_encode($payment));
+                    }
 
-                if ($payment_type == 'customer_package_payment') {
-                    $customer_package_controller = new CustomerPackageController;
-                    return $customer_package_controller->purchase_payment_done(session()->get('payment_data'), json_encode($payment));
-                }
-
-                if ($payment_type == 'seller_package_payment') {
-                    $seller_package_controller = new \App\Http\Controllers\SellerPackageController;
-                    return $seller_package_controller->purchase_payment_done(session()->get('payment_data'), json_encode($payment));
+                    if ($payment_type == 'seller_package_payment') {
+                        $seller_package_controller = new SellerPackageController;
+                        return $seller_package_controller->purchase_payment_done(session()->get('payment_data'), json_encode($payment));
+                    }
                 }
             }
-        } catch (\Exception $e) {
-            flash(translate('Payment failed'))->error();
-        return redirect()->route('home');
+            catch(Exception $e){
+                //dd($e);
+            }
         }
-
-            // Get the transaction from your DB using the transaction reference (txref)
-            // Check if you have previously given value for the transaction. If you have, redirect to your successpage else, continue
-            // Comfirm that the transaction is successful
-            // Confirm that the chargecode is 00 or 0
-            // Confirm that the currency on your db transaction is equal to the returned currency
-            // Confirm that the db transaction amount is equal to the returned amount
-            // Update the db transaction record (includeing parameters that didn't exist before the transaction is completed. for audit purpose)
-            // Give value for the transaction
-            // Update the transaction to note that you have given value for the transaction
-            // You can also redirect to your success page from here
-
+        elseif ($status ==  'cancelled'){
+            //Put desired action/code after transaction has been cancelled here
+            flash(translate('Payment cancelled'))->error();
+            return redirect()->route('home');
+        }
+        //Put desired action/code after transaction has failed here
+        flash(translate('Payment failed'))->error();
+        return redirect()->route('home');
     }
 }

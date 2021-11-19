@@ -3,13 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Product;
-use App\SubSubCategory;
-use App\Category;
-use App\Cart;
+use App\Models\Product;
+use App\Models\Category;
+use App\Models\Cart;
 use Auth;
 use Session;
-use App\Color;
 use Cookie;
 
 class CartController extends Controller
@@ -108,23 +106,25 @@ class CartController extends Controller
 
             $data['variation'] = $str;
 
-            if($str != null && $product->variant_product){
-                $product_stock = $product->stocks->where('variant', $str)->first();
-                $price = $product_stock->price;
-                $quantity = $product_stock->qty;
+            $product_stock = $product->stocks->where('variant', $str)->first();
+            $price = $product_stock->price;
 
-                if($quantity < $request['quantity']){
-                    return array(
-                        'status' => 0,
-                        'cart_count' => count($carts),
-                        'modal_view' => view('frontend.partials.outOfStockCart')->render(),
-                        'nav_cart_view' => view('frontend.partials.cart')->render(),
-                    );
+            if($product->wholesale_product){
+                $wholesalePrice = $product_stock->wholesalePrices->where('min_qty', '<=', $request->quantity)->where('max_qty', '>=', $request->quantity)->first();
+                if($wholesalePrice){
+                    $price = $wholesalePrice->price;
                 }
             }
 
-            else{
-                $price = $product->unit_price;
+            $quantity = $product_stock->qty;
+
+            if($quantity < $request['quantity']){
+                return array(
+                    'status' => 0,
+                    'cart_count' => count($carts),
+                    'modal_view' => view('frontend.partials.outOfStockCart')->render(),
+                    'nav_cart_view' => view('frontend.partials.cart')->render(),
+                );
             }
 
             //discount calculation
@@ -149,13 +149,13 @@ class CartController extends Controller
 
             //calculation of taxes
             foreach ($product->taxes as $product_tax) {
-            if($product_tax->tax_type == 'percent'){
-                $tax += ($price * $product_tax->tax) / 100;
+                if($product_tax->tax_type == 'percent'){
+                    $tax += ($price * $product_tax->tax) / 100;
+                }
+                elseif($product_tax->tax_type == 'amount'){
+                    $tax += $product_tax->tax;
+                }
             }
-            elseif($product_tax->tax_type == 'amount'){
-                $tax += $product_tax->tax;
-            }
-        }
 
             $data['quantity'] = $request['quantity'];
             $data['price'] = $price;
@@ -178,8 +178,8 @@ class CartController extends Controller
                 $foundInCart = false;
 
                 foreach ($carts as $key => $cartItem){
-                    $cart_product = Product::where('id', $cartItem['product_id'])->first();
-                    if($cart_product->auction_product == 1){
+                    $product = Product::where('id', $cartItem['product_id'])->first();
+                    if($product->auction_product == 1){
                         return array(
                             'status' => 0,
                             'cart_count' => count($carts),
@@ -203,6 +203,16 @@ class CartController extends Controller
                             $foundInCart = true;
 
                             $cartItem['quantity'] += $request['quantity'];
+
+                            if($product->wholesale_product){
+                                $wholesalePrice = $product_stock->wholesalePrices->where('min_qty', '<=', $request->quantity)->where('max_qty', '>=', $request->quantity)->first();
+                                if($wholesalePrice){
+                                    $price = $wholesalePrice->price;
+                                }
+                            }
+
+                            $cartItem['price'] = $price;
+
                             $cartItem->save();
                         }
                     }
@@ -230,7 +240,6 @@ class CartController extends Controller
             );
         }
         else{
-
             $price = $product->bids->max('amount');
 
             foreach ($product->taxes as $product_tax) {
@@ -291,20 +300,28 @@ class CartController extends Controller
     //updated the quantity for a cart item
     public function updateQuantity(Request $request)
     {
-        $object = Cart::findOrFail($request->id);
+        $cartItem = Cart::findOrFail($request->id);
 
-        if($object['id'] == $request->id){
-            $product = \App\Product::find($object['product_id']);
-            $product_stock = $product->stocks->where('variant', $object['variation'])->first();
+        if($cartItem['id'] == $request->id){
+            $product = Product::find($cartItem['product_id']);
+            $product_stock = $product->stocks->where('variant', $cartItem['variation'])->first();
             $quantity = $product_stock->qty;
+            $price = $product_stock->price;
 
             if($quantity >= $request->quantity) {
                 if($request->quantity >= $product->min_qty){
-                    $object['quantity'] = $request->quantity;
+                    $cartItem['quantity'] = $request->quantity;
                 }
             }
 
-            $object->save();
+            if($product->wholesale_product){
+                $wholesalePrice = $product_stock->wholesalePrices->where('min_qty', '<=', $request->quantity)->where('max_qty', '>=', $request->quantity)->first();
+                if($wholesalePrice){
+                    $price = $wholesalePrice->price;
+                }
+            }
+
+            $cartItem->save();
         }
 
         if(auth()->user() != null) {

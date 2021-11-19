@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\CustomerProduct;
-use App\CustomerProductTranslation;
-use App\Category;
-use App\SubCategory;
-use App\Brand;
-use App\SubSubCategory;
+use App\Models\CustomerProduct;
+use App\Models\CustomerProductTranslation;
+use App\Models\Category;
+use App\Models\SubCategory;
+use App\Models\Brand;
+use App\Models\SubSubCategory;
 use Auth;
 use ImageOptimizer;
 use Illuminate\Support\Str;

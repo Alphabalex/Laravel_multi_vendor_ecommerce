@@ -5,7 +5,6 @@
 
 @php
     $status = $order->orderDetails->first()->delivery_status;
-    $refund_request_addon = \App\Addon::where('unique_identifier', 'refund_request')->first();
 @endphp
 
 <div class="modal-body gry-bg px-3 pt-3">
@@ -115,7 +114,7 @@
                                 <th>{{ translate('Quantity')}}</th>
                                 <th>{{ translate('Delivery Type')}}</th>
                                 <th>{{ translate('Price')}}</th>
-                                @if ($refund_request_addon != null && $refund_request_addon->activated == 1)
+                                @if (addon_is_activated('refund_request'))
                                     <th>{{ translate('Refund')}}</th>
                                 @endif
                             </tr>
@@ -149,7 +148,7 @@
                                         @endif
                                     </td>
                                     <td>{{ single_price($orderDetail->price) }}</td>
-                                    @if ($refund_request_addon != null && $refund_request_addon->activated == 1)
+                                    @if (addon_is_activated('refund_request'))
                                         @php
                                             $no_of_max_day = get_setting('refund_request_time');
                                             $last_refund_date = $orderDetail->created_at->addDays($no_of_max_day);

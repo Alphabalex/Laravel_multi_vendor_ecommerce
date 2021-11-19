@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
-use App\User;
+use App\Models\User;
 use App\Mail\SecondEmailVerifyMailManager;
 use App\Utility\SmsUtility;
 use Mail;

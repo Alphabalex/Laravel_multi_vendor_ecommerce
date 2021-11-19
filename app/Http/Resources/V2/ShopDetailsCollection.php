@@ -11,9 +11,6 @@ class ShopDetailsCollection extends ResourceCollection
     {
         return [
             'data' => $this->collection->map(function($data) {
-
-                $true_rating = Product::where('user_id',$data->user_id)->where('rating','>',0.00)->avg('rating');
-                $rating = ceiling($true_rating,0.5);
                 return [
                     'id' => $data->id,
                     'user_id' => intval($data->user_id) ,
@@ -24,8 +21,8 @@ class ShopDetailsCollection extends ResourceCollection
                     'facebook' => $data->facebook,
                     'google' => $data->google,
                     'twitter' => $data->twitter,
-                    'true_rating' => $true_rating == null ? 0.00 : (double) $true_rating,
-                    'rating' => (double) $rating
+                    'true_rating' => (double) $data->user->seller->rating,
+                    'rating' => (double) $data->user->seller->rating
                 ];
             })
         ];

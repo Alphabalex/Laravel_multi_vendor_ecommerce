@@ -2,7 +2,7 @@
 
 @section('content')
 @php
-    $selle_policy =  \App\Page::where('type', 'seller_policy_page')->first();
+    $selle_policy =  \App\Models\Page::where('type', 'seller_policy_page')->first();
 @endphp
 <section class="pt-4 mb-4">
     <div class="container text-center">

@@ -5,55 +5,42 @@
             <div class="col-xl-6 mx-auto">
                 <div class="card">
                     <div class="card-body">
-                        <div class="text-center mb-4">
-                            <h1 class="h3">Congratulations!!!</h1>
-                            <p>You have successfully completed the installation process. Please Login to continue.</p>
+                        <div class="mar-ver pad-btm text-center">
+                            <h1 class="h3">Active eCommerce CMS Settings</h1>
+                            <p>Fill this form with basic information & admin login credentials</p>
                         </div>
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="fs-16 mb-0 card-title">Configure the following setting to run the system properly.</h3>
-                            </div>
-                            <div class="card-body">
-                                <ul class="">
-                                    <li class="">SMTP Setting</li>
-                                    <li class="">Payment Method Configuration</li>
-                                    <li class="">Social Media Login Configuration</li>
-                                    <li class="">Facebook Chat Configuration</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="fs-16 mb-0 card-title">Demo account added for test purpose.</h3>
-                            </div>
-                            <div class="card-body">
-                                <table class="table table-bordered mar-no">
-                                    <thead>
-                                        <tr>
-                                            <th>User Type</th>
-                                            <th>Email</th>
-                                            <th>Password</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Customer</td>
-                                            <td>customer@example.com</td>
-                                            <td>123456</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Seller</td>
-                                            <td>seller@example.com</td>
-                                            <td>123456</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <a href="{{ env('APP_URL') }}" class="btn btn-primary">Go to Frontend Website</a>
-                            <a href="{{ env('APP_URL') }}/admin" class="btn btn-success">Login to Admin panel</a>
-                        </div>
+                        <p class="text-muted font-13">
+                            <form method="POST" action="{{ route('system_settings') }}">
+                                @csrf
+                                <div class="form-group">
+                                    <label for="admin_name">Admin Name</label>
+                                    <input type="text" class="form-control" id="admin_name" name="admin_name" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="admin_email">Admin Email</label>
+                                    <input type="email" class="form-control" id="admin_email" name="admin_email" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="admin_password">Admin Password (At least 6 characters)</label>
+                                    <input type="password" class="form-control" id="admin_password" name="admin_password" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="admin_name">System Currency</label>
+                                    <select class="form-control aiz-selectpicker" data-live-search="true" name="system_default_currency" required>
+                                        @foreach (\App\Models\Currency::all() as $key => $currency)
+                                            <option value="{{ $currency->id }}">{{ $currency->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">Continue</button>
+                                </div>
+                            </form>
+                        </p>
                     </div>
                 </div>
             </div>

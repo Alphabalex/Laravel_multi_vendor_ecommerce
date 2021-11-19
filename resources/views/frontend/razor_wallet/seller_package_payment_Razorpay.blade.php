@@ -2,7 +2,7 @@
 
 @section('content')
 @php
-    $seller_package = \App\SellerPackage::findOrFail(Session::get('payment_data')['seller_package_id']);
+    $seller_package = \App\Models\SellerPackage::findOrFail(Session::get('payment_data')['seller_package_id']);
 @endphp
     <form action="{!!route('payment.rozer')!!}" method="POST" id='rozer-pay' style="display: none;">
         <!-- Note that the amount is in paise = 50 INR -->

@@ -87,7 +87,7 @@
         				</thead>
         				<tbody>
                     @php
-                    $admin_user_id = \App\User::where('user_type', 'admin')->first()->id;
+                    $admin_user_id = \App\Models\User::where('user_type', 'admin')->first()->id;
                     @endphp
                     @foreach ($order->orderDetails->where('seller_id', '!=', $admin_user_id) as $key => $orderDetail)
                         <tr>

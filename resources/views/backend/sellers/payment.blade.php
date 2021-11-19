@@ -4,7 +4,7 @@
 
 <div class="card">
     <div class="card-header">
-        <h5 class="mb-0 h6">{{ \App\Seller::find($payments->first()->seller_id)->user->name }} ({{ \App\Seller::find($payments->first()->seller_id)->user->shop->name }})</h5>
+        <h5 class="mb-0 h6">{{ \App\Models\Seller::find($payments->first()->seller_id)->user->name }} ({{ \App\Models\Seller::find($payments->first()->seller_id)->user->shop->name }})</h5>
     </div>
     <div class="card-body">
         <table class="table aiz-table">

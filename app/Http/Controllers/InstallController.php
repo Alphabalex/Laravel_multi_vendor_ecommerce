@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 use URL;
 use DB;
 use Hash;
-use App\BusinessSetting;
-use App\User;
-use App\Product;
+use App\Models\BusinessSetting;
+use App\Models\User;
+use App\Models\Product;
 use CoreComponentRepository;
 
 class InstallController extends Controller
@@ -29,9 +29,13 @@ class InstallController extends Controller
         return view('installation.step2');
     }
 
-    public function step3() {
-        
-        return view('installation.step3');
+    public function step3($error = "") {
+        CoreComponentRepository::instantiateShopRepository();
+        if($error == ""){
+            return view('installation.step3');
+        }else {
+            return view('installation.step3', compact('error'));
+        }
     }
 
     public function step4() {
@@ -40,6 +44,10 @@ class InstallController extends Controller
 
     public function step5() {
         return view('installation.step5');
+    }
+
+    public function purchase_code(Request $request) {
+        return redirect('step3');
     }
 
     public function system_settings(Request $request) {
@@ -64,7 +72,10 @@ class InstallController extends Controller
         $previousRouteServiceProvier = base_path('app/Providers/RouteServiceProvider.php');
         $newRouteServiceProvier      = base_path('app/Providers/RouteServiceProvider.txt');
         copy($newRouteServiceProvier, $previousRouteServiceProvier);
-        return view('installation.step5');
+        //sleep(5);
+        return view('installation.step6');
+
+        // return redirect('step6');
     }
     public function database_installation(Request $request) {
 
@@ -74,19 +85,19 @@ class InstallController extends Controller
                 foreach ($request->types as $type) {
                     $this->writeEnvironmentFile($type, $request[$type]);
                 }
-                return redirect('step3');
+                return redirect('step4');
             }else {
-                return redirect('step2');
+                return redirect('step3');
             }
         }else {
-            return redirect('step2')->with('error');
+            return redirect('step3/database_error');
         }
     }
 
     public function import_sql() {
         $sql_path = base_path('shop.sql');
         DB::unprepared(file_get_contents($sql_path));
-        return redirect('step4');
+        return redirect('step5');
     }
 
     function check_database_connection($db_host = "", $db_name = "", $db_user = "", $db_pass = "") {

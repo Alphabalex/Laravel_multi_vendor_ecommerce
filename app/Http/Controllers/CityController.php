@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\City;
-use App\Country;
-use App\CityTranslation;
+use App\Models\City;
+use App\Models\Country;
+use App\Models\CityTranslation;
+use App\Models\State;
 
 class CityController extends Controller
 {
@@ -14,11 +15,21 @@ class CityController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $cities = City::paginate(15);
-        $countries = Country::where('status', 1)->get();
-        return view('backend.setup_configurations.cities.index', compact('cities', 'countries'));
+        $sort_city = $request->sort_city;
+        $sort_state = $request->sort_state;
+        $cities_queries = City::query();
+        if($request->sort_city) {
+            $cities_queries->where('name', 'like', "%$sort_city%");
+        }
+        if($request->sort_state) {
+            $cities_queries->where('state_id', $request->sort_state);
+        }
+        $cities = $cities_queries->orderBy('status', 'desc')->paginate(15);
+        $states = State::where('status', 1)->get();
+
+        return view('backend.setup_configurations.cities.index', compact('cities', 'states', 'sort_city', 'sort_state'));
     }
 
     /**
@@ -42,7 +53,7 @@ class CityController extends Controller
 
         $city->name = $request->name;
         $city->cost = $request->cost;
-        $city->country_id = $request->country_id;
+        $city->state_id = $request->state_id;
 
         $city->save();
 
@@ -61,8 +72,8 @@ class CityController extends Controller
      {
          $lang  = $request->lang;
          $city  = City::findOrFail($id);
-         $countries = Country::where('status', 1)->get();
-         return view('backend.setup_configurations.cities.edit', compact('city', 'lang', 'countries'));
+         $states = State::where('status', 1)->get();
+         return view('backend.setup_configurations.cities.edit', compact('city', 'lang', 'states'));
      }
 
 
@@ -80,7 +91,7 @@ class CityController extends Controller
             $city->name = $request->name;
         }
 
-        $city->country_id = $request->country_id;
+        $city->state_id = $request->state_id;
         $city->cost = $request->cost;
 
         $city->save();
@@ -112,19 +123,12 @@ class CityController extends Controller
         flash(translate('City has been deleted successfully'))->success();
         return redirect()->route('cities.index');
     }
-    
-    public function get_city(Request $request) {
-        $country_info = Country::where('status',1)->where('name', $request->country_name)->first();
-        
-        $cities = City::where('country_id', $country_info->id)->get();
-        $html = '';
-        
-        foreach ($cities as $row) {
-//            $val = $row->id . ' | ' . $row->name;
-            $html .= '<option value="' . $row->name . '">' . $row->getTranslation('name') . '</option>';
-        }
-        
-        
-        echo json_encode($html);
+
+    public function updateStatus(Request $request){
+        $city = City::findOrFail($request->id);
+        $city->status = $request->status;
+        $city->save();
+
+        return 1;
     }
 }

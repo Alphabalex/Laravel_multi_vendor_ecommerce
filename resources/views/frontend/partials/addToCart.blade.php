@@ -147,7 +147,7 @@
 
                                 <div class="row no-gutters">
                                     <div class="col-2">
-                                        <div class="opacity-50 mt-2 ">{{ \App\Attribute::find($choice->attribute_id)->getTranslation('name') }}:</div>
+                                        <div class="opacity-50 mt-2 ">{{ \App\Models\Attribute::find($choice->attribute_id)->getTranslation('name') }}:</div>
                                     </div>
                                     <div class="col-10">
                                         <div class="aiz-radio-inline">
@@ -179,11 +179,11 @@
                                 <div class="col-10">
                                     <div class="aiz-radio-inline">
                                         @foreach (json_decode($product->colors) as $key => $color)
-                                        <label class="aiz-megabox pl-0 mr-2" data-toggle="tooltip" data-title="{{ \App\Color::where('code', $color)->first()->name }}">
+                                        <label class="aiz-megabox pl-0 mr-2" data-toggle="tooltip" data-title="{{ \App\Models\Color::where('code', $color)->first()->name }}">
                                             <input
                                                 type="radio"
                                                 name="color"
-                                                value="{{ \App\Color::where('code', $color)->first()->name }}"
+                                                value="{{ \App\Models\Color::where('code', $color)->first()->name }}"
                                                 @if($key == 0) checked @endif
                                             >
                                             <span class="aiz-megabox-elem rounded d-flex align-items-center justify-content-center p-1 mb-2">
@@ -248,10 +248,17 @@
                             <span class="d-none d-md-inline-block"> {{ translate('Add to cart')}}</span>
                         </button>
                     @elseif($qty > 0)
-                        <button type="button" class="btn btn-primary buy-now fw-600 add-to-cart" onclick="addToCart()">
-                            <i class="la la-shopping-cart"></i>
-                            <span class="d-none d-md-inline-block"> {{ translate('Add to cart')}}</span>
-                        </button>
+                        @if ($product->external_link != null)
+                            <a type="button" class="btn btn-soft-primary mr-2 add-to-cart fw-600" href="{{ $product->external_link }}">
+                                <i class="las la-shopping-bag"></i>
+                                <span class="d-none d-md-inline-block"> {{ translate('Add to cart')}}</span>
+                            </a>
+                        @else
+                            <button type="button" class="btn btn-primary buy-now fw-600 add-to-cart" onclick="addToCart()">
+                                <i class="la la-shopping-cart"></i>
+                                <span class="d-none d-md-inline-block"> {{ translate('Add to cart')}}</span>
+                            </button>
+                        @endif
                     @endif
                     <button type="button" class="btn btn-secondary out-of-stock fw-600 d-none" disabled>
                         <i class="la la-cart-arrow-down"></i> {{ translate('Out of Stock')}}

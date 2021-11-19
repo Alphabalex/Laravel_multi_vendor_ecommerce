@@ -24,7 +24,7 @@
                         </div>
                         <div class="col-lg-9">
                             @php
-                                $languagesArray = \App\Language::pluck('code')->toarray();
+                                $languagesArray = \App\Models\Language::pluck('code')->toarray();
                             @endphp
                             <select class="form-control aiz-selectpicker mb-2 mb-md-0" name="code" data-live-search="true" >
                                 @foreach(\File::files(base_path('public/assets/img/flags')) as $path)
@@ -37,6 +37,15 @@
 
                                 @endforeach
                             </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-lg-3">
+                            <label class="control-label">{{ translate('Flutter App Lang Code') }}</label>
+                            <code><a target="_blank" href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">{{ translate("Links for ISO 639-1 codes")}}</a></code>
+                        </div>
+                        <div class="col-lg-9">
+                            <input type="text" class="form-control" name="app_lang_code" placeholder="{{ translate('Put ISO 639-1 code for your language') }}" required>
                         </div>
                     </div>
                     <div class="form-group mb-0 text-right">

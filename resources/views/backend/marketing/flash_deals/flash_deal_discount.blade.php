@@ -19,7 +19,7 @@
   <tbody>
       @foreach ($product_ids as $key => $id)
       	@php
-      		$product = \App\Product::findOrFail($id);
+      		$product = \App\Models\Product::findOrFail($id);
       	@endphp
           <tr>
             <td>

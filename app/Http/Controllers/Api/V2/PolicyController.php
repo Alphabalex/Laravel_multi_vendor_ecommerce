@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Resources\V2\PolicyCollection;
-use App\Page;
+use App\Models\Page;
 use Illuminate\Http\Request;
 
 class PolicyController extends Controller

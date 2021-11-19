@@ -3,23 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\AffiliateOption;
-use App\Addon;
-use App\Order;
-use App\BusinessSetting;
-use App\AffiliateConfig;
-use App\AffiliateUser;
-use App\AffiliatePayment;
-use App\AffiliateEarningDetail;
-use App\AffiliateWithdrawRequest;
-use App\AffiliateLog;
-use App\AffiliateStats;
+use App\Models\AffiliateOption;
+use App\Models\Order;
+use App\Models\BusinessSetting;
+use App\Models\AffiliateConfig;
+use App\Models\AffiliateUser;
+use App\Models\AffiliatePayment;
+use App\Models\AffiliateWithdrawRequest;
+use App\Models\AffiliateLog;
+use App\Models\AffiliateStats;
 use Carbon\Carbon;
-use App\User;
-use App\Customer;
-use App\Category;
-use Session;
-use Cookie;
+use App\Models\User;
+use App\Models\Customer;
+use App\Models\Category;
 use Auth;
 use DB;
 use Hash;
@@ -97,10 +93,10 @@ class AffiliateController extends Controller
             $affiliate_config->type = $request->type;
             $affiliate_config->value = $request[$request->type];
             $affiliate_config->save();
-            
+
             flash("Validation time updated successfully")->success();
         } else {
-            
+
             $form = array();
             $select_types = ['select', 'multi_select', 'radio'];
             $j = 0;
@@ -115,7 +111,7 @@ class AffiliateController extends Controller
             }
             $affiliate_config = AffiliateConfig::where('type', 'verification_form')->first();
             $affiliate_config->value = json_encode($form);
-            
+
             flash("Verification form updated successfully")->success();
         }
         if($affiliate_config->save()){
@@ -124,6 +120,10 @@ class AffiliateController extends Controller
     }
 
     public function apply_for_affiliate(Request $request){
+        if(Auth::check() && AffiliateUser::where('user_id', Auth::user()->id)->first() != null){
+            flash(translate("You are already an affiliate user!"))->warning();
+            return back();
+        }
         return view('affiliate.frontend.apply_for_affiliate');
     }
 
@@ -283,7 +283,7 @@ class AffiliateController extends Controller
 
     public function user_index(Request $request){
         $affiliate_logs = AffiliateLog::where('referred_by_user', Auth::user()->id)->latest()->paginate(10);
-        
+
         $query = AffiliateStats::query();
         $query = $query->select(
                         DB::raw('SUM(no_of_click) AS count_click, SUM(no_of_order_item) AS count_item, SUM(no_of_delivered) AS count_delivered,  SUM(no_of_cancel) AS count_cancel')
@@ -296,7 +296,7 @@ class AffiliateController extends Controller
         $query->where('affiliate_user_id', Auth::user()->id);
         $affliate_stats = $query->first();
         $type = $request->type;
-                
+
 //        dd($type);
         return view('affiliate.frontend.index', compact('affiliate_logs', 'affliate_stats', 'type'));
     }
@@ -332,7 +332,7 @@ class AffiliateController extends Controller
     }
 
     public function processAffiliatePoints(Order $order){
-        if(Addon::where('unique_identifier', 'affiliate_system')->first() != null && \App\Addon::where('unique_identifier', 'affiliate_system')->first()->activated){
+        if(addon_is_activated('affiliate_system')){
             if(AffiliateOption::where('type', 'user_registration_first_purchase')->first()->status){
                 if ($order->user != null && $order->user->orders->count() == 1) {
                     if($order->user->referred_by != null){
@@ -437,12 +437,12 @@ class AffiliateController extends Controller
             }
         }
     }
-    
+
     public function processAffiliateStats($affiliate_user_id, $no_click = 0, $no_item = 0, $no_delivered = 0, $no_cancel = 0) {
         $affiliate_stats = AffiliateStats::whereDate('created_at', Carbon::today())
                 ->where("affiliate_user_id", $affiliate_user_id)
                 ->first();
-        
+
         if(!$affiliate_stats) {
             $affiliate_stats = new AffiliateStats;
             $affiliate_stats->no_of_order_item = 0;
@@ -450,26 +450,26 @@ class AffiliateController extends Controller
             $affiliate_stats->no_of_cancel = 0;
             $affiliate_stats->no_of_click = 0;
         }
-        
+
         $affiliate_stats->no_of_order_item += $no_item;
         $affiliate_stats->no_of_delivered += $no_delivered;
         $affiliate_stats->no_of_cancel += $no_cancel;
         $affiliate_stats->no_of_click += $no_click;
         $affiliate_stats->affiliate_user_id = $affiliate_user_id;
-        
+
 //        dd($affiliate_stats);
         $affiliate_stats->save();
-        
+
 //        foreach($order->orderDetails as $key => $orderDetail) {
 //            $referred_by_user = User::where('referral_code', $orderDetail->product_referral_code)->first();
-//            
+//
 //            if($referred_by_user != null) {
 //                if($orderDetail->delivery_status == 'delivered') {
 //                    $affiliate_stats->no_of_delivered++;
 //                } if($orderDetail->delivery_status == 'cancelled') {
 //                    $affiliate_stats->no_of_cancel++;
 //                }
-//                
+//
 //                $affiliate_stats->affiliate_user_id = $referred_by_user->id;
 //                dd($affiliate_stats);
 //                $affiliate_stats->save();

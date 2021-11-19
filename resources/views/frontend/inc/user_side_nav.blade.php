@@ -102,8 +102,8 @@
                 @else
 
                     @php
-                        $delivery_viewed = App\Order::where('user_id', Auth::user()->id)->where('delivery_viewed', 0)->get()->count();
-                        $payment_status_viewed = App\Order::where('user_id', Auth::user()->id)->where('payment_status_viewed', 0)->get()->count();
+                        $delivery_viewed = App\Models\Order::where('user_id', Auth::user()->id)->where('delivery_viewed', 0)->get()->count();
+                        $payment_status_viewed = App\Models\Order::where('user_id', Auth::user()->id)->where('payment_status_viewed', 0)->get()->count();
                     @endphp
                     <li class="aiz-side-nav-item">
                         <a href="{{ route('purchase_history.index') }}" class="aiz-side-nav-link {{ areActiveRoutes(['purchase_history.index'])}}">
@@ -120,11 +120,7 @@
                         </a>
                     </li>
 
-                    @php
-                        $refund_request_addon = \App\Addon::where('unique_identifier', 'refund_request')->first();
-                        $club_point_addon = \App\Addon::where('unique_identifier', 'club_point')->first();
-                    @endphp
-                    @if ($refund_request_addon != null && $refund_request_addon->activated == 1)
+                    @if (addon_is_activated('refund_request'))
                         <li class="aiz-side-nav-item">
                             <a href="{{ route('customer_refund_request') }}" class="aiz-side-nav-link {{ areActiveRoutes(['customer_refund_request'])}}">
                                 <i class="las la-backward aiz-side-nav-icon"></i>
@@ -191,12 +187,24 @@
 
                     @if(addon_is_activated('auction'))
                         <li class="aiz-side-nav-item">
-                            <a href="javascript:void(0);" class="aiz-side-nav-link {{ areActiveRoutes(['auction_product_bids.index'])}}">
+                            <a href="javascript:void(0);" class="aiz-side-nav-link">
                                 <i class="las la-gavel aiz-side-nav-icon"></i>
-                                <span class="aiz-side-nav-text">{{ translate('Auction Product') }}</span>
+                                <span class="aiz-side-nav-text">{{ translate('Auction') }}</span>
                                 <span class="aiz-side-nav-arrow"></span>
                             </a>
                             <ul class="aiz-side-nav-list level-2">
+                                @if (Auth::user()->user_type == 'seller')
+                                    <li class="aiz-side-nav-item">
+                                        <a href="{{ route('auction_products.seller.index') }}" class="aiz-side-nav-link {{ areActiveRoutes(['auction_products.seller.index','auction_products.create','auction_products.edit'])}}">
+                                            <span class="aiz-side-nav-text">{{ translate('All Auction Products') }}</span>
+                                        </a>
+                                    </li>
+                                    <li class="aiz-side-nav-item">
+                                        <a href="{{ route('auction_products_orders.seller') }}" class="aiz-side-nav-link {{ areActiveRoutes(['auction_products_orders.seller'])}}">
+                                            <span class="aiz-side-nav-text">{{ translate('Auction Product Orders') }}</span>
+                                        </a>
+                                    </li>
+                                @endif
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('auction_product_bids.index') }}" class="aiz-side-nav-link">
                                         <span class="aiz-side-nav-text">{{ translate('Bidded Products') }}</span>
@@ -213,7 +221,7 @@
 
                     @if(Auth::user()->user_type == 'seller')
                         @if (addon_is_activated('pos_system'))
-                            @if (\App\BusinessSetting::where('type', 'pos_activation_for_seller')->first() != null && get_setting('pos_activation_for_seller') != 0)
+                            @if (\App\Models\BusinessSetting::where('type', 'pos_activation_for_seller')->first() != null && get_setting('pos_activation_for_seller') != 0)
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('poin-of-sales.seller_index') }}" class="aiz-side-nav-link {{ areActiveRoutes(['poin-of-sales.seller_index'])}}">
                                         <i class="las la-fax aiz-side-nav-icon"></i>
@@ -222,26 +230,14 @@
                                 </li>
                             @endif
                         @endif
-
-                        @php
-                            $orders = DB::table('orders')
-                                        ->orderBy('code', 'desc')
-                                        ->join('order_details', 'orders.id', '=', 'order_details.order_id')
-                                        ->where('order_details.seller_id', Auth::user()->id)
-                                        ->where('orders.viewed', 0)
-                                        ->select('orders.id')
-                                        ->distinct()
-                                        ->count();
-                        @endphp
                         <li class="aiz-side-nav-item">
                             <a href="{{ route('orders.index') }}" class="aiz-side-nav-link {{ areActiveRoutes(['orders.index'])}}">
                                 <i class="las la-money-bill aiz-side-nav-icon"></i>
                                 <span class="aiz-side-nav-text">{{ translate('Orders') }}</span>
-                                @if($orders > 0)<span class="badge badge-inline badge-success">{{ $orders }}</span>@endif
                             </a>
                         </li>
 
-                        @if ($refund_request_addon != null && $refund_request_addon->activated == 1)
+                        @if (addon_is_activated('refund_request'))
                             <li class="aiz-side-nav-item">
                                 <a href="{{ route('vendor_refund_request') }}" class="aiz-side-nav-link {{ areActiveRoutes(['vendor_refund_request','reason_show'])}}">
                                     <i class="las la-backward aiz-side-nav-icon"></i>
@@ -249,22 +245,10 @@
                                 </a>
                             </li>
                         @endif
-
-                        @php
-                            $review_count = DB::table('reviews')
-                                        ->orderBy('code', 'desc')
-                                        ->join('products', 'products.id', '=', 'reviews.product_id')
-                                        ->where('products.user_id', Auth::user()->id)
-                                        ->where('reviews.viewed', 0)
-                                        ->select('reviews.id')
-                                        ->distinct()
-                                        ->count();
-                        @endphp
                         <li class="aiz-side-nav-item">
                             <a href="{{ route('reviews.seller') }}" class="aiz-side-nav-link {{ areActiveRoutes(['reviews.seller'])}}">
                                 <i class="las la-star-half-alt aiz-side-nav-icon"></i>
                                 <span class="aiz-side-nav-text">{{ translate('Product Reviews') }}</span>
-                                @if($review_count > 0)<span class="badge badge-inline badge-success">{{ $review_count }}</span>@endif
                             </a>
                         </li>
 
@@ -300,7 +284,7 @@
 
                     @if (get_setting('conversation_system') == 1)
                         @php
-                            $conversation = \App\Conversation::where('sender_id', Auth::user()->id)->where('sender_viewed', 0)->get();
+                            $conversation = \App\Models\Conversation::where('sender_id', Auth::user()->id)->where('sender_viewed', 0)->get();
                         @endphp
                         <li class="aiz-side-nav-item">
                             <a href="{{ route('conversations.index') }}" class="aiz-side-nav-link {{ areActiveRoutes(['conversations.index', 'conversations.show'])}}">
@@ -323,7 +307,7 @@
                         </li>
                     @endif
 
-                    @if ($club_point_addon != null && $club_point_addon->activated == 1)
+                    @if (addon_is_activated('club_point'))
                         <li class="aiz-side-nav-item">
                             <a href="{{ route('earnng_point_for_user') }}" class="aiz-side-nav-link {{ areActiveRoutes(['earnng_point_for_user'])}}">
                                 <i class="las la-dollar-sign aiz-side-nav-icon"></i>
@@ -402,8 +386,8 @@
             <div class="text-center">
                 <div class="heading-4 strong-700 mb-4">
                     @php
-                        $orderTotal = \App\Order::where('seller_id', Auth::user()->id)->where("payment_status", 'paid')->where('created_at', '>=', $days_ago_30)->sum('grand_total');
-                        //$orderDetails = \App\OrderDetail::where('seller_id', Auth::user()->id)->where('created_at', '>=', $days_ago_30)->get();
+                        $orderTotal = \App\Models\Order::where('seller_id', Auth::user()->id)->where("payment_status", 'paid')->where('created_at', '>=', $days_ago_30)->sum('grand_total');
+                        //$orderDetails = \App\Models\OrderDetail::where('seller_id', Auth::user()->id)->where('created_at', '>=', $days_ago_30)->get();
                         //$total = 0;
                         //foreach ($orderDetails as $key => $orderDetail) {
                             //if($orderDetail->order != null && $orderDetail->order != null && $orderDetail->order->payment_status == 'paid'){
@@ -417,7 +401,7 @@
                 <table class="table table-borderless">
                     <tr>
                         @php
-                            $orderTotal = \App\Order::where('seller_id', Auth::user()->id)->where("payment_status", 'paid')->sum('grand_total');
+                            $orderTotal = \App\Models\Order::where('seller_id', Auth::user()->id)->where("payment_status", 'paid')->sum('grand_total');
                         @endphp
                         <td class="p-1" width="60%">
                             {{ translate('Total Sold')}}:
@@ -428,7 +412,7 @@
                     </tr>
                     <tr>
                         @php
-                            $orderTotal = \App\Order::where('seller_id', Auth::user()->id)->where("payment_status", 'paid')->where('created_at', '>=', $days_ago_60)->where('created_at', '<=', $days_ago_30)->sum('grand_total');
+                            $orderTotal = \App\Models\Order::where('seller_id', Auth::user()->id)->where("payment_status", 'paid')->where('created_at', '>=', $days_ago_60)->where('created_at', '<=', $days_ago_30)->sum('grand_total');
                         @endphp
                         <td class="p-1" width="60%">
                             {{ translate('Last Month Sold')}}:
